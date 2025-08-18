@@ -1,4 +1,7 @@
+import { useTranslation } from 'react-i18next';
+
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="bg-foreground text-background py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -8,8 +11,7 @@ const Footer = () => {
               PropertyFlow
             </h3>
             <p className="text-background/70 mb-6 max-w-md">
-              The modern property management system trusted by professionals worldwide. 
-              Streamline your operations and grow your business with confidence.
+              {t('footer.description')}
             </p>
             <div className="flex space-x-4">
               <div className="w-10 h-10 bg-background/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors cursor-pointer">
@@ -25,7 +27,7 @@ const Footer = () => {
           </div>
           
           <div>
-            <h4 className="text-lg font-semibold mb-4">Product</h4>
+            <h4 className="text-lg font-semibold mb-4">{t('footer.product')}</h4>
             <ul className="space-y-2 text-background/70">
               <li><a href="#" className="hover:text-primary transition-colors">Features</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Pricing</a></li>
@@ -35,7 +37,7 @@ const Footer = () => {
           </div>
           
           <div>
-            <h4 className="text-lg font-semibold mb-4">Support</h4>
+            <h4 className="text-lg font-semibold mb-4">{t('footer.support')}</h4>
             <ul className="space-y-2 text-background/70">
               <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Documentation</a></li>
@@ -47,11 +49,11 @@ const Footer = () => {
         
         <div className="border-t border-background/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-background/60 text-sm">
-            © 2024 PropertyFlow. All rights reserved.
+            {t('footer.copyright')}
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="text-background/60 hover:text-primary text-sm transition-colors">Privacy Policy</a>
-            <a href="#" className="text-background/60 hover:text-primary text-sm transition-colors">Terms of Service</a>
+            <a href="#" className="text-background/60 hover:text-primary text-sm transition-colors">{t('footer.privacy')}</a>
+            <a href="#" className="text-background/60 hover:text-primary text-sm transition-colors">{t('footer.terms')}</a>
           </div>
         </div>
       </div>

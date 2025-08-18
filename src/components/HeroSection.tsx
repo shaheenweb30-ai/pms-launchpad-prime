@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-building.jpg";
 import { ArrowRight, CheckCircle } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const HeroSection = () => {
+  const { t } = useTranslation();
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       {/* Background with overlay */}
@@ -25,39 +27,38 @@ const HeroSection = () => {
             </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-              Modern Property 
+              {t('hero.title')}
               <span className="bg-gradient-primary bg-clip-text text-transparent block">
-                Management System
+                {t('hero.subtitle')}
               </span>
             </h1>
             
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl">
-              Streamline your property operations with our comprehensive PMS platform. 
-              From tenant management to maintenance tracking, everything you need in one place.
+              {t('hero.description')}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="bg-gradient-primary hover:shadow-hover transition-all duration-300">
-                Start Free Trial
+                {t('hero.startTrial')}
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
               <Button size="lg" variant="outline" className="border-primary/20 hover:border-primary/40">
-                Watch Demo
+                {t('hero.watchDemo')}
               </Button>
             </div>
             
             <div className="flex items-center mt-8 space-x-8">
               <div>
                 <div className="text-2xl font-bold text-foreground">500+</div>
-                <div className="text-sm text-muted-foreground">Properties Managed</div>
+                <div className="text-sm text-muted-foreground">{t('hero.stats.properties')}</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-foreground">98%</div>
-                <div className="text-sm text-muted-foreground">Customer Satisfaction</div>
+                <div className="text-sm text-muted-foreground">{t('hero.stats.satisfaction')}</div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-foreground">24/7</div>
-                <div className="text-sm text-muted-foreground">Support Available</div>
+                <div className="text-sm text-muted-foreground">{t('hero.stats.support')}</div>
               </div>
             </div>
           </div>

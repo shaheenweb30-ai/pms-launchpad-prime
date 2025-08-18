@@ -1,44 +1,45 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, TrendingUp, Clock, DollarSign } from "lucide-react";
-
-const benefits = [
-  {
-    icon: TrendingUp,
-    title: "Increase Revenue",
-    description: "Optimize rent collection and reduce vacancy rates",
-    metric: "Average 15% increase in NOI"
-  },
-  {
-    icon: Clock,
-    title: "Save Time",
-    description: "Automate routine tasks and streamline operations",
-    metric: "Save 20+ hours per week"
-  },
-  {
-    icon: CheckCircle,
-    title: "Improve Satisfaction", 
-    description: "Better tenant communication and faster response times",
-    metric: "98% tenant satisfaction rate"
-  },
-  {
-    icon: DollarSign,
-    title: "Reduce Costs",
-    description: "Lower maintenance costs through predictive analytics",
-    metric: "Cut expenses by 25%"
-  }
-];
+import { useTranslation } from 'react-i18next';
 
 const BenefitsSection = () => {
+  const { t } = useTranslation();
+  
+  const benefits = [
+    {
+      icon: TrendingUp,
+      title: t('benefits.revenue.title'),
+      description: t('benefits.revenue.description'),
+      metric: t('benefits.revenue.metric')
+    },
+    {
+      icon: Clock,
+      title: t('benefits.time.title'),
+      description: t('benefits.time.description'),
+      metric: t('benefits.time.metric')
+    },
+    {
+      icon: CheckCircle,
+      title: t('benefits.satisfaction.title'), 
+      description: t('benefits.satisfaction.description'),
+      metric: t('benefits.satisfaction.metric')
+    },
+    {
+      icon: DollarSign,
+      title: t('benefits.costs.title'),
+      description: t('benefits.costs.description'),
+      metric: t('benefits.costs.metric')
+    }
+  ];
   return (
     <section id="benefits" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Proven Results for Property Managers
+            {t('benefits.title')}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Join hundreds of property managers who have transformed their operations 
-            and achieved measurable results with our platform.
+            {t('benefits.description')}
           </p>
         </div>
         
@@ -69,24 +70,24 @@ const BenefitsSection = () => {
         {/* Stats Section */}
         <div className="mt-20 bg-gradient-hero rounded-2xl p-8 md:p-12 text-center">
           <h3 className="text-2xl md:text-3xl font-bold text-white mb-8">
-            Trusted by Property Management Professionals
+            {t('benefits.stats.title')}
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <div className="text-3xl md:text-4xl font-bold text-white">500+</div>
-              <div className="text-white/80">Properties Managed</div>
+              <div className="text-white/80">{t('benefits.stats.properties')}</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-bold text-white">50K+</div>
-              <div className="text-white/80">Tenant Interactions</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-white">$2M+</div>
-              <div className="text-white/80">Monthly Rent Processed</div>
+              <div className="text-3xl md:text-4xl font-bold text-white">50+</div>
+              <div className="text-white/80">{t('benefits.stats.managers')}</div>
             </div>
             <div>
               <div className="text-3xl md:text-4xl font-bold text-white">99.9%</div>
-              <div className="text-white/80">System Uptime</div>
+              <div className="text-white/80">{t('benefits.stats.uptime')}</div>
+            </div>
+            <div>
+              <div className="text-3xl md:text-4xl font-bold text-white">25+</div>
+              <div className="text-white/80">{t('benefits.stats.countries')}</div>
             </div>
           </div>
         </div>

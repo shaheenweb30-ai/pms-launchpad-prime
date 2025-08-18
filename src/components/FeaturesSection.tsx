@@ -9,61 +9,62 @@ import {
   Smartphone,
   Zap
 } from "lucide-react";
-
-const features = [
-  {
-    icon: Building2,
-    title: "Property Portfolio Management",
-    description: "Manage multiple properties from a single dashboard with comprehensive overview and controls."
-  },
-  {
-    icon: Users,
-    title: "Tenant Management",
-    description: "Streamline tenant screening, lease management, and communication in one unified system."
-  },
-  {
-    icon: Calendar,
-    title: "Maintenance Scheduling",
-    description: "Automated maintenance reminders and work order management to keep properties in perfect condition."
-  },
-  {
-    icon: CreditCard,
-    title: "Financial Tracking",
-    description: "Complete rent collection, expense tracking, and financial reporting for better profitability insights."
-  },
-  {
-    icon: BarChart3,
-    title: "Analytics & Reports",
-    description: "Data-driven insights with customizable reports to optimize your property management strategy."
-  },
-  {
-    icon: Shield,
-    title: "Security & Compliance",
-    description: "Bank-level security with automated compliance tracking and document management."
-  },
-  {
-    icon: Smartphone,
-    title: "Mobile Access",
-    description: "Full-featured mobile app for property managers and tenants to access everything on the go."
-  },
-  {
-    icon: Zap,
-    title: "Automation Tools",
-    description: "Automate repetitive tasks like rent reminders, lease renewals, and maintenance notifications."
-  }
-];
+import { useTranslation } from 'react-i18next';
 
 const FeaturesSection = () => {
+  const { t } = useTranslation();
+  
+  const features = [
+    {
+      icon: Building2,
+      title: t('features.portfolio.title'),
+      description: t('features.portfolio.description')
+    },
+    {
+      icon: Users,
+      title: t('features.tenant.title'),
+      description: t('features.tenant.description')
+    },
+    {
+      icon: Calendar,
+      title: t('features.maintenance.title'),
+      description: t('features.maintenance.description')
+    },
+    {
+      icon: CreditCard,
+      title: t('features.payments.title'),
+      description: t('features.payments.description')
+    },
+    {
+      icon: BarChart3,
+      title: t('features.analytics.title'),
+      description: t('features.analytics.description')
+    },
+    {
+      icon: Shield,
+      title: t('features.security.title'),
+      description: t('features.security.description')
+    },
+    {
+      icon: Smartphone,
+      title: t('features.mobile.title'),
+      description: t('features.mobile.description')
+    },
+    {
+      icon: Zap,
+      title: t('features.automation.title'),
+      description: t('features.automation.description')
+    }
+  ];
   return (
     <section id="features" className="py-20 bg-secondary/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Everything You Need to Manage Properties
+            {t('features.title')}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Our comprehensive platform provides all the tools you need to efficiently manage 
-            your property portfolio and deliver exceptional tenant experiences.
+            {t('features.subtitle')}
           </p>
         </div>
         

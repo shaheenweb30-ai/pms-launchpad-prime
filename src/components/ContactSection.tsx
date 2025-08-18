@@ -3,18 +3,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin, MessageSquare } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const ContactSection = () => {
+  const { t } = useTranslation();
   return (
     <section id="contact" className="py-20 bg-secondary/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Ready to Transform Your Property Management?
+            {t('contact.title')}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Get started with a personalized demo or contact our team to learn how 
-            PropertyFlow can streamline your operations.
+            {t('contact.description')}
           </p>
         </div>
         
@@ -29,46 +30,40 @@ const ContactSection = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-foreground mb-2 block">
-                      First Name
+                      {t('contact.form.name')}
                     </label>
-                    <Input placeholder="John" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">
-                      Last Name
-                    </label>
-                    <Input placeholder="Doe" />
+                    <Input placeholder={t('contact.form.name')} />
                   </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-2 block">
-                    Email Address
+                    {t('contact.form.email')}
                   </label>
-                  <Input type="email" placeholder="john@propertycompany.com" />
+                  <Input type="email" placeholder={t('contact.form.email')} />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-2 block">
-                    Company Name
+                    {t('contact.form.company')}
                   </label>
-                  <Input placeholder="Property Management Inc." />
+                  <Input placeholder={t('contact.form.company')} />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-2 block">
-                    Number of Properties
+                    {t('contact.form.properties')}
                   </label>
-                  <Input placeholder="e.g., 50" />
+                  <Input placeholder={t('contact.form.properties')} />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground mb-2 block">
-                    Message (Optional)
+                    {t('contact.form.message')}
                   </label>
                   <Textarea 
-                    placeholder="Tell us about your current property management challenges..."
+                    placeholder={t('contact.form.message')}
                     className="min-h-[100px]"
                   />
                 </div>
                 <Button className="w-full bg-gradient-primary hover:shadow-hover transition-all duration-300">
-                  Schedule Demo
+                  {t('contact.form.submit')}
                 </Button>
               </form>
             </CardContent>
@@ -82,7 +77,7 @@ const ContactSection = () => {
                   <Mail className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Email Us</h4>
+                  <h4 className="font-semibold text-foreground">{t('contact.details.email')}</h4>
                   <p className="text-muted-foreground">sales@propertyflow.com</p>
                 </div>
               </div>
@@ -94,7 +89,7 @@ const ContactSection = () => {
                   <Phone className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Call Us</h4>
+                  <h4 className="font-semibold text-foreground">{t('contact.details.phone')}</h4>
                   <p className="text-muted-foreground">1-800-PROPERTY</p>
                 </div>
               </div>
@@ -106,7 +101,7 @@ const ContactSection = () => {
                   <MapPin className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Visit Us</h4>
+                  <h4 className="font-semibold text-foreground">{t('contact.details.address')}</h4>
                   <p className="text-muted-foreground">123 Property St, Business District</p>
                 </div>
               </div>
@@ -118,7 +113,7 @@ const ContactSection = () => {
                   <MessageSquare className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground">Live Chat</h4>
+                  <h4 className="font-semibold text-foreground">{t('contact.details.chat')}</h4>
                   <p className="text-muted-foreground">Available 24/7 for support</p>
                 </div>
               </div>
@@ -126,13 +121,13 @@ const ContactSection = () => {
             
             <div className="bg-gradient-hero rounded-xl p-6">
               <h4 className="text-xl font-bold text-white mb-2">
-                Ready to Get Started?
+                {t('contact.trial.title')}
               </h4>
               <p className="text-white/80 mb-4">
-                Join hundreds of property managers who have transformed their business with PropertyFlow.
+                {t('contact.trial.description')}
               </p>
               <Button variant="secondary" className="w-full">
-                Start Free Trial Today
+                {t('contact.trial.button')}
               </Button>
             </div>
           </div>

@@ -2,55 +2,51 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const PricingSection = () => {
+  const { t } = useTranslation();
+  
   const plans = [
     {
-      name: "Starter",
+      name: t('pricing.starter.name'),
       price: "$49",
       period: "/month",
-      description: "Perfect for small property portfolios",
+      description: t('pricing.starter.description'),
       features: [
-        "Up to 10 properties",
-        "Basic tenant management",
-        "Maintenance tracking",
-        "Monthly reports",
-        "Email support",
-        "Mobile app access"
+        t('pricing.starter.features.1'),
+        t('pricing.starter.features.2'),
+        t('pricing.starter.features.3'),
+        t('pricing.starter.features.4')
       ],
       popular: false
     },
     {
-      name: "Professional",
-      price: "$99",
+      name: t('pricing.professional.name'),
+      price: "$99", 
       period: "/month",
-      description: "Ideal for growing property managers",
+      description: t('pricing.professional.description'),
       features: [
-        "Up to 50 properties",
-        "Advanced tenant screening",
-        "Automated rent collection",
-        "Financial analytics",
-        "Priority support",
-        "Custom branding",
-        "API access",
-        "Document storage"
+        t('pricing.professional.features.1'),
+        t('pricing.professional.features.2'),
+        t('pricing.professional.features.3'),
+        t('pricing.professional.features.4'),
+        t('pricing.professional.features.5')
       ],
       popular: true
     },
     {
-      name: "Enterprise",
-      price: "$199",
-      period: "/month",
-      description: "Complete solution for large portfolios",
+      name: t('pricing.enterprise.name'),
+      price: "Custom",
+      period: "",
+      description: t('pricing.enterprise.description'),
       features: [
-        "Unlimited properties",
-        "White-label solution",
-        "Advanced reporting",
-        "Multi-user accounts",
-        "24/7 phone support",
-        "Custom integrations",
-        "Dedicated account manager",
-        "Training & onboarding"
+        t('pricing.enterprise.features.1'),
+        t('pricing.enterprise.features.2'),
+        t('pricing.enterprise.features.3'),
+        t('pricing.enterprise.features.4'),
+        t('pricing.enterprise.features.5'),
+        t('pricing.enterprise.features.6')
       ],
       popular: false
     }
@@ -61,12 +57,19 @@ const PricingSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">
-            Choose Your Perfect Plan
+            {t('pricing.title')}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Scale your property management business with flexible pricing that grows with you. 
-            No hidden fees, cancel anytime.
+            {t('pricing.subtitle')}
           </p>
+          <div className="flex justify-center space-x-2 mt-6">
+            <Button variant="ghost" size="sm" className="text-muted-foreground">
+              {t('pricing.monthly')}
+            </Button>
+            <Button variant="ghost" size="sm" className="text-muted-foreground">
+              {t('pricing.annually')}
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -120,7 +123,7 @@ const PricingSection = () => {
                   }`}
                   variant={plan.popular ? 'default' : 'outline'}
                 >
-                  {plan.popular ? 'Start Free Trial' : 'Get Started'}
+                  {plan.name === t('pricing.enterprise.name') ? t('pricing.contactSales') : t('pricing.getStarted')}
                 </Button>
               </CardContent>
             </Card>
