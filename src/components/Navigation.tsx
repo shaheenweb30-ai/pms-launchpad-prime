@@ -19,6 +19,9 @@ const Navigation = () => {
               <a href="#benefits" className="text-foreground/80 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 Benefits
               </a>
+              <a href="/pricing" className="text-foreground/80 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                Pricing
+              </a>
               <a href="#contact" className="text-foreground/80 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors">
                 Contact
               </a>
