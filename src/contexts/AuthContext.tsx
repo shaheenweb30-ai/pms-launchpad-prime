@@ -107,49 +107,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signUp = async (email: string, password: string, name: string, userType: string) => {
     try {
-      // Sign up with Supabase Auth
-      const { data, error } = await supabase.auth.signUp({
+      const [firstName, ...lastNameParts] = name.trim().split(' ');
+      const lastName = lastNameParts.join(' ') || '';
+
+      // Map user type to database role
+      const roleMap: { [key: string]: Database['public']['Enums']['user_role'] } = {
+        'owner': 'homeowner',
+        'tenant': 'tenant',
+        'maintainer': 'vendor'
+      };
+
+      // Sign up with user metadata - the database trigger will create the profile automatically
+      const { error } = await supabase.auth.signUp({
         email,
         password,
-      });
-
-      if (error) {
-        return { error };
-      }
-
-      if (data.user) {
-        // Create user profile in the users table
-        const [firstName, ...lastNameParts] = name.trim().split(' ');
-        const lastName = lastNameParts.join(' ') || '';
-
-        // Map user type to database role
-        const roleMap: { [key: string]: Database['public']['Enums']['user_role'] } = {
-          'owner': 'homeowner',
-          'tenant': 'tenant',
-          'maintainer': 'vendor'
-        };
-
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert({
-            id: data.user.id,
-            email: data.user.email!,
+        options: {
+          data: {
             first_name: firstName,
             last_name: lastName,
-            role: roleMap[userType] || 'tenant',
-            is_active: true,
-            email_verified: false,
-          });
-
-        if (profileError) {
-          console.error('Error creating profile:', profileError);
-          // If profile creation fails, we should clean up the auth user
-          await supabase.auth.signOut();
-          return { error: { message: profileError.message } as AuthError };
+            role: roleMap[userType] || 'tenant'
+          }
         }
-      }
+      });
 
-      return { error: null };
+      return { error };
     } catch (error) {
       console.error('Sign up error:', error);
       return { error: error as AuthError };
