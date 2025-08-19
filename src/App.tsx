@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Benefits from "./pages/Benefits";
 import Pricing from "./pages/Pricing";
+import SignIn from "./pages/SignIn";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/benefits" element={<Benefits />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/signin" element={<SignIn />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

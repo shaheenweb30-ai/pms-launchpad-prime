@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Navigation = () => {
   const { t } = useTranslation();
@@ -49,9 +50,11 @@ const Navigation = () => {
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
             <LanguageSwitcher />
-            <Button variant="ghost" size="sm" className="rounded-full text-[#231f20] hover:text-[#ed1c24] hover:bg-[#ed1c24]/5 border-0 text-xs sm:text-sm">
-              {t('nav.signIn')}
-            </Button>
+            <Link to="/signin">
+              <Button variant="ghost" size="sm" className="rounded-full text-[#231f20] hover:text-[#ed1c24] hover:bg-[#ed1c24]/5 border-0 text-xs sm:text-sm">
+                {t('nav.signIn')}
+              </Button>
+            </Link>
             <Button size="sm" className="bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-full border-0 shadow-md hover:shadow-lg transition-all duration-300 text-xs sm:text-sm">
               {t('nav.getDemo')}
             </Button>
@@ -110,9 +113,11 @@ const Navigation = () => {
               
               {/* Mobile CTA Buttons */}
               <div className="pt-4 pb-2 space-y-2">
-                <Button variant="ghost" className="w-full rounded-full text-[#231f20] hover:text-[#ed1c24] hover:bg-[#ed1c24]/5 border-0">
-                  {t('nav.signIn')}
-                </Button>
+                <Link to="/signin" className="block w-full">
+                  <Button variant="ghost" className="w-full rounded-full text-[#231f20] hover:text-[#ed1c24] hover:bg-[#ed1c24]/5 border-0">
+                    {t('nav.signIn')}
+                  </Button>
+                </Link>
                 <Button className="w-full bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-full border-0 shadow-md hover:shadow-lg transition-all duration-300">
                   {t('nav.getDemo')}
                 </Button>
