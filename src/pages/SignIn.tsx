@@ -5,12 +5,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { Building2, Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft } from "lucide-react";
+import { Building2, Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft, MessageSquare } from "lucide-react";
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const SignIn = () => {
   const { t } = useTranslation();
+  const { signIn } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,24 +36,44 @@ const SignIn = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const { error } = await signIn(formData.email, formData.password);
+      
+      if (error) {
+        toast({
+          title: "Sign in failed",
+          description: error.message || "Please check your credentials and try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully signed in to PropertyFlow.",
+        });
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      toast({
+        title: "Sign in failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-      // Handle sign in logic here
-      console.log('Sign in attempt:', formData);
-    }, 2000);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8f9fa] via-white to-[#e8eaed] flex items-center justify-center p-4">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#f8f9fa] via-white to-[#e8eaed]">
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(237,28,36,0.05)_0%,transparent_50%)]"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(34,95,172,0.05)_0%,transparent_50%)]"></div>
       </div>
       
-      <div className="relative z-10 w-full max-w-md">
-        {/* Back to Home */}
+      {/* Main Content Container - Centered */}
+      <div className="relative z-10 w-full max-w-md mx-auto px-6">
+        {/* Back to Home - Centered */}
         <div className="text-center mb-6">
           <Link 
             to="/" 
@@ -58,7 +84,7 @@ const SignIn = () => {
           </Link>
         </div>
         
-        {/* Logo */}
+        {/* Logo and Title - Centered */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-2xl mb-4">
             <Building2 className="w-8 h-8 text-white" />
@@ -71,8 +97,8 @@ const SignIn = () => {
           </p>
         </div>
         
-        {/* Sign In Form */}
-        <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+        {/* Sign In Form Card - Centered */}
+        <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm mx-auto">
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-xl font-semibold text-[#231f20]">
               Sign In
@@ -96,6 +122,7 @@ const SignIn = () => {
                     onChange={(e) => handleInputChange('email', e.target.value)}
                     className="pl-10 h-12 border-[#a5afbe]/30 focus:border-[#ed1c24] focus:ring-[#ed1c24] rounded-full text-sm"
                     required
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -115,11 +142,13 @@ const SignIn = () => {
                     onChange={(e) => handleInputChange('password', e.target.value)}
                     className="pl-10 pr-12 h-12 border-[#a5afbe]/30 focus:border-[#ed1c24] focus:ring-[#ed1c24] rounded-full text-sm"
                     required
+                    disabled={isLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#a5afbe] hover:text-[#ed1c24] transition-colors duration-300"
+                    disabled={isLoading}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -134,6 +163,7 @@ const SignIn = () => {
                     checked={formData.rememberMe}
                     onCheckedChange={(checked) => handleInputChange('rememberMe', checked as boolean)}
                     className="border-[#a5afbe]/30 data-[state=checked]:bg-[#ed1c24] data-[state=checked]:border-[#ed1c24]"
+                    disabled={isLoading}
                   />
                   <Label htmlFor="rememberMe" className="text-sm text-[#231f20] cursor-pointer">
                     Remember me
@@ -151,15 +181,15 @@ const SignIn = () => {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white font-semibold rounded-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-12 bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] shadow-lg hover:shadow-xl transition-all duration-300 border-0 rounded-full"
               >
                 {isLoading ? (
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-center">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                     Signing in...
                   </div>
                 ) : (
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-center">
                     Sign In
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </div>
@@ -180,6 +210,7 @@ const SignIn = () => {
               <Button
                 variant="outline"
                 className="w-full h-12 border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full transition-all duration-300"
+                disabled={isLoading}
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -193,6 +224,7 @@ const SignIn = () => {
               <Button
                 variant="outline"
                 className="w-full h-12 border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full transition-all duration-300"
+                disabled={isLoading}
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
@@ -216,7 +248,7 @@ const SignIn = () => {
           </CardContent>
         </Card>
         
-        {/* Footer Links */}
+        {/* Footer Links - Centered */}
         <div className="text-center mt-8 space-y-2">
           <div className="flex justify-center space-x-6 text-xs text-[#a5afbe]">
             <Link to="/privacy" className="hover:text-[#ed1c24] transition-colors duration-300">
