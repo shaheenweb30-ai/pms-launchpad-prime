@@ -55,9 +55,11 @@ const Navigation = () => {
                 {t('nav.signIn')}
               </Button>
             </Link>
-            <Button size="sm" className="bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-full border-0 shadow-md hover:shadow-lg transition-all duration-300 text-xs sm:text-sm">
-              {t('nav.getDemo')}
-            </Button>
+            <Link to="/demo">
+              <Button size="sm" className="bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-full border-0 shadow-md hover:shadow-lg transition-all duration-300 text-xs sm:text-sm">
+                {t('nav.getDemo')}
+              </Button>
+            </Link>
           </div>
           
           {/* Mobile Menu Button */}
@@ -118,9 +120,11 @@ const Navigation = () => {
                     {t('nav.signIn')}
                   </Button>
                 </Link>
-                <Button className="w-full bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-full border-0 shadow-md hover:shadow-lg transition-all duration-300">
-                  {t('nav.getDemo')}
-                </Button>
+                <Link to="/demo" className="block w-full">
+                  <Button className="w-full bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-full border-0 shadow-md hover:shadow-lg transition-all duration-300">
+                    {t('nav.getDemo')}
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
