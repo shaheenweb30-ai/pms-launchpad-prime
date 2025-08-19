@@ -597,7 +597,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_leases: {
+        Args: Record<PropertyKey, never>
+        Returns: string[]
+      }
+      get_user_properties: {
+        Args: Record<PropertyKey, never>
+        Returns: string[]
+      }
+      is_property_owner: {
+        Args: { property_uuid: string }
+        Returns: boolean
+      }
     }
     Enums: {
       document_type:
