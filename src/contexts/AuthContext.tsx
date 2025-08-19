@@ -145,7 +145,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.error('Error creating profile:', profileError);
           // If profile creation fails, we should clean up the auth user
           await supabase.auth.signOut();
-          return { error: profileError as AuthError };
+          return { error: { message: profileError.message } as AuthError };
         }
       }
 
@@ -192,7 +192,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         await fetchProfile(user.id);
       }
 
-      return { error };
+      return { error: error ? { message: error.message } as AuthError : null };
     } catch (error) {
       console.error('Update profile error:', error);
       return { error: error as AuthError };
