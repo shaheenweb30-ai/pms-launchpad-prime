@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const SignIn = () => {
   const { t } = useTranslation();
-  const { signIn } = useAuth();
+  const { signIn, profile, user, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -24,6 +24,18 @@ const SignIn = () => {
     password: '',
     rememberMe: false
   });
+
+  // Watch for profile changes and redirect accordingly
+  useEffect(() => {
+    if (user && profile && !loading) {
+      console.log('Profile loaded, redirecting...', profile.role);
+      if (profile.role === 'homeowner') {
+        navigate('/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [user, profile, loading, navigate]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
@@ -37,28 +49,32 @@ const SignIn = () => {
     setIsLoading(true);
     
     try {
+      console.log('Attempting sign in...'); // Debug log
       const { error } = await signIn(formData.email, formData.password);
       
       if (error) {
+        console.error('Sign in error:', error); // Debug log
         toast({
           title: "Sign in failed",
           description: error.message || "Please check your credentials and try again.",
           variant: "destructive",
         });
+        setIsLoading(false);
       } else {
+        console.log('Sign in successful, waiting for profile...'); // Debug log
         toast({
           title: "Welcome back!",
           description: "You have successfully signed in to PropertyFlow.",
         });
-        navigate('/dashboard');
+        // Don't redirect here - let useEffect handle it when profile loads
       }
     } catch (error) {
+      console.error('Unexpected error during sign in:', error); // Debug log
       toast({
         title: "Sign in failed",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };
