@@ -3,6 +3,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Building2, 
   Home, 
@@ -39,7 +43,10 @@ import {
   List,
   SortAsc,
   SortDesc,
-  LayoutDashboard
+  LayoutDashboard,
+  X,
+  Camera,
+  Upload
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -57,6 +64,46 @@ const Properties = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  
+  // Add Property Modal State
+  const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
+  const [addPropertyStep, setAddPropertyStep] = useState(1);
+  const [propertyFormData, setPropertyFormData] = useState({
+    // Basic Information
+    name: '',
+    type: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'United States',
+    
+    // Property Details
+    totalUnits: '',
+    bedrooms: '',
+    bathrooms: '',
+    squareFootage: '',
+    yearBuilt: '',
+    propertyClass: '',
+    
+    // Financial Information
+    purchasePrice: '',
+    currentValue: '',
+    monthlyRent: '',
+    propertyTax: '',
+    insurance: '',
+    utilities: '',
+    
+    // Additional Details
+    description: '',
+    amenities: '',
+    parkingSpaces: '',
+    petPolicy: '',
+    smokingPolicy: '',
+    
+    // Images
+    images: [] as File[]
+  });
 
   // Mock data - in real app, this would come from API
   const properties = [
@@ -98,17 +145,114 @@ const Properties = () => {
       address: "789 Oak Ave, Los Angeles, CA",
       type: "Townhouse",
       units: 8,
-      occupied: 6,
+      occupied: 7,
       monthlyRevenue: 24000,
       status: "active",
       image: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=400&h=300&fit=crop",
-      lastUpdated: "2024-01-10",
-      occupancyRate: 75.0,
+      lastUpdated: "2024-01-17",
+      occupancyRate: 87.5,
       avgRent: 3000,
       maintenanceRequests: 2,
-      upcomingRenewals: 1
+      upcomingRenewals: 3
     }
   ];
+
+  // Add Property Functions
+  const handleAddProperty = () => {
+    setShowAddPropertyModal(true);
+    setAddPropertyStep(1);
+    setPropertyFormData({
+      name: '',
+      type: '',
+      address: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      country: 'United States',
+      totalUnits: '',
+      bedrooms: '',
+      bathrooms: '',
+      squareFootage: '',
+      yearBuilt: '',
+      propertyClass: '',
+      purchasePrice: '',
+      currentValue: '',
+      monthlyRent: '',
+      propertyTax: '',
+      insurance: '',
+      utilities: '',
+      description: '',
+      amenities: '',
+      parkingSpaces: '',
+      petPolicy: '',
+      smokingPolicy: '',
+      images: []
+    });
+  };
+
+  const handleNextStep = () => {
+    if (addPropertyStep < 4) {
+      setAddPropertyStep(addPropertyStep + 1);
+    }
+  };
+
+  const handlePrevStep = () => {
+    if (addPropertyStep > 1) {
+      setAddPropertyStep(addPropertyStep - 1);
+    }
+  };
+
+  const handleInputChange = (field: string, value: string | number) => {
+    setPropertyFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newImages = Array.from(files);
+      setPropertyFormData(prev => ({
+        ...prev,
+        images: [...prev.images, ...newImages]
+      }));
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setPropertyFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleSubmitProperty = async () => {
+    try {
+      // Here you would typically send the data to your API
+      console.log('Submitting property:', propertyFormData);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Property Added Successfully!",
+        description: `${propertyFormData.name} has been added to your portfolio.`,
+      });
+      
+      setShowAddPropertyModal(false);
+      setAddPropertyStep(1);
+      
+      // In a real app, you would refresh the properties list here
+      
+    } catch (error) {
+      toast({
+        title: "Error Adding Property",
+        description: "There was an error adding the property. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const financialData = {
     monthlyRevenue: 104000,
@@ -281,13 +425,22 @@ const Properties = () => {
                 Manage your property portfolio and monitor performance
               </p>
             </div>
-            <Button 
-              className="bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-xl px-6 shadow-lg hover:shadow-xl transition-all duration-300"
-              onClick={() => navigate('/dashboard')}
-            >
-              <ArrowUpRight className="w-4 h-4 mr-2" />
-              Back to Dashboard
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Button 
+                className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl px-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                onClick={handleAddProperty}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Property
+              </Button>
+              <Button 
+                className="bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-xl px-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                onClick={() => navigate('/dashboard')}
+              >
+                <ArrowUpRight className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </div>
           </div>
 
           {/* Quick Stats */}
@@ -742,7 +895,10 @@ const Properties = () => {
                   <CardTitle className="text-xl text-slate-900">Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="p-6 space-y-4">
-                  <Button className="w-full h-14 bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
+                  <Button 
+                    className="w-full h-14 bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
+                    onClick={handleAddProperty}
+                  >
                     <Plus className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" />
                     Add New Property
                   </Button>
@@ -829,6 +985,436 @@ const Properties = () => {
           </div>
         </div>
       </div>
+
+      {/* Add Property Modal */}
+      {showAddPropertyModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-[#ed1c24] to-[#225fac] p-6 text-white">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold">Add New Property</h2>
+                  <p className="text-white/90 mt-1">Step {addPropertyStep} of 4</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:bg-white/20 rounded-xl"
+                  onClick={() => setShowAddPropertyModal(false)}
+                >
+                  <X className="w-6 h-6" />
+                </Button>
+              </div>
+              
+              {/* Progress Steps */}
+              <div className="flex items-center space-x-2 mt-6">
+                {[1, 2, 3, 4].map((step) => (
+                  <div
+                    key={step}
+                    className={`flex-1 h-2 rounded-full transition-all duration-300 ${
+                      step <= addPropertyStep ? 'bg-white' : 'bg-white/30'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              {addPropertyStep === 1 && (
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold text-slate-900">Basic Information</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="name" className="text-sm font-medium text-slate-700">Property Name *</Label>
+                      <Input
+                        id="name"
+                        placeholder="e.g., Sunset Apartments"
+                        value={propertyFormData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="type" className="text-sm font-medium text-slate-700">Property Type *</Label>
+                      <Select value={propertyFormData.type} onValueChange={(value) => handleInputChange('type', value)}>
+                        <SelectTrigger className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20">
+                          <SelectValue placeholder="Select property type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="apartment">Apartment Complex</SelectItem>
+                          <SelectItem value="house">Single Family Home</SelectItem>
+                          <SelectItem value="townhouse">Townhouse</SelectItem>
+                          <SelectItem value="condo">Condominium</SelectItem>
+                          <SelectItem value="loft">Loft</SelectItem>
+                          <SelectItem value="commercial">Commercial Property</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="address" className="text-sm font-medium text-slate-700">Street Address *</Label>
+                    <Input
+                      id="address"
+                      placeholder="123 Main Street"
+                      value={propertyFormData.address}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="city" className="text-sm font-medium text-slate-700">City *</Label>
+                      <Input
+                        id="city"
+                        placeholder="Los Angeles"
+                        value={propertyFormData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="state" className="text-sm font-medium text-slate-700">State *</Label>
+                      <Input
+                        id="state"
+                        placeholder="CA"
+                        value={propertyFormData.state}
+                        onChange={(e) => handleInputChange('state', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="zipCode" className="text-sm font-medium text-slate-700">ZIP Code *</Label>
+                      <Input
+                        id="zipCode"
+                        placeholder="90210"
+                        value={propertyFormData.zipCode}
+                        onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {addPropertyStep === 2 && (
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold text-slate-900">Property Details</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="totalUnits" className="text-sm font-medium text-slate-700">Total Units *</Label>
+                      <Input
+                        id="totalUnits"
+                        type="number"
+                        placeholder="24"
+                        value={propertyFormData.totalUnits}
+                        onChange={(e) => handleInputChange('totalUnits', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="yearBuilt" className="text-sm font-medium text-slate-700">Year Built</Label>
+                      <Input
+                        id="yearBuilt"
+                        type="number"
+                        placeholder="2020"
+                        value={propertyFormData.yearBuilt}
+                        onChange={(e) => handleInputChange('yearBuilt', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="bedrooms" className="text-sm font-medium text-slate-700">Bedrooms</Label>
+                      <Input
+                        id="bedrooms"
+                        type="number"
+                        placeholder="2"
+                        value={propertyFormData.bedrooms}
+                        onChange={(e) => handleInputChange('bedrooms', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="bathrooms" className="text-sm font-medium text-slate-700">Bathrooms</Label>
+                      <Input
+                        id="bathrooms"
+                        type="number"
+                        placeholder="2"
+                        value={propertyFormData.bathrooms}
+                        onChange={(e) => handleInputChange('bathrooms', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="squareFootage" className="text-sm font-medium text-slate-700">Square Footage</Label>
+                      <Input
+                        id="squareFootage"
+                        type="number"
+                        placeholder="1200"
+                        value={propertyFormData.squareFootage}
+                        onChange={(e) => handleInputChange('squareFootage', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="propertyClass" className="text-sm font-medium text-slate-700">Property Class</Label>
+                    <Select value={propertyFormData.propertyClass} onValueChange={(value) => handleInputChange('propertyClass', value)}>
+                      <SelectTrigger className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20">
+                        <SelectValue placeholder="Select property class" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="luxury">Luxury</SelectItem>
+                        <SelectItem value="premium">Premium</SelectItem>
+                        <SelectItem value="standard">Standard</SelectItem>
+                        <SelectItem value="economy">Economy</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
+              {addPropertyStep === 3 && (
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold text-slate-900">Financial Information</h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="purchasePrice" className="text-sm font-medium text-slate-700">Purchase Price</Label>
+                      <Input
+                        id="purchasePrice"
+                        type="number"
+                        placeholder="500000"
+                        value={propertyFormData.purchasePrice}
+                        onChange={(e) => handleInputChange('purchasePrice', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="currentValue" className="text-sm font-medium text-slate-700">Current Value</Label>
+                      <Input
+                        id="currentValue"
+                        type="number"
+                        placeholder="550000"
+                        value={propertyFormData.currentValue}
+                        onChange={(e) => handleInputChange('currentValue', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="monthlyRent" className="text-sm font-medium text-slate-700">Monthly Rent *</Label>
+                      <Input
+                        id="monthlyRent"
+                        type="number"
+                        placeholder="2500"
+                        value={propertyFormData.monthlyRent}
+                        onChange={(e) => handleInputChange('monthlyRent', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="propertyTax" className="text-sm font-medium text-slate-700">Property Tax (Annual)</Label>
+                      <Input
+                        id="propertyTax"
+                        type="number"
+                        placeholder="6000"
+                        value={propertyFormData.propertyTax}
+                        onChange={(e) => handleInputChange('propertyTax', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="insurance" className="text-sm font-medium text-slate-700">Insurance (Annual)</Label>
+                      <Input
+                        id="insurance"
+                        type="number"
+                        placeholder="2400"
+                        value={propertyFormData.insurance}
+                        onChange={(e) => handleInputChange('insurance', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {addPropertyStep === 4 && (
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold text-slate-900">Additional Details & Images</h3>
+                  
+                  <div>
+                    <Label htmlFor="description" className="text-sm font-medium text-slate-700">Property Description</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Describe the property, its features, and any special characteristics..."
+                      value={propertyFormData.description}
+                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      rows={4}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="amenities" className="text-sm font-medium text-slate-700">Amenities</Label>
+                    <Textarea
+                      id="amenities"
+                      placeholder="Pool, gym, parking, etc."
+                      value={propertyFormData.amenities}
+                      onChange={(e) => handleInputChange('amenities', e.target.value)}
+                      className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="parkingSpaces" className="text-sm font-medium text-slate-700">Parking Spaces</Label>
+                      <Input
+                        id="parkingSpaces"
+                        type="number"
+                        placeholder="2"
+                        value={propertyFormData.parkingSpaces}
+                        onChange={(e) => handleInputChange('parkingSpaces', e.target.value)}
+                        className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="petPolicy" className="text-sm font-medium text-slate-700">Pet Policy</Label>
+                      <Select value={propertyFormData.petPolicy} onValueChange={(value) => handleInputChange('petPolicy', value)}>
+                        <SelectTrigger className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20">
+                          <SelectValue placeholder="Select pet policy" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="allowed">Pets Allowed</SelectItem>
+                          <SelectItem value="cats-only">Cats Only</SelectItem>
+                          <SelectItem value="dogs-only">Dogs Only</SelectItem>
+                          <SelectItem value="not-allowed">No Pets</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="smokingPolicy" className="text-sm font-medium text-slate-700">Smoking Policy</Label>
+                    <Select value={propertyFormData.smokingPolicy} onValueChange={(value) => handleInputChange('smokingPolicy', value)}>
+                      <SelectTrigger className="mt-2 rounded-xl border-slate-200 focus:border-[#ed1c24] focus:ring-[#ed1c24]/20">
+                        <SelectValue placeholder="Select smoking policy" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="not-allowed">No Smoking</SelectItem>
+                        <SelectItem value="outdoor-only">Outdoor Only</SelectItem>
+                        <SelectItem value="allowed">Smoking Allowed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-medium text-slate-700">Property Images</Label>
+                    <div className="mt-2 border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-[#ed1c24] transition-colors duration-200">
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        id="image-upload"
+                      />
+                      <label htmlFor="image-upload" className="cursor-pointer">
+                        <Camera className="w-12 h-12 text-slate-400 mx-auto mb-2" />
+                        <p className="text-sm text-slate-600">Click to upload images or drag and drop</p>
+                        <p className="text-xs text-slate-500 mt-1">PNG, JPG up to 10MB each</p>
+                      </label>
+                    </div>
+                    
+                    {propertyFormData.images.length > 0 && (
+                      <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+                        {propertyFormData.images.map((image, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={URL.createObjectURL(image)}
+                              alt={`Property ${index + 1}`}
+                              className="w-full h-24 object-cover rounded-lg"
+                            />
+                            <button
+                              onClick={() => removeImage(index)}
+                              className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-slate-50 p-6 border-t border-slate-200">
+              <div className="flex items-center justify-between">
+                <div className="text-sm text-slate-600">
+                  {addPropertyStep === 1 && "Basic property information"}
+                  {addPropertyStep === 2 && "Property specifications and details"}
+                  {addPropertyStep === 3 && "Financial information and costs"}
+                  {addPropertyStep === 4 && "Additional details and images"}
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  {addPropertyStep > 1 && (
+                    <Button
+                      variant="outline"
+                      onClick={handlePrevStep}
+                      className="border-slate-200 text-slate-700 hover:border-[#ed1c24] hover:text-[#ed1c24] rounded-xl px-6"
+                    >
+                      Previous
+                    </Button>
+                  )}
+                  
+                  {addPropertyStep < 4 ? (
+                    <Button
+                      onClick={handleNextStep}
+                      className="bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-xl px-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      Next Step
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleSubmitProperty}
+                      className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl px-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Property
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
