@@ -16,6 +16,7 @@ import Dashboard from "./pages/Dashboard";
 import Properties from "./pages/Properties";
 import Tenants from "./pages/Tenants";
 import Maintenance from "./pages/Maintenance";
+import Financials from "./pages/Financials";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
 
@@ -65,6 +66,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Maintenance />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/financials" 
+                element={
+                  <ProtectedRoute>
+                    <Financials />
                   </ProtectedRoute>
                 } 
               />
