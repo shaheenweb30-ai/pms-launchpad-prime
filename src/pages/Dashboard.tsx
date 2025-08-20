@@ -321,7 +321,10 @@ const Dashboard = () => {
               </button>
 
               {/* Additional Navigation Items */}
-              <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+              <button 
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                onClick={() => navigate('/tenants')}
+              >
                 <Users className="w-5 h-5 text-slate-500" />
                 <span className="font-medium">Tenants</span>
               </button>
@@ -489,9 +492,13 @@ const Dashboard = () => {
                     <Plus className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" />
                     Add New Property
                   </Button>
-                  <Button variant="outline" className="w-full h-14 border-slate-200 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-slate-700 rounded-xl transition-all duration-200 group">
+                  <Button 
+                    variant="outline" 
+                    className="w-full h-14 border-slate-200 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-slate-700 rounded-xl transition-all duration-200 group"
+                    onClick={() => navigate('/tenants')}
+                  >
                     <Users className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" />
-                    Add New Tenant
+                    Manage Tenants
                   </Button>
                   <Button variant="outline" className="w-full h-14 border-slate-200 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-slate-700 rounded-xl transition-all duration-200 group">
                     <FileText className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" />

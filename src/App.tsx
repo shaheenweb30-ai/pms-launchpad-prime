@@ -14,6 +14,7 @@ import SignUp from "./pages/SignUp";
 import GetDemo from "./pages/GetDemo";
 import Dashboard from "./pages/Dashboard";
 import Properties from "./pages/Properties";
+import Tenants from "./pages/Tenants";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
 
@@ -47,6 +48,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Properties />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/tenants" 
+                element={
+                  <ProtectedRoute>
+                    <Tenants />
                   </ProtectedRoute>
                 } 
               />
