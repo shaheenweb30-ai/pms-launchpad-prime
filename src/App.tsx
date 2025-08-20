@@ -15,6 +15,7 @@ import GetDemo from "./pages/GetDemo";
 import Dashboard from "./pages/Dashboard";
 import Properties from "./pages/Properties";
 import Tenants from "./pages/Tenants";
+import Maintenance from "./pages/Maintenance";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
 
@@ -56,6 +57,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Tenants />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/maintenance" 
+                element={
+                  <ProtectedRoute>
+                    <Maintenance />
                   </ProtectedRoute>
                 } 
               />

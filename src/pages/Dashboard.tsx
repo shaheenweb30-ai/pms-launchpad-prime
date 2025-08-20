@@ -329,7 +329,10 @@ const Dashboard = () => {
                 <span className="font-medium">Tenants</span>
               </button>
 
-              <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+              <button 
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                onClick={() => navigate('/maintenance')}
+              >
                 <FileText className="w-5 h-5 text-slate-500" />
                 <span className="font-medium">Maintenance</span>
               </button>
