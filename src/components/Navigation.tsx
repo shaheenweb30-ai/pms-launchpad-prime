@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Building2, Menu, X, User, Users, Wrench, DollarSign, LogOut } from 'lucide-react';
+import { Building2, Menu, X, User, Users, Wrench, DollarSign, BarChart3, Settings, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -96,6 +96,18 @@ const Navigation = () => {
                   <Button variant="outline" className="border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full">
                     <DollarSign className="w-4 h-4 mr-2" />
                     Financials
+                  </Button>
+                </Link>
+                <Link to="/reports">
+                  <Button variant="outline" className="border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Reports
+                  </Button>
+                </Link>
+                <Link to="/settings">
+                  <Button variant="outline" className="border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Settings
                   </Button>
                 </Link>
                 <div className="flex items-center space-x-2 text-sm">

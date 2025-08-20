@@ -34,11 +34,13 @@ import {
   UserPlus,
   Download,
   Upload,
+  FileText,
   Settings,
   LogOut,
   LayoutDashboard,
   ArrowLeft,
   ArrowRight,
+  ArrowUpRight,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -310,6 +312,195 @@ const Tenants = () => {
               Add New Tenant
             </Button>
           </div>
+        </div>
+
+        {/* Main Content with Sidebar */}
+        <div className="flex gap-8">
+          {/* Sidebar */}
+          <aside className="w-72 bg-white/90 backdrop-blur-md shadow-2xl border border-slate-200/40 rounded-3xl p-6 sticky top-24 h-fit">
+            {/* User Profile Section */}
+            <div className="mb-8 p-4 bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl border border-slate-200/60">
+              <div className="flex items-center space-x-3 mb-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-xl flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">
+                    {profile?.first_name?.[0] || user?.email?.[0] || 'U'}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900">
+                    {profile?.first_name || 'User'}
+                  </h3>
+                  <p className="text-sm text-slate-600 capitalize">
+                    {profile?.role || 'Property Manager'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-between text-xs text-slate-600">
+                <span>Last login: 2 min ago</span>
+                <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+              </div>
+            </div>
+
+            {/* Navigation Section */}
+            <div className="mb-6">
+              <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
+                <LayoutDashboard className="w-5 h-5 mr-2 text-[#ed1c24]" />
+                Navigation
+              </h2>
+            </div>
+            
+            <nav className="space-y-3">
+              {/* Dashboard */}
+              <button 
+                onClick={() => navigate('/dashboard')}
+                className="group w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-left transition-all duration-300 text-slate-700 hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:text-slate-900 hover:shadow-md border border-transparent hover:border-slate-200/60"
+              >
+                <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center group-hover:bg-slate-200 transition-colors duration-300">
+                  <LayoutDashboard className="w-5 h-5 text-slate-600" />
+                </div>
+                <span className="font-medium">Dashboard</span>
+                <ArrowUpRight className="w-4 h-4 ml-auto text-slate-400 group-hover:text-slate-600 transition-colors duration-300" />
+              </button>
+
+              {/* Properties */}
+              <button 
+                onClick={() => navigate('/properties')}
+                className="group w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-left transition-all duration-300 text-slate-700 hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:text-slate-900 hover:shadow-md border border-transparent hover:border-slate-200/60"
+              >
+                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-300">
+                  <Building2 className="w-5 h-5 text-blue-600" />
+                </div>
+                <span className="font-medium">Properties</span>
+                <ArrowUpRight className="w-4 h-4 ml-auto text-slate-400 group-hover:text-slate-600 transition-colors duration-300" />
+              </button>
+
+              {/* Tenants - Active State */}
+              <button className="w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-left transition-all duration-300 bg-gradient-to-r from-[#ed1c24] to-[#225fac] text-white shadow-lg shadow-[#ed1c24]/25 transform hover:scale-[1.02]">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+                <span className="font-semibold">Tenants</span>
+                <div className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              </button>
+
+              {/* Maintenance */}
+              <button 
+                onClick={() => navigate('/maintenance')}
+                className="group w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-left transition-all duration-300 text-slate-700 hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:text-slate-900 hover:shadow-md border border-transparent hover:border-slate-200/60"
+              >
+                <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors duration-300">
+                  <FileText className="w-5 h-5 text-orange-600" />
+                </div>
+                <span className="font-medium">Maintenance</span>
+                <div className="ml-auto">
+                  <Badge variant="destructive" className="text-xs px-2 py-1 bg-red-100 text-red-700 border-0">
+                    3
+                  </Badge>
+                </div>
+              </button>
+
+              {/* Financials */}
+              <button 
+                onClick={() => navigate('/financials')}
+                className="group w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-left transition-all duration-300 text-slate-700 hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:text-slate-900 hover:shadow-md border border-transparent hover:border-slate-200/60"
+              >
+                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors duration-300">
+                  <DollarSign className="w-5 h-5 text-green-600" />
+                </div>
+                <span className="font-medium">Financials</span>
+                <div className="ml-auto">
+                  <Badge variant="default" className="text-xs px-2 py-1 bg-green-100 text-green-700 border-0">
+                    $104k
+                  </Badge>
+                </div>
+              </button>
+
+              {/* Reports */}
+              <button 
+                onClick={() => navigate('/reports')}
+                className="group w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-left transition-all duration-300 text-slate-700 hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:text-slate-900 hover:shadow-md border border-transparent hover:border-slate-200/60"
+              >
+                <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors duration-300">
+                  <BarChart3 className="w-5 h-5 text-purple-600" />
+                </div>
+                <span className="font-medium">Reports</span>
+                <div className="ml-auto">
+                  <Badge variant="secondary" className="text-xs px-2 py-1 bg-purple-100 text-purple-700 border-0">
+                    New
+                  </Badge>
+                </div>
+              </button>
+
+              {/* Settings */}
+              <button 
+                onClick={() => navigate('/settings')}
+                className="group w-full flex items-center space-x-3 px-4 py-3.5 rounded-2xl text-left transition-all duration-300 text-slate-700 hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:text-slate-900 hover:shadow-md border border-transparent hover:border-slate-200/60"
+              >
+                <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center group-hover:bg-slate-200 transition-colors duration-300">
+                  <Settings className="w-5 h-5 text-slate-600" />
+                </div>
+                <span className="font-medium">Settings</span>
+                <div className="ml-auto">
+                  <Badge variant="outline" className="text-xs px-2 py-1 border-slate-300 text-slate-600">
+                    <Settings className="w-3 h-3" />
+                  </Badge>
+                </div>
+              </button>
+            </nav>
+
+            {/* Quick Stats Section */}
+            <div className="mt-8 p-5 bg-gradient-to-br from-slate-50 via-white to-slate-100 rounded-2xl border border-slate-200/60 shadow-sm">
+              <h3 className="text-sm font-semibold text-slate-700 mb-4 flex items-center">
+                <BarChart3 className="w-4 h-4 mr-2 text-slate-500" />
+                Quick Stats
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200/40">
+                  <div className="flex items-center space-x-2">
+                    <Users className="w-4 h-4 text-blue-500" />
+                    <span className="text-xs text-slate-600">Total Tenants</span>
+                  </div>
+                  <span className="font-bold text-slate-900">{tenants.length}</span>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200/40">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-500" />
+                    <span className="text-xs text-slate-600">Active</span>
+                  </div>
+                  <span className="font-bold text-slate-900">{tenants.filter(t => t.status === 'active').length}</span>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200/40">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="w-4 h-4 text-yellow-500" />
+                    <span className="text-xs text-slate-600">Pending</span>
+                  </div>
+                  <span className="font-bold text-slate-900">{tenants.filter(t => t.status === 'pending').length}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="mt-6 p-4 bg-gradient-to-br from-[#ed1c24]/5 to-[#225fac]/5 rounded-2xl border border-[#ed1c24]/20">
+              <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                <Plus className="w-4 h-4 mr-2 text-[#ed1c24]" />
+                Quick Actions
+              </h3>
+              <div className="space-y-2">
+                <button className="w-full text-left text-xs text-slate-600 hover:text-slate-900 transition-colors duration-200 p-2 rounded-lg hover:bg-white/50">
+                  + Add New Tenant
+                </button>
+                <button className="w-full text-left text-xs text-slate-600 hover:text-slate-900 transition-colors duration-200 p-2 rounded-lg hover:bg-white/50">
+                  + View All Leases
+                </button>
+                <button className="w-full text-left text-xs text-slate-600 hover:text-slate-900 transition-colors duration-200 p-2 rounded-lg hover:bg-white/50">
+                  + Generate Report
+                </button>
+              </div>
+            </div>
+          </aside>
+
+          {/* Main Content Area */}
+          <div className="flex-1">
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -391,7 +582,6 @@ const Tenants = () => {
               </CardContent>
             </Card>
           </div>
-        </div>
 
         {/* Filters and Search */}
         <Card className="border-0 shadow-lg bg-white rounded-2xl mb-8">
@@ -573,6 +763,8 @@ const Tenants = () => {
             )}
           </CardContent>
         </Card>
+          </div>
+        </div>
       </main>
     </div>
   );

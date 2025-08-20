@@ -345,33 +345,70 @@ const Dashboard = () => {
                 <span className="font-medium">Financials</span>
               </button>
 
-              <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+              <button 
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                onClick={() => navigate('/reports')}
+              >
                 <BarChart3 className="w-5 h-5 text-slate-500" />
                 <span className="font-medium">Reports</span>
               </button>
 
-              <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+              <button 
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                onClick={() => navigate('/settings')}
+              >
                 <Settings className="w-5 h-5 text-slate-500" />
                 <span className="font-medium">Settings</span>
               </button>
             </nav>
 
-            {/* Quick Stats in Sidebar */}
-            <div className="mt-8 p-4 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200/60">
-              <h3 className="text-sm font-medium text-slate-700 mb-3">Quick Stats</h3>
+            {/* Quick Stats Section */}
+            <div className="mt-8 p-5 bg-gradient-to-br from-slate-50 via-white to-slate-100 rounded-2xl border border-slate-200/60 shadow-sm">
+              <h3 className="text-sm font-semibold text-slate-700 mb-4 flex items-center">
+                <BarChart3 className="w-4 h-4 mr-2 text-slate-500" />
+                Quick Stats
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200/40">
+                  <div className="flex items-center space-x-2">
+                    <Building2 className="w-4 h-4 text-blue-500" />
+                    <span className="text-xs text-slate-600">Properties</span>
+                  </div>
+                  <span className="font-bold text-slate-900">{financialData.totalProperties}</span>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200/40">
+                  <div className="flex items-center space-x-2">
+                    <Home className="w-4 h-4 text-emerald-500" />
+                    <span className="text-xs text-slate-600">Units</span>
+                  </div>
+                  <span className="font-bold text-slate-900">{financialData.totalUnits}</span>
+                </div>
+                <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200/40">
+                  <div className="flex items-center space-x-2">
+                    <DollarSign className="w-4 h-4 text-green-500" />
+                    <span className="text-xs text-slate-600">Revenue</span>
+                  </div>
+                  <span className="font-bold text-emerald-600">${(financialData.monthlyRevenue / 1000).toFixed(0)}k</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="mt-6 p-4 bg-gradient-to-br from-[#ed1c24]/5 to-[#225fac]/5 rounded-2xl border border-[#ed1c24]/20">
+              <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                <Plus className="w-4 h-4 mr-2 text-[#ed1c24]" />
+                Quick Actions
+              </h3>
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-600">Properties</span>
-                  <span className="font-semibold text-slate-900">{financialData.totalProperties}</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-600">Units</span>
-                  <span className="font-semibold text-slate-900">{financialData.totalUnits}</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-600">Revenue</span>
-                  <span className="font-semibold text-emerald-600">${(financialData.monthlyRevenue / 1000).toFixed(0)}k</span>
-                </div>
+                <button className="w-full text-left text-xs text-slate-600 hover:text-slate-900 transition-colors duration-200 p-2 rounded-lg hover:bg-white/50">
+                  + Add New Property
+                </button>
+                <button className="w-full text-left text-xs text-slate-600 hover:text-slate-900 transition-colors duration-200 p-2 rounded-lg hover:bg-white/50">
+                  + Add New Tenant
+                </button>
+                <button className="w-full text-left text-xs text-slate-600 hover:text-slate-900 transition-colors duration-200 p-2 rounded-lg hover:bg-white/50">
+                  + Create Report
+                </button>
               </div>
             </div>
           </aside>

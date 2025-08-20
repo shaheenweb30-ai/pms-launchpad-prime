@@ -544,27 +544,42 @@ const Properties = () => {
                 <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
               </button>
               
-              <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+              <button 
+                onClick={() => navigate('/tenants')}
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              >
                 <Users className="w-5 h-5 text-slate-500" />
                 <span className="font-medium">Tenants</span>
               </button>
 
-              <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+              <button 
+                onClick={() => navigate('/maintenance')}
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              >
                 <FileText className="w-5 h-5 text-slate-500" />
                 <span className="font-medium">Maintenance</span>
               </button>
 
-              <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+              <button 
+                onClick={() => navigate('/financials')}
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              >
                 <DollarSign className="w-5 h-5 text-slate-500" />
                 <span className="font-medium">Financials</span>
               </button>
 
-              <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+              <button 
+                onClick={() => navigate('/reports')}
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              >
                 <BarChart3 className="w-5 h-5 text-slate-500" />
                 <span className="font-medium">Reports</span>
               </button>
 
-              <button className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+              <button 
+                onClick={() => navigate('/settings')}
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              >
                 <Settings className="w-5 h-5 text-slate-500" />
                 <span className="font-medium">Settings</span>
               </button>
