@@ -180,7 +180,7 @@ const Inspections = () => {
       nextInspection: '2025-03-20',
       inspectionDuration: '2.5 hours',
       inspectorRating: 4.8,
-      tenantSatisfaction: 4.5,
+
       complianceScore: 92,
       safetyScore: 88,
       maintenanceScore: 82,
@@ -220,7 +220,7 @@ const Inspections = () => {
       nextInspection: '2025-06-18',
       inspectionDuration: '1.8 hours',
       inspectorRating: 4.9,
-      tenantSatisfaction: 4.7,
+
       complianceScore: 95,
       safetyScore: 94,
       maintenanceScore: 91,
@@ -260,7 +260,7 @@ const Inspections = () => {
       nextInspection: '2024-12-30',
       inspectionDuration: '4.2 hours',
       inspectorRating: 4.6,
-      tenantSatisfaction: 2.1,
+
       complianceScore: 35,
       safetyScore: 28,
       maintenanceScore: 22,
@@ -296,7 +296,7 @@ const Inspections = () => {
       nextInspection: null,
       inspectionDuration: null,
       inspectorRating: null,
-      tenantSatisfaction: null,
+
       complianceScore: null,
       safetyScore: null,
       maintenanceScore: null,
@@ -332,7 +332,7 @@ const Inspections = () => {
       nextInspection: null,
       inspectionDuration: null,
       inspectorRating: null,
-      tenantSatisfaction: null,
+
       complianceScore: null,
       safetyScore: null,
       maintenanceScore: null,
@@ -372,7 +372,7 @@ const Inspections = () => {
       nextInspection: '2025-03-10',
       inspectionDuration: '2.1 hours',
       inspectorRating: 4.4,
-      tenantSatisfaction: 3.8,
+
       complianceScore: 75,
       safetyScore: 82,
       maintenanceScore: 68,
@@ -482,13 +482,7 @@ const Inspections = () => {
     return 'text-red-600';
   };
 
-  const getTenantSatisfactionColor = (satisfaction: number) => {
-    if (satisfaction >= 4.5) return 'text-emerald-600';
-    if (satisfaction >= 4.0) return 'text-green-600';
-    if (satisfaction >= 3.5) return 'text-blue-600';
-    if (satisfaction >= 3.0) return 'text-yellow-600';
-    return 'text-red-600';
-  };
+
 
   const getImprovementColor = (improvement: string) => {
     if (improvement.includes('+')) return 'text-green-600';
@@ -530,8 +524,7 @@ const Inspections = () => {
   
   const avgInspectorRating = inspections.filter(ins => ins.inspectorRating)
     .reduce((sum, ins) => sum + (ins.inspectorRating || 0), 0) / Math.max(inspections.filter(ins => ins.inspectorRating).length, 1);
-  const avgTenantSatisfaction = inspections.filter(ins => ins.tenantSatisfaction)
-    .reduce((sum, ins) => sum + (ins.tenantSatisfaction || 0), 0) / Math.max(inspections.filter(ins => ins.tenantSatisfaction).length, 1);
+
   const totalPhotos = inspections.reduce((sum, ins) => sum + ins.photos, 0);
   const followUpRequired = inspections.filter(ins => ins.followUpRequired).length;
   const avgInspectionDuration = inspections.filter(ins => ins.inspectionDuration)
@@ -567,7 +560,7 @@ const Inspections = () => {
                 Property Inspections 🔍
               </h1>
               <p className="text-lg text-gray-600 max-w-2xl">
-                Schedule, track, and manage comprehensive property inspections and maintenance checks. Ensure compliance, safety, and tenant satisfaction across your portfolio.
+                Schedule, track, and manage comprehensive property inspections and maintenance checks. Ensure compliance, safety, and quality standards across your portfolio.
               </p>
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -681,11 +674,7 @@ const Inspections = () => {
           <div className="text-xs text-purple-600">Service quality</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-white border border-indigo-100">
-          <div className="text-2xl font-bold text-indigo-600 mb-1">{avgTenantSatisfaction.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Tenant Satisfaction</div>
-          <div className="text-xs text-indigo-600">Tenant feedback</div>
-        </div>
+
         
         <div className="text-center p-4 rounded-xl bg-gradient-to-br from-orange-50 to-white border border-orange-100">
           <div className="text-2xl font-bold text-orange-600 mb-1">{avgInspectionDuration.toFixed(1)}h</div>

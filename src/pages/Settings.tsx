@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
+import { useTranslation } from 'react-i18next';
 import { 
   User, 
   Bell,
@@ -134,6 +135,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useCurrency, currencies } from '@/contexts/CurrencyContext';
 import {
   Tabs,
   TabsContent,
@@ -151,6 +153,12 @@ import {
 const Settings = () => {
   const { user, profile } = useAuth();
   const { toast } = useToast();
+  const { t, i18n } = useTranslation();
+  const { selectedCurrency, setSelectedCurrency } = useCurrency();
+  
+  // Temporary state for unsaved changes
+  const [tempCurrency, setTempCurrency] = useState(selectedCurrency);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
   const [profileData, setProfileData] = useState({
     firstName: profile?.first_name || '',
@@ -264,6 +272,85 @@ const Settings = () => {
     }
   };
 
+  // Language switching functionality
+  const handleLanguageChange = (newLanguage: string) => {
+    i18n.changeLanguage(newLanguage);
+    setPreferences(prev => ({
+      ...prev,
+      language: newLanguage
+    }));
+    
+    // Save language preference to localStorage
+    localStorage.setItem('preferredLanguage', newLanguage);
+    
+    toast({
+      title: t('settings.languageChanged'),
+      description: `Language changed to ${newLanguage === 'en' ? 'English' : 'العربية'}`,
+    });
+  };
+
+  // Save all changes function
+  const handleSaveChanges = () => {
+    // Apply currency changes
+    if (tempCurrency.code !== selectedCurrency.code) {
+      setSelectedCurrency(tempCurrency);
+      localStorage.setItem('preferredCurrency', tempCurrency.code);
+    }
+
+    // Apply language changes
+    if (preferences.language !== i18n.language) {
+      i18n.changeLanguage(preferences.language);
+      localStorage.setItem('preferredLanguage', preferences.language);
+    }
+
+    // Save other preferences
+    localStorage.setItem('userPreferences', JSON.stringify(preferences));
+
+    // Reset unsaved changes flag
+    setHasUnsavedChanges(false);
+
+    // Show success message
+    toast({
+      title: t('settings.updateSuccess'),
+      description: `All settings have been saved successfully. Currency: ${i18n.language === 'ar' ? tempCurrency.nameArabic : tempCurrency.name}`,
+    });
+  };
+
+  // Cancel changes function
+  const handleCancelChanges = () => {
+    // Reset to original values
+    setTempCurrency(selectedCurrency);
+    setPreferences(prev => ({
+      ...prev,
+      language: i18n.language,
+      timezone: 'EST',
+      dateFormat: 'MM/DD/YYYY'
+    }));
+    setHasUnsavedChanges(false);
+
+    toast({
+      title: t('settings.cancel'),
+      description: 'Changes have been cancelled',
+    });
+  };
+
+  // Load saved language preference on component mount
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('preferredLanguage');
+    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ar')) {
+      i18n.changeLanguage(savedLanguage);
+      setPreferences(prev => ({
+        ...prev,
+        language: savedLanguage
+      }));
+    }
+  }, [i18n]);
+
+  // Update temporary currency when selected currency changes
+  useEffect(() => {
+    setTempCurrency(selectedCurrency);
+  }, [selectedCurrency]);
+
   return (
     <div className="space-y-6">
       {/* Enhanced Header */}
@@ -273,38 +360,46 @@ const Settings = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-2">
               <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-600 to-gray-600 bg-clip-text text-transparent">
-                Settings ⚙️
+                {t('settings.title')} ⚙️
               </h1>
               <p className="text-lg text-gray-600 max-w-2xl">
-                Manage your account settings, security preferences, and application configurations. Customize your experience and maintain account security.
+                {t('settings.description')}
               </p>
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"></div>
-                  <span>Last login: {accountStats.lastLogin}</span>
+                  <span>{t('settings.lastLogin')}: {accountStats.lastLogin}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Shield className="h-4 w-4" />
-                  <span>Security score: {accountStats.securityScore}/100</span>
+                  <span>{t('settings.securityScore')}: {accountStats.securityScore}/100</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <User className="h-4 w-4" />
-                  <span>Profile: {accountStats.profileCompletion}% complete</span>
+                  <span>{t('settings.profileComplete')}: {accountStats.profileCompletion}% complete</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
               <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50">
                 <Activity className="h-4 w-4 mr-2" />
-                Account Analytics
+                {t('settings.accountAnalytics')}
               </Button>
               <Button variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50">
                 <HelpCircle className="h-4 w-4 mr-2" />
                 Help & Support
               </Button>
-              <Button className="bg-gradient-to-r from-slate-600 to-gray-600 hover:from-slate-700 hover:to-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button 
+                onClick={handleSaveChanges}
+                disabled={!hasUnsavedChanges}
+                className={`${
+                  hasUnsavedChanges 
+                    ? 'bg-gradient-to-r from-slate-600 to-gray-600 hover:from-slate-700 hover:to-gray-700 shadow-lg hover:shadow-xl' 
+                    : 'bg-gray-300 cursor-not-allowed'
+                } transition-all duration-300 transform hover:scale-105`}
+              >
                 <Save className="h-4 w-4 mr-2" />
-                Save All Changes
+                {hasUnsavedChanges ? 'Save All Changes' : 'No Changes'}
               </Button>
             </div>
           </div>
@@ -388,10 +483,10 @@ const Settings = () => {
 
       <Tabs defaultValue="profile" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="preferences">Preferences</TabsTrigger>
+          <TabsTrigger value="profile">{t('settings.profile')}</TabsTrigger>
+          <TabsTrigger value="notifications">{t('settings.notifications')}</TabsTrigger>
+          <TabsTrigger value="security">{t('settings.security')}</TabsTrigger>
+          <TabsTrigger value="preferences">{t('settings.preferences')}</TabsTrigger>
         </TabsList>
 
         {/* Profile Tab */}
@@ -794,22 +889,27 @@ const Settings = () => {
             <CardContent className="space-y-6 p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <Label htmlFor="language" className="text-sm font-medium text-gray-700">Language</Label>
-                  <Select value={preferences.language} onValueChange={(value) => setPreferences(prev => ({ ...prev, language: value }))}>
+                  <Label htmlFor="language" className="text-sm font-medium text-gray-700">{t('settings.language')}</Label>
+                  <Select value={preferences.language} onValueChange={(value) => {
+                    setPreferences(prev => ({ ...prev, language: value }));
+                    setHasUnsavedChanges(true);
+                  }}>
                     <SelectTrigger className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="es">Spanish</SelectItem>
-                      <SelectItem value="fr">French</SelectItem>
+                      <SelectItem value="en">{t('settings.english')}</SelectItem>
+                      <SelectItem value="ar">{t('settings.arabic')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="timezone" className="text-sm font-medium text-gray-700">Timezone</Label>
-                  <Select value={preferences.timezone} onValueChange={(value) => setPreferences(prev => ({ ...prev, timezone: value }))}>
+                  <Label htmlFor="timezone" className="text-sm font-medium text-gray-700">{t('settings.timezone')}</Label>
+                  <Select value={preferences.timezone} onValueChange={(value) => {
+                    setPreferences(prev => ({ ...prev, timezone: value }));
+                    setHasUnsavedChanges(true);
+                  }}>
                     <SelectTrigger className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
                       <SelectValue />
                     </SelectTrigger>
@@ -823,22 +923,32 @@ const Settings = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="currency" className="text-sm font-medium text-gray-700">Currency</Label>
-                  <Select value={preferences.currency} onValueChange={(value) => setPreferences(prev => ({ ...prev, currency: value }))}>
+                  <Label htmlFor="currency" className="text-sm font-medium text-gray-700">{t('settings.currency')}</Label>
+                  <Select value={tempCurrency.code} onValueChange={(value) => {
+                    if (currencies[value]) {
+                      setTempCurrency(currencies[value]);
+                      setHasUnsavedChanges(true);
+                    }
+                  }}>
                     <SelectTrigger className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="USD">USD ($)</SelectItem>
-                      <SelectItem value="EUR">EUR (€)</SelectItem>
-                      <SelectItem value="GBP">GBP (£)</SelectItem>
+                      {Object.entries(currencies).map(([code, currency]) => (
+                        <SelectItem key={code} value={code}>
+                          {currency.code} - {i18n.language === 'ar' ? currency.nameArabic : currency.name} ({i18n.language === 'ar' ? currency.symbolArabic : currency.symbol})
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="dateFormat" className="text-sm font-medium text-gray-700">Date Format</Label>
-                  <Select value={preferences.dateFormat} onValueChange={(value) => setPreferences(prev => ({ ...prev, dateFormat: value }))}>
+                  <Label htmlFor="dateFormat" className="text-sm font-medium text-gray-700">{t('settings.dateFormat')}</Label>
+                  <Select value={preferences.dateFormat} onValueChange={(value) => {
+                    setPreferences(prev => ({ ...prev, dateFormat: value }));
+                    setHasUnsavedChanges(true);
+                  }}>
                     <SelectTrigger className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
                       <SelectValue />
                     </SelectTrigger>
@@ -854,12 +964,29 @@ const Settings = () => {
               <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Info className="h-4 w-4" />
-                  <span>Preferences are applied immediately</span>
+                  <span>Click "Save Changes" to apply your preferences</span>
                 </div>
-                <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Preferences
-                </Button>
+                <div className="flex gap-3">
+                  <Button 
+                    onClick={handleCancelChanges}
+                    variant="outline"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                  >
+                    {t('settings.cancel')}
+                  </Button>
+                  <Button 
+                    onClick={handleSaveChanges}
+                    disabled={!hasUnsavedChanges}
+                    className={`${
+                      hasUnsavedChanges 
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl' 
+                        : 'bg-gray-300 cursor-not-allowed'
+                    } transition-all duration-300 transform hover:scale-105`}
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    {hasUnsavedChanges ? t('settings.saveChanges') : 'No Changes'}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

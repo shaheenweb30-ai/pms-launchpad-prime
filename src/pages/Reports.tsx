@@ -194,7 +194,7 @@ const Reports = () => {
         expenses: 15000,
         netIncome: 33000,
         occupancyRate: 96.0,
-        tenantSatisfaction: 4.3
+
       },
       charts: ['performance_trend', 'tenant_analysis', 'maintenance_costs'],
       automated: false,

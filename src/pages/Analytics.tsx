@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -66,6 +67,7 @@ import {
 } from "@/components/ui/tabs";
 
 const Analytics = () => {
+  const { formatCurrency } = useCurrency();
   const [timeRange, setTimeRange] = useState('12months');
   const [selectedMetric, setSelectedMetric] = useState('revenue');
 
@@ -337,7 +339,7 @@ const Analytics = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="text-3xl font-bold text-gray-900">${(kpiData.portfolioValue / 1000000).toFixed(1)}M</div>
+            <div className="text-3xl font-bold text-gray-900">{formatCurrency(kpiData.portfolioValue)}</div>
             <div className="space-y-2">
               <div className="flex items-center text-sm text-gray-600">
                 <TrendingUp className="h-4 w-4 text-green-600 mr-2" />
@@ -454,11 +456,11 @@ const Analytics = () => {
                     {monthlyPerformance.slice(-6).map((month, index) => (
                       <tr key={index} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors duration-200">
                         <td className="p-4 font-medium text-gray-900">{month.month}</td>
-                        <td className="p-4 text-right font-semibold text-gray-900">${month.revenue.toLocaleString()}</td>
-                        <td className="p-4 text-right text-gray-600">${month.expenses.toLocaleString()}</td>
-                        <td className="p-4 text-right font-semibold text-green-600">
-                          ${(month.revenue - month.expenses).toLocaleString()}
-                        </td>
+                                          <td className="p-4 text-right font-semibold text-gray-900">{formatCurrency(month.revenue)}</td>
+                  <td className="p-4 text-right text-gray-600">{formatCurrency(month.expenses)}</td>
+                  <td className="p-4 text-right font-semibold text-green-600">
+                    {formatCurrency(month.revenue - month.expenses)}
+                  </td>
                         <td className="p-4 text-right">
                           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                             {month.occupancy}%
@@ -500,7 +502,7 @@ const Analytics = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <DollarSign className="h-4 w-4 text-green-500" />
-                            <span>Monthly Revenue: ${property.revenue.toLocaleString()}</span>
+                            <span>Monthly Revenue: {formatCurrency(property.revenue)}</span>
                           </div>
                         </div>
                       </div>
@@ -514,7 +516,7 @@ const Analytics = () => {
                           </Badge>
                         </div>
                         <div className="text-sm text-gray-600">
-                          Net: ${(property.revenue - property.expenses).toLocaleString()}
+                          Net: {formatCurrency(property.revenue - property.expenses)}
                         </div>
                       </div>
                     </div>
@@ -535,7 +537,7 @@ const Analytics = () => {
                     <PieChart className="h-5 w-5 text-red-600" />
                   </div>
                   Expense Breakdown
-                  <Badge variant="secondary" className="ml-auto">$52,650 total</Badge>
+                                      <Badge variant="secondary" className="ml-auto">{formatCurrency(52650)} total</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
@@ -552,7 +554,7 @@ const Analytics = () => {
                         </Badge>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-gray-900">${expense.amount.toLocaleString()}</div>
+                        <div className="font-semibold text-gray-900">{formatCurrency(expense.amount)}</div>
                         <div className="text-xs text-gray-500">{expense.percentage}%</div>
                       </div>
                     </div>
@@ -603,11 +605,11 @@ const Analytics = () => {
             <CardContent className="p-6">
               <div className="grid gap-6 md:grid-cols-3">
                 <div className="text-center p-6 border border-gray-200 rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-md transition-shadow duration-200">
-                  <div className="text-3xl font-bold text-green-600 mb-2">${marketComparison.yourAvgRent}</div>
+                  <div className="text-3xl font-bold text-green-600 mb-2">{formatCurrency(marketComparison.yourAvgRent)}</div>
                   <div className="text-sm text-gray-600 mb-3">Your Avg. Rent</div>
                   <div className="flex items-center justify-center gap-2 text-sm text-green-600 font-medium">
                     <TrendingUp className="h-4 w-4" />
-                    +${marketComparison.yourAvgRent - marketComparison.marketAvgRent} vs market
+                                          +{formatCurrency(marketComparison.yourAvgRent - marketComparison.marketAvgRent)} vs market
                   </div>
                 </div>
                 

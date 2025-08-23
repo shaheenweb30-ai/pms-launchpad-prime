@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import jsPDF from 'jspdf';
+import { useTranslation } from 'react-i18next';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,7 +61,8 @@ import {
   RefreshCw,
   Minus,
   Upload,
-  X
+  X,
+  Info
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -77,21 +81,303 @@ import {
 } from "@/components/ui/select";
 
 const Properties = () => {
+  const { t } = useTranslation();
+  const { formatCurrency } = useCurrency();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [showAddPropertyModal, setShowAddPropertyModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [propertyImages, setPropertyImages] = useState<File[]>([]);
+  const [editPropertyImages, setEditPropertyImages] = useState<File[]>([]);
   const [properties, setProperties] = useState<any[]>([]);
+  
+  // Tenant management state
+  const [tenants, setTenants] = useState<any[]>([]);
+  const [showAddTenantModal, setShowAddTenantModal] = useState(false);
+  const [editingTenant, setEditingTenant] = useState<any>(null);
+  const [newTenant, setNewTenant] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    unitNumber: '',
+    leaseStart: '',
+    leaseEnd: '',
+    monthlyRent: '',
+    securityDeposit: '',
+    status: 'active',
+    emergencyContact: '',
+    notes: ''
+  });
+  
+  // Load properties from localStorage on component mount
+  useEffect(() => {
+    const loadProperties = async () => {
+      const savedProperties = localStorage.getItem('pms-properties');
+      if (savedProperties) {
+        try {
+          const parsedProperties = JSON.parse(savedProperties);
+          setProperties(parsedProperties);
+        } catch (error) {
+          console.error('Error parsing saved properties:', error);
+          setProperties([]);
+        }
+      } else {
+        // Add some sample properties if none exist
+        const sampleProperties = [
+          {
+            id: 1,
+            name: 'Oak Street Apartments',
+            address: '123 Oak Street, Downtown',
+            city: 'Downtown',
+            type: 'Apartment',
+            units: 24,
+            occupiedUnits: 20,
+            monthlyRent: 28800,
+            image: '/placeholder.svg',
+            status: 'active',
+            occupancyRate: 83,
+            lastInspection: '2024-01-15',
+            maintenanceScore: 95,
+            yearBuilt: 2020,
+            propertyValue: 2800000,
+            monthlyExpenses: 8500,
+            netIncome: 20300,
+            roi: 8.7,
+            trend: 'up',
+            change: '+2.3%'
+          },
+          {
+            id: 2,
+            name: 'Riverside Complex',
+            address: '456 River Road, Midtown',
+            city: 'Midtown',
+            type: 'Complex',
+            units: 48,
+            occupiedUnits: 42,
+            monthlyRent: 52000,
+            image: '/placeholder.svg',
+            status: 'active',
+            occupancyRate: 88,
+            lastInspection: '2024-01-10',
+            maintenanceScore: 92,
+            yearBuilt: 2018,
+            propertyValue: 4500000,
+            monthlyExpenses: 12000,
+            netIncome: 40000,
+            roi: 10.7,
+            trend: 'up',
+            change: '+1.8%'
+          }
+        ];
+        setProperties(sampleProperties);
+        await savePropertiesToStorage(sampleProperties);
+      }
+    };
+    
+    loadProperties();
+  }, []);
+  
+  // Helper function to convert File to base64 data URL
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  // Helper function to save properties to localStorage
+  const savePropertiesToStorage = async (propertiesToSave: any[]) => {
+    try {
+      // Convert properties to a format that can be safely stored in localStorage
+      const propertiesToStore = [];
+      
+      for (const property of propertiesToSave) {
+        if (property.images && property.images.length > 0) {
+          // Convert File objects to base64 data URLs for storage
+          const imagesWithBase64 = [];
+          
+          for (const img of property.images) {
+            if (img.file && img.file instanceof File) {
+              const base64 = await fileToBase64(img.file);
+              imagesWithBase64.push({
+                id: img.id,
+                name: img.name,
+                url: base64,
+                // Don't store the File object as it can't be serialized
+              });
+            } else {
+              // If it's already a base64 URL, keep it
+              imagesWithBase64.push(img);
+            }
+          }
+          
+          propertiesToStore.push({
+            ...property,
+            images: imagesWithBase64,
+            image: imagesWithBase64[0]?.url || '/placeholder.svg'
+          });
+        } else {
+          propertiesToStore.push({
+            ...property,
+            image: property.image || '/placeholder.svg'
+          });
+        }
+      }
+      
+      localStorage.setItem('pms-properties', JSON.stringify(propertiesToStore));
+    } catch (error) {
+      console.error('Error saving properties to localStorage:', error);
+    }
+  };
+
+  // Helper function to export portfolio as PDF
+  const exportPortfolioPDF = async () => {
+    setIsExporting(true);
+    try {
+      const pdf = new jsPDF();
+      const pageHeight = pdf.internal.pageSize.height;
+      const pageWidth = pdf.internal.pageSize.width;
+      let yPosition = 20;
+      
+      // PDF Header
+      pdf.setFontSize(24);
+      pdf.setTextColor(40, 40, 40);
+      pdf.text('Property Portfolio Report', 20, yPosition);
+      
+      yPosition += 10;
+      pdf.setFontSize(12);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(`Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, 20, yPosition);
+      
+      yPosition += 20;
+      
+      // Portfolio Summary Section
+      pdf.setFontSize(16);
+      pdf.setTextColor(40, 40, 40);
+      pdf.text('Portfolio Summary', 20, yPosition);
+      
+      yPosition += 15;
+      pdf.setFontSize(11);
+      
+      // Summary stats
+      const summaryData = [
+        ['Total Properties:', totalProperties.toString()],
+        ['Total Units:', `${totalOccupied}/${totalUnits}`],
+        ['Occupancy Rate:', totalUnits === 0 ? 'N/A' : `${Math.round((totalOccupied / totalUnits) * 100)}%`],
+        ['Monthly Revenue:', `$${totalRevenue.toLocaleString()}`],
+        ['Portfolio Value:', `$${totalValue.toLocaleString()}`],
+        ['Average ROI:', `${avgROI.toFixed(1)}%`]
+      ];
+      
+      summaryData.forEach(([label, value]) => {
+        pdf.text(label, 20, yPosition);
+        pdf.text(value, 120, yPosition);
+        yPosition += 8;
+      });
+      
+      yPosition += 15;
+      
+      // Properties Details Section
+      if (properties.length > 0) {
+        pdf.setFontSize(16);
+        pdf.setTextColor(40, 40, 40);
+        pdf.text('Property Details', 20, yPosition);
+        yPosition += 15;
+        
+        properties.forEach((property, index) => {
+          // Check if we need a new page
+          if (yPosition > pageHeight - 60) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          // Property header
+          pdf.setFontSize(14);
+          pdf.setTextColor(34, 34, 34);
+          pdf.text(`${index + 1}. ${property.name}`, 20, yPosition);
+          yPosition += 10;
+          
+          pdf.setFontSize(10);
+          pdf.setTextColor(80, 80, 80);
+          
+          // Property details
+          const propertyData = [
+            ['Address:', property.address],
+            ['Type:', property.type],
+            ['Units:', `${property.occupiedUnits}/${property.units} occupied`],
+            ['Status:', property.status.charAt(0).toUpperCase() + property.status.slice(1)],
+            ['Monthly Rent:', `$${property.monthlyRent.toLocaleString()}`],
+            ['Monthly Expenses:', `$${(property.monthlyExpenses || 0).toLocaleString()}`],
+            ['Net Income:', `$${property.netIncome.toLocaleString()}`],
+            ['ROI:', `${property.roi}%`],
+            ['Occupancy Rate:', `${property.occupancyRate}%`],
+            ['Maintenance Score:', `${property.maintenanceScore}%`],
+            ['Year Built:', property.yearBuilt ? property.yearBuilt.toString() : 'N/A'],
+            ['Property Value:', property.propertyValue ? `$${property.propertyValue.toLocaleString()}` : 'N/A'],
+            ['Last Inspection:', new Date(property.lastInspection).toLocaleDateString()]
+          ];
+          
+          propertyData.forEach(([label, value]) => {
+            if (yPosition > pageHeight - 20) {
+              pdf.addPage();
+              yPosition = 20;
+            }
+            pdf.text(`  ${label}`, 25, yPosition);
+            pdf.text(value, 120, yPosition);
+            yPosition += 7;
+          });
+          
+          yPosition += 10;
+        });
+      } else {
+        pdf.setFontSize(12);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text('No properties found in your portfolio.', 20, yPosition);
+      }
+      
+      // Add footer to all pages
+      const totalPages = pdf.internal.pages.length - 1; // -1 because pages array includes a null first element
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text(`Page ${i} of ${totalPages}`, pageWidth - 40, pageHeight - 10);
+        pdf.text('PMS Launchpad - Property Management System', 20, pageHeight - 10);
+      }
+      
+      // Generate filename with timestamp
+      const timestamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '');
+      const filename = `portfolio-report-${timestamp}.pdf`;
+      
+      // Save the PDF
+      pdf.save(filename);
+      
+      toast.success('Portfolio exported successfully!', {
+        description: `Downloaded as ${filename}`,
+        duration: 5000,
+      });
+      
+    } catch (error) {
+      console.error('Error exporting portfolio:', error);
+      toast.error('Failed to export portfolio. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
   
   // Property action modals state
   const [selectedProperty, setSelectedProperty] = useState<any>(null);
   const [showViewDetailsModal, setShowViewDetailsModal] = useState(false);
   const [showEditPropertyModal, setShowEditPropertyModal] = useState(false);
   const [showAnalyticsModal, setShowAnalyticsModal] = useState(false);
+  const [showPortfolioAnalyticsModal, setShowPortfolioAnalyticsModal] = useState(false);
+  const [showTenantsModal, setShowTenantsModal] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   
   // Form state for new property
@@ -136,6 +422,64 @@ const Properties = () => {
   const totalRevenue = properties.reduce((sum, property) => sum + (property.monthlyRent || 0), 0);
   const totalValue = properties.reduce((sum, property) => sum + (property.propertyValue || 0), 0);
   const avgROI = properties.length > 0 ? properties.reduce((sum, property) => sum + (property.roi || 0), 0) / properties.length : 0;
+
+  // Portfolio Analytics Calculations
+  const portfolioAnalytics = {
+    // Basic Metrics
+    totalProperties,
+    totalUnits,
+    totalOccupied,
+    totalVacant: totalUnits - totalOccupied,
+    occupancyRate: totalUnits === 0 ? 0 : Math.round((totalOccupied / totalUnits) * 100),
+    
+    // Financial Metrics
+    totalRevenue,
+    totalExpenses: properties.reduce((sum, property) => sum + (property.monthlyExpenses || 0), 0),
+    totalNetIncome: properties.reduce((sum, property) => sum + (property.netIncome || 0), 0),
+    totalValue,
+    avgROI,
+    
+    // Performance Metrics
+    avgOccupancyRate: properties.length > 0 ? properties.reduce((sum, property) => sum + (property.occupancyRate || 0), 0) / properties.length : 0,
+    avgMaintenanceScore: properties.length > 0 ? properties.reduce((sum, property) => sum + (property.maintenanceScore || 0), 0) / properties.length : 0,
+    
+    // Property Type Distribution
+    propertyTypeDistribution: properties.reduce((acc, property) => {
+      acc[property.type] = (acc[property.type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>),
+    
+    // Status Distribution
+    statusDistribution: properties.reduce((acc, property) => {
+      acc[property.status] = (acc[property.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>),
+    
+    // Top Performing Properties
+    topPerformers: [...properties]
+      .sort((a, b) => (b.roi || 0) - (a.roi || 0))
+      .slice(0, 3),
+    
+    // Properties Needing Attention
+    needsAttention: properties.filter(property => 
+      property.occupancyRate < 80 || property.maintenanceScore < 70
+    ),
+    
+    // Monthly Cash Flow Projection
+    monthlyCashFlow: {
+      gross: totalRevenue,
+      expenses: properties.reduce((sum, property) => sum + (property.monthlyExpenses || 0), 0),
+      net: totalRevenue - properties.reduce((sum, property) => sum + (property.monthlyExpenses || 0), 0),
+      annual: (totalRevenue - properties.reduce((sum, property) => sum + (property.monthlyExpenses || 0), 0)) * 12
+    },
+    
+    // ROI Analysis
+    roiAnalysis: {
+      high: properties.filter(p => (p.roi || 0) > 10).length,
+      medium: properties.filter(p => (p.roi || 0) >= 5 && (p.roi || 0) <= 10).length,
+      low: properties.filter(p => (p.roi || 0) < 5).length
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -235,6 +579,16 @@ const Properties = () => {
       securityDeposit: '', // Not stored in current property object
       applicationFee: '' // Not stored in current property object
     });
+    
+    // Pre-populate images if they exist
+    if (property.images && property.images.length > 0) {
+      // For editing, we'll start with empty edit images since we can't convert base64 back to File objects
+      // Users can re-upload images if needed
+      setEditPropertyImages([]);
+    } else {
+      setEditPropertyImages([]);
+    }
+    
     setCurrentStep(1);
     setShowEditPropertyModal(true);
   };
@@ -249,9 +603,11 @@ const Properties = () => {
     setShowDeleteConfirmModal(true);
   };
 
-  const confirmDeleteProperty = () => {
+  const confirmDeleteProperty = async () => {
     if (selectedProperty) {
-      setProperties(prev => prev.filter(p => p.id !== selectedProperty.id));
+      const updatedProperties = properties.filter(p => p.id !== selectedProperty.id);
+      setProperties(updatedProperties);
+      await savePropertiesToStorage(updatedProperties);
       toast.success(`Property "${selectedProperty.name}" deleted successfully`);
       setShowDeleteConfirmModal(false);
       setSelectedProperty(null);
@@ -268,25 +624,34 @@ const Properties = () => {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Update the property in the array
-      setProperties(prev => prev.map(p => 
+      const updatedProperties = properties.map(p => 
         p.id === selectedProperty.id 
           ? {
               ...p,
-              name: newProperty.name,
-              address: `${newProperty.address}, ${newProperty.city}`,
-              city: newProperty.city,
-              type: newProperty.type,
-              units: parseInt(newProperty.units) || 0,
+              name: newProperty.name || 'Unnamed Property',
+              address: newProperty.address && newProperty.city ? `${newProperty.address}, ${newProperty.city}` : 'Address not specified',
+              city: newProperty.city || 'City not specified',
+              type: newProperty.type || 'Other',
+              units: parseInt(newProperty.units) || 1,
               monthlyRent: parseFloat(newProperty.monthlyRent) || 0,
               yearBuilt: newProperty.yearBuilt ? parseInt(newProperty.yearBuilt) : undefined,
               propertyValue: newProperty.purchasePrice ? parseFloat(newProperty.purchasePrice) : 0,
               monthlyExpenses: newProperty.monthlyExpenses ? parseFloat(newProperty.monthlyExpenses) : 0,
-              netIncome: (parseFloat(newProperty.monthlyRent) || 0) - (newProperty.monthlyExpenses ? parseFloat(newProperty.monthlyExpenses) : 0)
+              netIncome: (parseFloat(newProperty.monthlyRent) || 0) - (newProperty.monthlyExpenses ? parseFloat(newProperty.monthlyExpenses) : 0),
+              images: editPropertyImages.length > 0 ? editPropertyImages.map(file => ({
+                id: Math.random().toString(36).substr(2, 9),
+                name: file.name,
+                url: URL.createObjectURL(file),
+                file: file
+              })) : p.images || [],
+              image: editPropertyImages.length > 0 ? URL.createObjectURL(editPropertyImages[0]) : (p.image || '/placeholder.svg')
             }
           : p
-      ));
+      );
+      setProperties(updatedProperties);
+      await savePropertiesToStorage(updatedProperties);
       
-      toast.success(`Property "${newProperty.name}" updated successfully!`);
+      toast.success(`Property "${newProperty.name || 'Unnamed Property'}" updated successfully!`);
       setShowEditPropertyModal(false);
       setSelectedProperty(null);
       resetForm();
@@ -328,6 +693,34 @@ const Properties = () => {
     setCurrentStep(1);
   };
 
+  const resetEditForm = () => {
+    setNewProperty({
+      name: '',
+      address: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      type: '',
+      units: '',
+      description: '',
+      yearBuilt: '',
+      purchasePrice: '',
+      monthlyRent: '',
+      monthlyExpenses: '',
+      managementFee: '',
+      insuranceCost: '',
+      propertyTax: '',
+      maintenanceBudget: '',
+      amenities: '',
+      parkingSpaces: '',
+      petPolicy: '',
+      leaseDuration: '',
+      securityDeposit: '',
+      applicationFee: ''
+    });
+    setEditPropertyImages([]);
+  };
+
   const nextStep = () => {
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
@@ -341,16 +734,8 @@ const Properties = () => {
   };
 
   const canProceedToNext = () => {
-    switch (currentStep) {
-      case 1:
-        return newProperty.name && newProperty.type && (shouldShowUnits() ? newProperty.units : true);
-      case 2:
-        return newProperty.address && newProperty.city && newProperty.state && newProperty.zipCode;
-      case 3:
-        return newProperty.monthlyRent;
-      default:
-        return true;
-    }
+    // All fields are now optional, so users can proceed through all steps
+    return true;
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -360,6 +745,174 @@ const Properties = () => {
 
   const removeImage = (index: number) => {
     setPropertyImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleEditImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const currentCount = editPropertyImages.length;
+    const availableSlots = 3 - currentCount;
+    
+    if (files.length > availableSlots) {
+      toast.error(`You can only upload ${availableSlots} more image${availableSlots !== 1 ? 's' : ''}. Maximum 3 images allowed.`);
+      return;
+    }
+    
+    setEditPropertyImages(prev => [...prev, ...files]);
+  };
+
+  const removeEditImage = (index: number) => {
+    setEditPropertyImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Tenant management functions
+  const handleTenantsClick = (property: any) => {
+    setSelectedProperty(property);
+    // Load sample tenants for the property (in a real app, this would come from API)
+    const sampleTenants = [
+      {
+        id: 1,
+        name: 'John Smith',
+        email: 'john.smith@email.com',
+        phone: '+1 (555) 123-4567',
+        unitNumber: 'A101',
+        leaseStart: '2024-01-01',
+        leaseEnd: '2024-12-31',
+        monthlyRent: 1200,
+        securityDeposit: 1200,
+        status: 'active',
+        emergencyContact: 'Jane Smith +1 (555) 987-6543',
+        notes: 'Excellent tenant, always pays on time',
+        rentHistory: [
+          { month: 'Jan 2024', amount: 1200, status: 'paid', date: '2024-01-01' },
+          { month: 'Feb 2024', amount: 1200, status: 'paid', date: '2024-02-01' },
+          { month: 'Mar 2024', amount: 1200, status: 'paid', date: '2024-03-01' }
+        ]
+      },
+      {
+        id: 2,
+        name: 'Sarah Johnson',
+        email: 'sarah.j@email.com',
+        phone: '+1 (555) 234-5678',
+        unitNumber: 'B205',
+        leaseStart: '2024-02-01',
+        leaseEnd: '2025-01-31',
+        monthlyRent: 1350,
+        securityDeposit: 1350,
+        status: 'active',
+        emergencyContact: 'Mike Johnson +1 (555) 876-5432',
+        notes: 'New tenant, first month completed',
+        rentHistory: [
+          { month: 'Feb 2024', amount: 1350, status: 'paid', date: '2024-02-01' },
+          { month: 'Mar 2024', amount: 1350, status: 'paid', date: '2024-03-01' }
+        ]
+      }
+    ];
+    setTenants(sampleTenants);
+    setShowTenantsModal(true);
+  };
+
+  const handleAddTenant = () => {
+    setEditingTenant(null);
+    setNewTenant({
+      name: '',
+      email: '',
+      phone: '',
+      unitNumber: '',
+      leaseStart: '',
+      leaseEnd: '',
+      monthlyRent: '',
+      securityDeposit: '',
+      status: 'active',
+      emergencyContact: '',
+      notes: ''
+    });
+    setShowAddTenantModal(true);
+  };
+
+  const handleEditTenant = (tenant: any) => {
+    setEditingTenant(tenant);
+    setNewTenant({
+      name: tenant.name,
+      email: tenant.email,
+      phone: tenant.phone,
+      unitNumber: tenant.unitNumber,
+      leaseStart: tenant.leaseStart,
+      leaseEnd: tenant.leaseEnd,
+      monthlyRent: tenant.monthlyRent.toString(),
+      securityDeposit: tenant.securityDeposit.toString(),
+      status: tenant.status,
+      emergencyContact: tenant.emergencyContact,
+      notes: tenant.notes
+    });
+    setShowAddTenantModal(true);
+  };
+
+  const handleSaveTenant = () => {
+    if (editingTenant) {
+      // Update existing tenant
+      const updatedTenants = tenants.map(t => 
+        t.id === editingTenant.id 
+          ? {
+              ...t,
+              ...newTenant,
+              monthlyRent: parseFloat(newTenant.monthlyRent) || 0,
+              securityDeposit: parseFloat(newTenant.securityDeposit) || 0
+            }
+          : t
+      );
+      setTenants(updatedTenants);
+      toast.success(`Tenant "${newTenant.name}" updated successfully!`);
+    } else {
+      // Add new tenant
+      const newTenantObj = {
+        id: Date.now(),
+        ...newTenant,
+        monthlyRent: parseFloat(newTenant.monthlyRent) || 0,
+        securityDeposit: parseFloat(newTenant.securityDeposit) || 0,
+        rentHistory: []
+      };
+      setTenants(prev => [...prev, newTenantObj]);
+      toast.success(`Tenant "${newTenant.name}" added successfully!`);
+    }
+    
+    setShowAddTenantModal(false);
+    setEditingTenant(null);
+    setNewTenant({
+      name: '',
+      email: '',
+      phone: '',
+      unitNumber: '',
+      leaseStart: '',
+      leaseEnd: '',
+      monthlyRent: '',
+      securityDeposit: '',
+      status: 'active',
+      emergencyContact: '',
+      notes: ''
+    });
+  };
+
+  const handleDeleteTenant = (tenant: any) => {
+    const updatedTenants = tenants.filter(t => t.id !== tenant.id);
+    setTenants(updatedTenants);
+    toast.success(`Tenant "${tenant.name}" removed successfully!`);
+  };
+
+  const resetTenantForm = () => {
+    setNewTenant({
+      name: '',
+      email: '',
+      phone: '',
+      unitNumber: '',
+      leaseStart: '',
+      leaseEnd: '',
+      monthlyRent: '',
+      securityDeposit: '',
+      status: 'active',
+      emergencyContact: '',
+      notes: ''
+    });
+    setEditingTenant(null);
   };
 
   // Dynamic field visibility based on property type
@@ -403,39 +956,39 @@ const Properties = () => {
     return ['Apartment', 'Complex', 'Condo', 'House', 'Estate'].includes(newProperty.type);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     console.log('Form submitted!', newProperty);
     console.log('Property images:', propertyImages);
     
-    // Validate required fields
-    if (!newProperty.name || !newProperty.type || !newProperty.units || !newProperty.address || !newProperty.city || !newProperty.state || !newProperty.zipCode || !newProperty.monthlyRent) {
-      toast.error('Please fill in all required fields marked with *');
-      return;
-    }
-    
+    // All fields are now optional - no validation required
     setIsSubmitting(true);
     
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Create new property object
+      // Create new property object with default values for empty fields
       const newPropertyObj = {
         id: properties.length + 1,
-        name: newProperty.name,
-        address: `${newProperty.address}, ${newProperty.city}`,
-        city: newProperty.city,
-        type: newProperty.type,
-        units: parseInt(newProperty.units) || 0,
+        name: newProperty.name || 'Unnamed Property',
+        address: newProperty.address && newProperty.city ? `${newProperty.address}, ${newProperty.city}` : 'Address not specified',
+        city: newProperty.city || 'City not specified',
+        type: newProperty.type || 'Other',
+        units: parseInt(newProperty.units) || 1,
         occupiedUnits: 0, // New properties start with 0 occupied units
         monthlyRent: parseFloat(newProperty.monthlyRent) || 0,
-        image: '/placeholder.svg',
+        images: propertyImages.length > 0 ? propertyImages.map(file => ({
+          id: Math.random().toString(36).substr(2, 9),
+          name: file.name,
+          url: URL.createObjectURL(file),
+          file: file
+        })) : [],
+        image: propertyImages.length > 0 ? URL.createObjectURL(propertyImages[0]) : '/placeholder.svg',
         status: 'active',
         occupancyRate: 0, // New properties start with 0% occupancy
         lastInspection: new Date().toISOString().split('T')[0],
         maintenanceScore: 100, // New properties start with perfect maintenance score
-        tenantSatisfaction: 0, // No tenants yet
+
         yearBuilt: newProperty.yearBuilt ? parseInt(newProperty.yearBuilt) : undefined,
         propertyValue: newProperty.purchasePrice ? parseFloat(newProperty.purchasePrice) : 0,
         monthlyExpenses: newProperty.monthlyExpenses ? parseFloat(newProperty.monthlyExpenses) : 0,
@@ -446,11 +999,13 @@ const Properties = () => {
       };
       
       // Add to properties array
-      setProperties(prev => [...prev, newPropertyObj]);
+      const updatedProperties = [...properties, newPropertyObj];
+      setProperties(updatedProperties);
+      await savePropertiesToStorage(updatedProperties);
       
       // Show success message
-      toast.success(`Property "${newProperty.name}" created successfully!`, {
-        description: `${newProperty.address}, ${newProperty.city} | ${newProperty.type} | ${newProperty.units} units`,
+      toast.success(`Property "${newPropertyObj.name}" created successfully!`, {
+        description: `${newPropertyObj.address} | ${newPropertyObj.type} | ${newPropertyObj.units} units`,
         duration: 5000,
       });
       
@@ -474,9 +1029,22 @@ const Properties = () => {
   const PropertyCard = ({ property }: { property: typeof properties[0] }) => (
     <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-gray-50/50 shadow-lg hover:shadow-2xl">
       <CardHeader className="p-0 relative">
-        <div className="h-48 bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
-          <Building2 className="h-16 w-16 text-blue-600 relative z-10" />
+        <div className="h-48 rounded-t-lg flex items-center justify-center relative overflow-hidden">
+          {property.image && property.image !== '/placeholder.svg' ? (
+            // Display the property image
+            <img
+              src={property.image}
+              alt="Property"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            // Fallback to placeholder with icon
+            <div className="w-full h-full bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
+              <Building2 className="h-16 w-16 text-blue-600 relative z-10" />
+            </div>
+          )}
+          
           <div className="absolute top-3 right-3">
             <Badge className={getStatusColor(property.status)}>
               {property.status === 'active' ? 'Active' : 'Maintenance'}
@@ -487,6 +1055,7 @@ const Properties = () => {
               {property.occupancyRate}% Occupied
             </Badge>
           </div>
+
         </div>
       </CardHeader>
       <CardContent className="p-6">
@@ -513,14 +1082,14 @@ const Properties = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('properties.card.actions')}</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => handleViewDetails(property)}>
                 <Eye className="h-4 w-4 mr-2" />
-                View Details
+                {t('properties.card.viewDetails')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleEditProperty(property)}>
                 <Edit className="h-4 w-4 mr-2" />
-                Edit Property
+                {t('properties.card.edit')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleViewAnalytics(property)}>
                 <BarChart3 className="h-4 w-4 mr-2" />
@@ -529,7 +1098,7 @@ const Properties = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleDeleteProperty(property)} className="text-red-600">
                 <Trash2 className="h-4 w-4 mr-2" />
-                Delete Property
+                {t('properties.card.delete')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -550,7 +1119,7 @@ const Properties = () => {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Monthly Revenue:</span>
-              <span className="font-semibold text-lg text-green-600">${property.monthlyRent.toLocaleString()}</span>
+              <span className="font-semibold text-lg text-green-600">{formatCurrency(property.monthlyRent)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Net Income:</span>
@@ -575,13 +1144,7 @@ const Properties = () => {
                 <Progress value={property.maintenanceScore} className="w-16 h-2" />
               </div>
             </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Tenant Satisfaction:</span>
-              <div className="flex items-center gap-1">
-                <span className="font-medium">{property.tenantSatisfaction}</span>
-                <Star className="h-4 w-4 text-yellow-500 fill-current" />
-              </div>
-            </div>
+
           </div>
         </div>
 
@@ -590,13 +1153,22 @@ const Properties = () => {
             Last inspection: {new Date(property.lastInspection).toLocaleDateString()}
           </div>
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="border-blue-200 text-blue-700 hover:bg-blue-50"
+              onClick={() => handleTenantsClick(property)}
+            >
               <Users className="h-4 w-4 mr-1" />
               Tenants
             </Button>
-            <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+            <Button 
+              size="sm" 
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              onClick={() => handleViewDetails(property)}
+            >
               <Eye className="h-4 w-4 mr-1" />
-              View
+              {t('properties.card.view')}
             </Button>
           </div>
         </div>
@@ -613,46 +1185,64 @@ const Properties = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-2">
               <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                Property Portfolio 🏢
+                {t('properties.title')} 🏢
               </h1>
               <p className="text-lg text-gray-600 max-w-2xl">
-                Manage and monitor your complete property portfolio. Track performance, occupancy rates, and financial metrics across all your properties.
+                {t('properties.description')}
               </p>
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>{totalProperties === 0 ? 'No properties yet' : `${totalProperties} properties managed`}</span>
+                  <span>{totalProperties === 0 ? 'No properties yet' : `${totalProperties} ${t('properties.totalProperties')}`}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Clock className="h-4 w-4" />
-                  <span>Last updated: {new Date().toLocaleTimeString()}</span>
+                  <span>{t('properties.lastUpdated')}: {new Date().toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-green-200 text-green-700 hover:bg-green-50">
+              <Button 
+                variant="outline" 
+                className="border-green-200 text-green-700 hover:bg-green-50"
+                onClick={exportPortfolioPDF}
+                disabled={isExporting}
+              >
+                {isExporting ? (
+                  <div className="flex items-center gap-2">
+                                    <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                {t('properties.exporting')}
+              </div>
+            ) : (
+              <>
                 <Download className="h-4 w-4 mr-2" />
-                Export Portfolio
+                {t('properties.exportPortfolio')}
+              </>
+            )}
               </Button>
-              <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+              <Button 
+                variant="outline" 
+                className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                onClick={() => setShowPortfolioAnalyticsModal(true)}
+              >
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Portfolio Analytics
+                {t('properties.portfolioAnalytics')}
               </Button>
               <Dialog open={showAddPropertyModal} onOpenChange={setShowAddPropertyModal}>
                 <DialogTrigger asChild>
                   <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Property
+                    {t('properties.addProperty')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2 text-xl">
                       <Building2 className="h-6 w-6 text-blue-600" />
-                      Add New Property
+                      {t('properties.addNewProperty')}
                     </DialogTitle>
                     <DialogDescription>
-                      Complete all steps to add a new property to your portfolio. All fields marked with * are required.
+                      {t('properties.addPropertyDescription')}
                     </DialogDescription>
                     
                     {/* Step Indicator */}
@@ -686,36 +1276,35 @@ const Properties = () => {
                     {/* Step Labels */}
                     <div className="flex items-center justify-center mt-2 text-xs text-gray-600">
                       <div className="flex items-center space-x-12">
-                        <span className={currentStep === 1 ? 'text-blue-600 font-medium' : ''}>Basic Info</span>
-                        <span className={currentStep === 2 ? 'text-blue-600 font-medium' : ''}>Location</span>
-                        <span className={currentStep === 3 ? 'text-blue-600 font-medium' : ''}>Financial</span>
-                        <span className={currentStep === 4 ? 'text-blue-600 font-medium' : ''}>Images</span>
+                        <span className={currentStep === 1 ? 'text-blue-600 font-medium' : ''}>{t('properties.step.basic')}</span>
+                        <span className={currentStep === 2 ? 'text-blue-600 font-medium' : ''}>{t('properties.step.financials')}</span>
+                        <span className={currentStep === 3 ? 'text-blue-600 font-medium' : ''}>{t('properties.step.images')}</span>
+                        <span className={currentStep === 4 ? 'text-blue-600 font-medium' : ''}>{t('properties.step.review')}</span>
                       </div>
                     </div>
                   </DialogHeader>
                   
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form className="space-y-6">
                     {/* Step 1: Basic Information */}
                     {currentStep === 1 && (
                       <div className="space-y-6">
                         <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Basic Property Information</h3>
-                          <p className="text-gray-600">Let's start with the essential details about your property</p>
+                          <h3 className="text-xl font-semibold text-gray-900">{t('properties.step.basic')}</h3>
+                          <p className="text-gray-600">{t('properties.allFieldsOptional')}</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="name">Property Name *</Label>
+                            <Label htmlFor="name">{t('properties.form.name')}</Label>
                             <Input
                               id="name"
-                              placeholder="e.g., Oak Street Apartments"
+                              placeholder={t('properties.form.namePlaceholder')}
                               value={newProperty.name}
                               onChange={(e) => handleInputChange('name', e.target.value)}
-                              required
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="type">Property Type *</Label>
+                            <Label htmlFor="type">{t('properties.form.type')}</Label>
                             <Select value={newProperty.type} onValueChange={(value) => handleInputChange('type', value)}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select property type" />
@@ -735,27 +1324,26 @@ const Properties = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                           {shouldShowUnits() && (
                             <div className="space-y-2">
-                              <Label htmlFor="units">Number of Units *</Label>
-                              <Input
-                                id="units"
-                                type="number"
-                                placeholder="e.g., 24"
-                                value={newProperty.units}
-                                onChange={(e) => handleInputChange('units', e.target.value)}
-                                required
-                              />
+                                                          <Label htmlFor="units">{t('properties.form.units')}</Label>
+                            <Input
+                              id="units"
+                              type="number"
+                              placeholder={t('properties.form.unitsPlaceholder')}
+                              value={newProperty.units}
+                              onChange={(e) => handleInputChange('units', e.target.value)}
+                            />
                             </div>
                           )}
                           {shouldShowYearBuilt() && (
                             <div className="space-y-2">
-                              <Label htmlFor="yearBuilt">Year Built</Label>
-                              <Input
-                                id="yearBuilt"
-                                type="number"
-                                placeholder="e.g., 2020"
-                                value={newProperty.yearBuilt}
-                                onChange={(e) => handleInputChange('yearBuilt', e.target.value)}
-                              />
+                                                          <Label htmlFor="yearBuilt">{t('properties.form.yearBuilt')}</Label>
+                            <Input
+                              id="yearBuilt"
+                              type="number"
+                              placeholder={t('properties.form.yearBuiltPlaceholder')}
+                              value={newProperty.yearBuilt}
+                              onChange={(e) => handleInputChange('yearBuilt', e.target.value)}
+                            />
                             </div>
                           )}
                           {shouldShowParkingSpaces() && (
@@ -790,49 +1378,45 @@ const Properties = () => {
                       <div className="space-y-6">
                         <div className="text-center mb-6">
                           <h3 className="text-xl font-semibold text-gray-900">Location Details</h3>
-                          <p className="text-gray-600">Where is your property located?</p>
+                          <p className="text-gray-600">Where is your property located? (all fields are optional)</p>
                         </div>
                         
                         <div className="space-y-4">
                           <div className="space-y-2">
-                            <Label htmlFor="address">Street Address *</Label>
+                            <Label htmlFor="address">Street Address</Label>
                             <Input
                               id="address"
                               placeholder="e.g., 123 Oak Street"
                               value={newProperty.address}
                               onChange={(e) => handleInputChange('address', e.target.value)}
-                              required
                             />
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
-                              <Label htmlFor="city">City *</Label>
+                              <Label htmlFor="city">City</Label>
                               <Input
                                 id="city"
                                 placeholder="e.g., Downtown"
                                 value={newProperty.city}
                                 onChange={(e) => handleInputChange('city', e.target.value)}
-                                required
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="state">State *</Label>
+                              <Label htmlFor="state">State</Label>
                               <Input
                                 id="state"
                                 placeholder="e.g., CA"
                                 value={newProperty.state}
                                 onChange={(e) => handleInputChange('state', e.target.value)}
-                                required
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="zipCode">ZIP Code *</Label>
+                              <Label htmlFor="zipCode">ZIP Code</Label>
                               <Input
                                 id="zipCode"
                                 placeholder="e.g., 90210"
                                 value={newProperty.zipCode}
                                 onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                                required
                               />
                             </div>
                           </div>
@@ -845,7 +1429,7 @@ const Properties = () => {
                       <div className="space-y-6">
                         <div className="text-center mb-6">
                           <h3 className="text-xl font-semibold text-gray-900">Financial Details</h3>
-                          <p className="text-gray-600">Let's talk about the financial aspects of your property</p>
+                          <p className="text-gray-600">Let's talk about the financial aspects of your property (all fields are optional)</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -860,14 +1444,13 @@ const Properties = () => {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="monthlyRent">Monthly Rent Income *</Label>
+                            <Label htmlFor="monthlyRent">Monthly Rent Income</Label>
                             <Input
                               id="monthlyRent"
                               type="number"
                               placeholder="e.g., 28800"
                               value={newProperty.monthlyRent}
                               onChange={(e) => handleInputChange('monthlyRent', e.target.value)}
-                              required
                             />
                           </div>
                           <div className="space-y-2">
@@ -1049,7 +1632,7 @@ const Properties = () => {
                       <div className="space-y-6">
                         <div className="text-center mb-6">
                           <h3 className="text-xl font-semibold text-gray-900">Property Images</h3>
-                          <p className="text-gray-600">Upload photos to showcase your property</p>
+                          <p className="text-gray-600">Upload photos to showcase your property (optional)</p>
                         </div>
                         
                         {/* Image Upload Area */}
@@ -1131,14 +1714,15 @@ const Properties = () => {
                           <Button 
                             type="button"
                             onClick={nextStep}
-                            disabled={!canProceedToNext() || isSubmitting}
+                            disabled={isSubmitting}
                             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                           >
-                            Next
+                            {t('properties.form.next')}
                           </Button>
                         ) : (
                           <Button 
-                            type="submit"
+                            type="button"
+                            onClick={handleSubmit}
                             disabled={isSubmitting}
                             className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
                           >
@@ -1150,7 +1734,7 @@ const Properties = () => {
                             ) : (
                               <div className="flex items-center gap-2">
                                 <Plus className="h-4 w-4" />
-                                Create Property
+                                {t('properties.form.createProperty')}
                               </div>
                             )}
                           </Button>
@@ -1171,7 +1755,7 @@ const Properties = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
               <Building2 className="h-6 w-6 text-blue-600" />
-              Property Details
+              {t('properties.details.title')}
             </DialogTitle>
             <DialogDescription>
               Complete information about {selectedProperty?.name}
@@ -1209,6 +1793,44 @@ const Properties = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Property Images Gallery */}
+              {selectedProperty.images && selectedProperty.images.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-gray-900 border-b pb-2">{t('properties.images.title')}</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {selectedProperty.images.map((img: any, index: number) => (
+                      <div key={img.id || index} className="relative group">
+                        <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                          {img.url && img.url !== '/placeholder.svg' ? (
+                            <img
+                              src={img.url}
+                              alt={img.name || `Property image ${index + 1}`}
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                              <div className="text-center">
+                                <Camera className="h-12 w-12 text-blue-400 mx-auto mb-2" />
+                                <p className="text-sm text-gray-500">Image {index + 1}</p>
+                                <p className="text-xs text-gray-400">{img.name || 'Property Image'}</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <div className="absolute top-2 right-2">
+                          <Badge variant="secondary" className="bg-white/90 text-gray-700 text-xs">
+                            {index + 1}/{selectedProperty.images.length}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-500 text-center">
+                    {selectedProperty.images.length} image{selectedProperty.images.length !== 1 ? 's' : ''} available
+                  </p>
+                </div>
+              )}
 
               {/* Key Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1263,15 +1885,7 @@ const Properties = () => {
                         <Progress value={selectedProperty.maintenanceScore} className="w-16 h-2" />
                       </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Tenant Satisfaction:</span>
-                      <div className="flex items-center gap-1">
-                        <span className="font-medium">{selectedProperty.tenantSatisfaction || 'N/A'}</span>
-                        {selectedProperty.tenantSatisfaction > 0 && (
-                          <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                        )}
-                      </div>
-                    </div>
+
                     <div className="flex justify-between">
                       <span className="text-gray-600">Trend:</span>
                       <div className="flex items-center gap-2">
@@ -1328,17 +1942,16 @@ const Properties = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-name">Property Name *</Label>
+                  <Label htmlFor="edit-name">Property Name</Label>
                   <Input
                     id="edit-name"
                     placeholder="e.g., Oak Street Apartments"
                     value={newProperty.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit-type">Property Type *</Label>
+                  <Label htmlFor="edit-type">Property Type</Label>
                   <Select value={newProperty.type} onValueChange={(value) => handleInputChange('type', value)}>
                     <SelectTrigger>
                       <SelectValue />
@@ -1357,14 +1970,13 @@ const Properties = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-units">Number of Units *</Label>
+                  <Label htmlFor="edit-units">Number of Units</Label>
                   <Input
                     id="edit-units"
                     type="number"
                     placeholder="e.g., 24"
                     value={newProperty.units}
                     onChange={(e) => handleInputChange('units', e.target.value)}
-                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -1378,37 +1990,34 @@ const Properties = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit-monthlyRent">Monthly Rent *</Label>
+                  <Label htmlFor="edit-monthlyRent">Monthly Rent</Label>
                   <Input
                     id="edit-monthlyRent"
                     type="number"
                     placeholder="e.g., 28800"
                     value={newProperty.monthlyRent}
                     onChange={(e) => handleInputChange('monthlyRent', e.target.value)}
-                    required
                   />
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-address">Street Address *</Label>
+                  <Label htmlFor="edit-address">Street Address</Label>
                   <Input
                     id="edit-address"
                     placeholder="e.g., 123 Oak Street"
                     value={newProperty.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
-                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit-city">City *</Label>
+                  <Label htmlFor="edit-city">City</Label>
                   <Input
                     id="edit-city"
                     placeholder="e.g., Downtown"
                     value={newProperty.city}
                     onChange={(e) => handleInputChange('city', e.target.value)}
-                    required
                   />
                 </div>
               </div>
@@ -1435,19 +2044,129 @@ const Properties = () => {
                   />
                 </div>
               </div>
+              
+              {/* Image Management Section */}
+              <div className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-gray-900">Property Images</h3>
+                  <p className="text-gray-600">Manage your property images (maximum 3 images)</p>
+                </div>
+                
+                {/* Current Images Display */}
+                {selectedProperty && selectedProperty.images && selectedProperty.images.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-gray-900">Current Images ({selectedProperty.images.length}/3)</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {selectedProperty.images.map((img: any, index: number) => (
+                        <div key={img.id || index} className="relative group">
+                          <div className="w-full h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                            <div className="text-center">
+                              <Camera className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                              <p className="text-xs text-gray-500">Image {index + 1}</p>
+                              <p className="text-xs text-gray-400">{img.name || 'Property Image'}</p>
+                            </div>
+                          </div>
+                          <div className="absolute top-2 right-2">
+                            <Badge variant="secondary" className="bg-white/80 text-gray-700">
+                              Current
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-500 text-center">
+                      Current images will be preserved. Upload new images to replace them.
+                    </p>
+                  </div>
+                )}
+                
+                {/* New Images Upload */}
+                <div className="space-y-3">
+                  <h4 className="font-medium text-gray-900">Upload New Images ({editPropertyImages.length}/3)</h4>
+                  
+                  {editPropertyImages.length < 3 && (
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleEditImageUpload}
+                        className="hidden"
+                        id="edit-image-upload"
+                      />
+                      <label htmlFor="edit-image-upload" className="cursor-pointer">
+                        <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm font-medium text-gray-900 mb-1">
+                          Click to upload new images
+                        </p>
+                        <p className="text-xs text-gray-600">
+                          Upload up to {3 - editPropertyImages.length} more image{(3 - editPropertyImages.length) !== 1 ? 's' : ''} (JPG, PNG, GIF)
+                        </p>
+                      </label>
+                    </div>
+                  )}
+                  
+                  {/* Uploaded New Images Preview */}
+                  {editPropertyImages.length > 0 && (
+                    <div className="space-y-3">
+                      <h5 className="font-medium text-gray-700">New Images Preview</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {editPropertyImages.map((file, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`New property image ${index + 1}`}
+                              className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeEditImage(index)}
+                              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                            <div className="absolute top-2 left-2">
+                              <Badge variant="secondary" className="bg-white/80 text-blue-700">
+                                New
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-gray-600 mt-1 truncate">{file.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Image Limit Warning */}
+                  {editPropertyImages.length >= 3 && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <div className="flex items-center gap-2 text-blue-800">
+                        <Info className="h-4 w-4" />
+                        <span className="text-sm font-medium">Maximum images reached</span>
+                      </div>
+                      <p className="text-xs text-blue-700 mt-1">
+                        You've reached the maximum of 3 images. Remove some images to upload new ones.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </form>
 
           <DialogFooter className="flex gap-3">
             <Button
               variant="outline"
-              onClick={() => setShowEditPropertyModal(false)}
+              onClick={() => {
+                setShowEditPropertyModal(false);
+                resetEditForm();
+              }}
             >
               Cancel
             </Button>
             <Button
               onClick={handleUpdateProperty}
-              disabled={isSubmitting || !newProperty.name || !newProperty.type || !newProperty.units || !newProperty.address || !newProperty.city || !newProperty.monthlyRent}
+              disabled={isSubmitting}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
               {isSubmitting ? (
@@ -1773,10 +2492,7 @@ const Properties = () => {
                 </SelectContent>
               </Select>
               
-              <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
-                <Filter className="h-4 w-4 mr-2" />
-                More Filters
-              </Button>
+
             </div>
             
             <div className="flex items-center gap-2">
@@ -1925,6 +2641,640 @@ const Properties = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Portfolio Analytics Modal */}
+      <Dialog open={showPortfolioAnalyticsModal} onOpenChange={setShowPortfolioAnalyticsModal}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <BarChart3 className="h-6 w-6 text-blue-600" />
+              Portfolio Analytics Dashboard
+            </DialogTitle>
+            <DialogDescription>
+              Comprehensive overview of your entire property portfolio performance, trends, and insights
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-8 py-4">
+            {/* Portfolio Overview Header */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg border border-blue-100">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-blue-600 mb-1">{portfolioAnalytics.totalProperties}</div>
+                  <div className="text-sm text-gray-600">Total Properties</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-1">{portfolioAnalytics.totalUnits}</div>
+                  <div className="text-sm text-gray-600">Total Units</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-emerald-600 mb-1">{portfolioAnalytics.occupancyRate}%</div>
+                  <div className="text-sm text-gray-600">Portfolio Occupancy</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-purple-600 mb-1">${portfolioAnalytics.totalValue.toLocaleString()}</div>
+                  <div className="text-sm text-gray-600">Total Portfolio Value</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Performance Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="border-0 shadow-lg">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-green-600" />
+                    Financial Performance
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Monthly Revenue:</span>
+                    <span className="font-semibold text-green-600">${portfolioAnalytics.totalRevenue.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Monthly Expenses:</span>
+                    <span className="font-semibold text-red-600">${portfolioAnalytics.totalExpenses.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 border-t">
+                    <span className="text-gray-800 font-semibold">Net Income:</span>
+                    <span className="font-bold text-blue-600">${portfolioAnalytics.totalNetIncome.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Annual Cash Flow:</span>
+                    <span className="font-semibold text-purple-600">${portfolioAnalytics.monthlyCashFlow.annual.toLocaleString()}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Target className="h-5 w-5 text-blue-600" />
+                    Performance Metrics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Avg. ROI:</span>
+                    <span className="font-semibold text-blue-600">{portfolioAnalytics.avgROI.toFixed(1)}%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Avg. Occupancy:</span>
+                    <span className="font-semibold text-green-600">{portfolioAnalytics.avgOccupancyRate.toFixed(1)}%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Avg. Maintenance:</span>
+                    <span className="font-semibold text-orange-600">{portfolioAnalytics.avgMaintenanceScore.toFixed(1)}%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Vacant Units:</span>
+                    <span className="font-semibold text-red-600">{portfolioAnalytics.totalVacant}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-purple-600" />
+                    ROI Distribution
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">High ROI (&gt;10%):</span>
+                    <span className="font-semibold text-green-600">{portfolioAnalytics.roiAnalysis.high}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Medium ROI (5-10%):</span>
+                    <span className="font-semibold text-blue-600">{portfolioAnalytics.roiAnalysis.medium}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Low ROI (&lt;5%):</span>
+                    <span className="font-semibold text-red-600">{portfolioAnalytics.roiAnalysis.low}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Total Properties:</span>
+                    <span className="font-semibold text-gray-800">{portfolioAnalytics.totalProperties}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Property Type and Status Distribution */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-blue-600" />
+                    Property Type Distribution
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {Object.entries(portfolioAnalytics.propertyTypeDistribution).map(([type, count]) => (
+                      <div key={type} className="flex items-center justify-between">
+                        <span className="text-gray-600">{type}</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-blue-600 h-2 rounded-full" 
+                              style={{ width: `${((count as number) / portfolioAnalytics.totalProperties) * 100}%` }}
+                            ></div>
+                          </div>
+                          <span className="font-semibold text-gray-800">{count as number}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-green-600" />
+                    Status Distribution
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {Object.entries(portfolioAnalytics.statusDistribution).map(([status, count]) => (
+                      <div key={status} className="flex items-center justify-between">
+                        <span className="text-gray-600 capitalize">{status}</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-20 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-green-600 h-2 rounded-full" 
+                              style={{ width: `${((count as number) / portfolioAnalytics.totalProperties) * 100}%` }}
+                            ></div>
+                          </div>
+                          <span className="font-semibold text-gray-800">{count as number}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Top Performers and Properties Needing Attention */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Star className="h-5 w-5 text-yellow-600" />
+                    Top Performing Properties
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {portfolioAnalytics.topPerformers.map((property, index) => (
+                      <div key={property.id} className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center text-sm font-bold text-yellow-700">
+                            #{index + 1}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-gray-900">{property.name}</div>
+                            <div className="text-sm text-gray-600">{property.type}</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-green-600">{property.roi}% ROI</div>
+                          <div className="text-sm text-gray-600">${property.monthlyRent.toLocaleString()}/mo</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5 text-red-600" />
+                    Properties Needing Attention
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {portfolioAnalytics.needsAttention.length > 0 ? (
+                      portfolioAnalytics.needsAttention.map((property) => (
+                        <div key={property.id} className="p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg border border-red-200">
+                          <div className="font-semibold text-gray-900 mb-1">{property.name}</div>
+                          <div className="text-sm text-gray-600 space-y-1">
+                            {property.occupancyRate < 80 && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-red-600">⚠️</span>
+                                <span>Low occupancy: {property.occupancyRate}%</span>
+                              </div>
+                            )}
+                            {property.maintenanceScore < 70 && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-orange-600">🔧</span>
+                                <span>Maintenance needed: {property.maintenanceScore}%</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4 text-gray-500">
+                        <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
+                        <p>All properties are performing well!</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recommendations Section */}
+            <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-50 to-indigo-50">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Zap className="h-5 w-5 text-blue-600" />
+                  Portfolio Recommendations
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 text-sm text-gray-700">
+                  {portfolioAnalytics.occupancyRate < 85 && (
+                    <p>• <strong>Improve Occupancy:</strong> Focus on marketing strategies to increase portfolio occupancy from {portfolioAnalytics.occupancyRate}% to target 90%+</p>
+                  )}
+                  {portfolioAnalytics.avgMaintenanceScore < 80 && (
+                    <p>• <strong>Maintenance Priority:</strong> Schedule maintenance for properties with scores below 80% to improve overall portfolio health</p>
+                  )}
+                  {portfolioAnalytics.roiAnalysis.low > portfolioAnalytics.roiAnalysis.high && (
+                    <p>• <strong>ROI Optimization:</strong> Review underperforming properties and consider value-add improvements or rent increases</p>
+                  )}
+                  {portfolioAnalytics.totalVacant > 0 && (
+                    <p>• <strong>Vacancy Management:</strong> {portfolioAnalytics.totalVacant} vacant units represent potential revenue. Focus on quick tenant acquisition</p>
+                  )}
+                  {portfolioAnalytics.avgROI < 8 && (
+                    <p>• <strong>Performance Review:</strong> Portfolio ROI of {portfolioAnalytics.avgROI.toFixed(1)}% is below market average. Consider strategic improvements</p>
+                  )}
+                  {portfolioAnalytics.occupancyRate >= 85 && portfolioAnalytics.avgMaintenanceScore >= 80 && portfolioAnalytics.avgROI >= 8 && (
+                    <p>• <strong>Excellent Performance:</strong> Your portfolio is performing exceptionally well! Consider expansion opportunities or value-add investments</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPortfolioAnalyticsModal(false)}>
+              Close
+            </Button>
+            <Button 
+              onClick={() => {
+                setShowPortfolioAnalyticsModal(false);
+                exportPortfolioPDF();
+              }}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Export Analytics Report
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Tenants Management Modal */}
+      <Dialog open={showTenantsModal} onOpenChange={setShowTenantsModal}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Users className="h-6 w-6 text-blue-600" />
+              Tenant Management - {selectedProperty?.name}
+            </DialogTitle>
+            <DialogDescription>
+              Manage tenants, view lease information, and track rent payments for this property
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Property Summary */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-100">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+                <div>
+                  <div className="text-2xl font-bold text-blue-600">{tenants.length}</div>
+                  <div className="text-sm text-gray-600">Total Tenants</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {tenants.filter(t => t.status === 'active').length}
+                  </div>
+                  <div className="text-sm text-gray-600">Active Tenants</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-emerald-600">
+                    ${tenants.reduce((sum, t) => sum + t.monthlyRent, 0).toLocaleString()}
+                  </div>
+                  <div className="text-sm text-gray-600">Monthly Rent Income</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-purple-600">
+                    {selectedProperty ? Math.round((tenants.length / selectedProperty.units) * 100) : 0}%
+                  </div>
+                  <div className="text-sm text-gray-600">Occupancy Rate</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tenants List */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900">Tenants</h3>
+                <Button onClick={handleAddTenant} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Tenant
+                </Button>
+              </div>
+              
+              {tenants.length > 0 ? (
+                <div className="grid gap-4">
+                  {tenants.map((tenant) => (
+                    <Card key={tenant.id} className="border-0 shadow-lg">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 space-y-3">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+                                <Users className="h-6 w-6 text-blue-600" />
+                              </div>
+                              <div>
+                                <h4 className="text-lg font-semibold text-gray-900">{tenant.name}</h4>
+                                <div className="flex items-center gap-4 text-sm text-gray-600">
+                                  <span>Unit {tenant.unitNumber}</span>
+                                  <span>•</span>
+                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    tenant.status === 'active' 
+                                      ? 'bg-green-100 text-green-800' 
+                                      : 'bg-red-100 text-red-800'
+                                  }`}>
+                                    {tenant.status === 'active' ? 'Active' : 'Inactive'}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                              <div className="space-y-2">
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Email:</span>
+                                  <span className="font-medium">{tenant.email}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Phone:</span>
+                                  <span className="font-medium">{tenant.phone}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Monthly Rent:</span>
+                                  <span className="font-semibold text-green-600">${tenant.monthlyRent.toLocaleString()}</span>
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Lease Start:</span>
+                                  <span className="font-medium">{new Date(tenant.leaseStart).toLocaleDateString()}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Lease End:</span>
+                                  <span className="font-medium">{new Date(tenant.leaseEnd).toLocaleDateString()}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">Security Deposit:</span>
+                                  <span className="font-medium">${tenant.securityDeposit.toLocaleString()}</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {tenant.notes && (
+                              <div className="bg-gray-50 p-3 rounded-lg">
+                                <p className="text-sm text-gray-700">{tenant.notes}</p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="flex items-center gap-2 ml-4">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEditTenant(tenant)}
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDeleteTenant(tenant)}
+                              className="text-red-600 border-red-200 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card className="border-0 shadow-lg">
+                  <CardContent className="p-12 text-center">
+                    <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-600 mb-2">No tenants yet</h3>
+                    <p className="text-gray-500 mb-4">
+                      Start managing your property by adding your first tenant. Track lease information, rent payments, and tenant details.
+                    </p>
+                    <Button onClick={handleAddTenant} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add First Tenant
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowTenantsModal(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add/Edit Tenant Modal */}
+      <Dialog open={showAddTenantModal} onOpenChange={setShowAddTenantModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              {editingTenant ? <Edit className="h-6 w-6 text-blue-600" /> : <Plus className="h-6 w-6 text-green-600" />}
+              {editingTenant ? 'Edit Tenant' : 'Add New Tenant'}
+            </DialogTitle>
+            <DialogDescription>
+              {editingTenant ? 'Update tenant information' : 'Add a new tenant to this property'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tenant-name">Full Name *</Label>
+                <Input
+                  id="tenant-name"
+                  value={newTenant.name}
+                  onChange={(e) => setNewTenant(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="e.g., John Smith"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tenant-email">Email *</Label>
+                <Input
+                  id="tenant-email"
+                  type="email"
+                  value={newTenant.email}
+                  onChange={(e) => setNewTenant(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="e.g., john@email.com"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tenant-phone">Phone Number *</Label>
+                <Input
+                  id="tenant-phone"
+                  value={newTenant.phone}
+                  onChange={(e) => setNewTenant(prev => ({ ...prev, phone: e.target.value }))}
+                  placeholder="e.g., +1 (555) 123-4567"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tenant-unit">Unit Number *</Label>
+                <Input
+                  id="tenant-unit"
+                  value={newTenant.unitNumber}
+                  onChange={(e) => setNewTenant(prev => ({ ...prev, unitNumber: e.target.value }))}
+                  placeholder="e.g., A101"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tenant-lease-start">Lease Start Date *</Label>
+                <Input
+                  id="tenant-lease-start"
+                  type="date"
+                  value={newTenant.leaseStart}
+                  onChange={(e) => setNewTenant(prev => ({ ...prev, leaseStart: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tenant-lease-end">Lease End Date *</Label>
+                <Input
+                  id="tenant-lease-end"
+                  type="date"
+                  value={newTenant.leaseEnd}
+                  onChange={(e) => setNewTenant(prev => ({ ...prev, leaseEnd: e.target.value }))}
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tenant-rent">Monthly Rent *</Label>
+                <Input
+                  id="tenant-rent"
+                  type="number"
+                  value={newTenant.monthlyRent}
+                  onChange={(e) => setNewTenant(prev => ({ ...prev, monthlyRent: e.target.value }))}
+                  placeholder="e.g., 1200"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tenant-deposit">Security Deposit *</Label>
+                <Input
+                  id="tenant-deposit"
+                  type="number"
+                  value={newTenant.securityDeposit}
+                  onChange={(e) => setNewTenant(prev => ({ ...prev, securityDeposit: e.target.value }))}
+                  placeholder="e.g., 1200"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="tenant-status">Status</Label>
+              <Select value={newTenant.status} onValueChange={(value) => setNewTenant(prev => ({ ...prev, status: value }))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="tenant-emergency">Emergency Contact</Label>
+              <Input
+                id="tenant-emergency"
+                value={newTenant.emergencyContact}
+                onChange={(e) => setNewTenant(prev => ({ ...prev, emergencyContact: e.target.value }))}
+                placeholder="e.g., Jane Smith +1 (555) 987-6543"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="tenant-notes">Notes</Label>
+              <Textarea
+                id="tenant-notes"
+                value={newTenant.notes}
+                onChange={(e) => setNewTenant(prev => ({ ...prev, notes: e.target.value }))}
+                placeholder="Additional notes about the tenant..."
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowAddTenantModal(false);
+                resetTenantForm();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveTenant}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              {editingTenant ? (
+                <>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Update Tenant
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Tenant
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

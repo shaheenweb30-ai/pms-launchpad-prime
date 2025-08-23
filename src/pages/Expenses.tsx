@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -142,6 +143,7 @@ import {
 } from "@/components/ui/tabs";
 
 const Expenses = () => {
+  const { formatCurrency } = useCurrency();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [propertyFilter, setPropertyFilter] = useState('all');
@@ -612,7 +614,7 @@ const Expenses = () => {
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                  <span>${totalExpenses.toLocaleString()} total expenses this month</span>
+                  <span>{formatCurrency(totalExpenses)} total expenses this month</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="h-4 w-4" />
@@ -647,7 +649,7 @@ const Expenses = () => {
                 <DollarSign className="h-8 w-8 text-red-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(totalExpenses / 1000).toFixed(1)}K</p>
+                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalExpenses)}</p>
                 <p className="text-sm text-gray-600">Total Expenses</p>
                 <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
@@ -665,7 +667,7 @@ const Expenses = () => {
                 <CheckCircle className="h-8 w-8 text-green-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(paidExpenses / 1000).toFixed(1)}K</p>
+                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(paidExpenses)}</p>
                 <p className="text-sm text-gray-600">Paid Expenses</p>
                 <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
                   <CheckCircle className="h-3 w-3" />
@@ -683,7 +685,7 @@ const Expenses = () => {
                 <Clock className="h-8 w-8 text-yellow-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(pendingExpenses / 1000).toFixed(1)}K</p>
+                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(pendingExpenses)}</p>
                 <p className="text-sm text-gray-600">Pending Expenses</p>
                 <div className="flex items-center gap-1 text-xs text-yellow-600 mt-1">
                   <Clock className="h-3 w-3" />
@@ -701,7 +703,7 @@ const Expenses = () => {
                 <TrendingUp className="h-8 w-8 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(recurringExpenses / 1000).toFixed(1)}K</p>
+                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(recurringExpenses)}</p>
                 <p className="text-sm text-gray-600">Recurring Expenses</p>
                 <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
@@ -855,7 +857,7 @@ const Expenses = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="font-medium">${expense.amount.toLocaleString()}</div>
+                      <div className="font-medium">{formatCurrency(expense.amount)}</div>
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
@@ -954,7 +956,7 @@ const Expenses = () => {
                       <span className="capitalize font-medium">{category}</span>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold">${amount.toLocaleString()}</div>
+                      <div className="font-semibold">{formatCurrency(amount)}</div>
                       <div className="text-xs text-muted-foreground">
                         {((amount / totalExpenses) * 100).toFixed(1)}%
                       </div>
@@ -981,7 +983,7 @@ const Expenses = () => {
                     <div>
                       <div className="font-medium">{expense.description}</div>
                       <div className="text-sm text-muted-foreground">
-                        {expense.property} - ${expense.amount.toLocaleString()}
+                        {expense.property} - {formatCurrency(expense.amount)}
                       </div>
                       <div className="text-xs text-muted-foreground">
                         Vendor: {expense.vendor}
@@ -1043,7 +1045,7 @@ const Expenses = () => {
                 </div>
                 <div className="space-y-2">
                   <Label>Amount</Label>
-                  <div className="p-2 border rounded font-medium">${selectedExpense.amount.toLocaleString()}</div>
+                  <div className="p-2 border rounded font-medium">{formatCurrency(selectedExpense.amount)}</div>
                 </div>
                 <div className="space-y-2">
                   <Label>Date</Label>

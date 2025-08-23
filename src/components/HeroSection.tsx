@@ -71,7 +71,7 @@ const HeroSection = () => {
                   <Users className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-[#46b64b]" />
                 </div>
                 <div className="text-lg sm:text-xl lg:text-2xl font-bold text-[#231f20]">98%</div>
-                <div className="text-xs sm:text-sm text-[#a5afbe]">Satisfaction</div>
+                <div className="text-xs sm:text-sm text-[#a5afbe]">Success Rate</div>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-[#225fac]/10 rounded-lg sm:rounded-xl mb-2 sm:mb-3 mx-auto">

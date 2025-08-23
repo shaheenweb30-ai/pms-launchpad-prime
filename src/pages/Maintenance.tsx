@@ -181,7 +181,7 @@ const Maintenance = () => {
       urgencyScore: 85,
       completionTime: null,
       vendorRating: null,
-      tenantSatisfaction: null,
+
       photosCount: 2,
       updatesCount: 0,
       estimatedDuration: '2-4 hours',
@@ -210,7 +210,7 @@ const Maintenance = () => {
       urgencyScore: 65,
       completionTime: null,
       vendorRating: 4.2,
-      tenantSatisfaction: null,
+
       photosCount: 3,
       updatesCount: 2,
       estimatedDuration: '3-5 hours',
@@ -239,7 +239,7 @@ const Maintenance = () => {
       urgencyScore: 95,
       completionTime: null,
       vendorRating: 4.8,
-      tenantSatisfaction: null,
+
       photosCount: 1,
       updatesCount: 3,
       estimatedDuration: '4-6 hours',
@@ -268,7 +268,7 @@ const Maintenance = () => {
       urgencyScore: 40,
       completionTime: '3 hours',
       vendorRating: 4.5,
-      tenantSatisfaction: 4.8,
+
       photosCount: 0,
       updatesCount: 1,
       estimatedDuration: '2-3 hours',
@@ -297,7 +297,7 @@ const Maintenance = () => {
       urgencyScore: 75,
       completionTime: null,
       vendorRating: null,
-      tenantSatisfaction: null,
+
       photosCount: 1,
       updatesCount: 0,
       estimatedDuration: '1-2 hours',
@@ -326,7 +326,7 @@ const Maintenance = () => {
       urgencyScore: 55,
       completionTime: null,
       vendorRating: 4.1,
-      tenantSatisfaction: null,
+
       photosCount: 2,
       updatesCount: 1,
       estimatedDuration: '1-2 hours',
@@ -355,7 +355,7 @@ const Maintenance = () => {
       urgencyScore: 80,
       completionTime: null,
       vendorRating: 4.6,
-      tenantSatisfaction: null,
+
       photosCount: 3,
       updatesCount: 2,
       estimatedDuration: '2-3 hours',
@@ -385,7 +385,7 @@ const Maintenance = () => {
   const avgUrgencyScore = maintenanceRequests.reduce((sum, r) => sum + r.urgencyScore, 0) / maintenanceRequests.length;
   const emergencyRequests = maintenanceRequests.filter(r => r.emergencyLevel).length;
   const avgVendorRating = maintenanceRequests.filter(r => r.vendorRating).reduce((sum, r) => sum + (r.vendorRating || 0), 0) / Math.max(maintenanceRequests.filter(r => r.vendorRating).length, 1);
-  const avgTenantSatisfaction = maintenanceRequests.filter(r => r.tenantSatisfaction).reduce((sum, r) => sum + (r.tenantSatisfaction || 0), 0) / Math.max(maintenanceRequests.filter(r => r.tenantSatisfaction).length, 1);
+
   const totalPhotos = maintenanceRequests.reduce((sum, r) => sum + r.photosCount, 0);
   const followUpRequired = maintenanceRequests.filter(r => r.followUpRequired).length;
 
@@ -507,7 +507,7 @@ const Maintenance = () => {
         assignedVendor: null,
         completionTime: null,
         vendorRating: null,
-        tenantSatisfaction: null,
+  
         photosCount: 0,
         updatesCount: 0,
         warranty: '1 year',
@@ -629,7 +629,7 @@ const Maintenance = () => {
                 Maintenance Hub 🔧
               </h1>
               <p className="text-lg text-gray-600 max-w-2xl">
-                Manage maintenance requests and work orders efficiently. Track progress, assign vendors, and ensure tenant satisfaction across your property portfolio.
+                Manage maintenance requests and work orders efficiently. Track progress, assign vendors, and ensure quality maintenance across your property portfolio.
               </p>
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-2 text-sm text-gray-600">

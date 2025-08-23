@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -97,6 +98,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Lease = () => {
+  const { formatCurrency } = useCurrency();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [propertyFilter, setPropertyFilter] = useState('all');
@@ -858,10 +860,10 @@ const Lease = () => {
                             <div>
                               <h4 className="font-semibold text-gray-900 mb-2">Financial Terms</h4>
                               <div className="space-y-1 text-sm text-gray-600">
-                                <p><span className="font-medium">Monthly Rent:</span> ${newLease.monthlyRent}/month</p>
-                                <p><span className="font-medium">Security Deposit:</span> ${newLease.deposit}</p>
-                                <p><span className="font-medium">Additional Deposit:</span> ${newLease.securityDeposit || 'None'}</p>
-                                <p><span className="font-medium">Late Fees:</span> ${newLease.lateFees || 'None'}</p>
+                                                <p><span className="font-medium">Monthly Rent:</span> {formatCurrency(newLease.monthlyRent)}/month</p>
+                <p><span className="font-medium">Security Deposit:</span> {formatCurrency(newLease.deposit)}</p>
+                <p><span className="font-medium">Additional Deposit:</span> {newLease.securityDeposit ? formatCurrency(newLease.securityDeposit) : 'None'}</p>
+                <p><span className="font-medium">Late Fees:</span> {newLease.lateFees ? formatCurrency(newLease.lateFees) : 'None'}</p>
                                 <p><span className="font-medium">Auto-Renewal:</span> {newLease.autoRenew ? 'Yes' : 'No'}</p>
                               </div>
                             </div>
@@ -972,7 +974,7 @@ const Lease = () => {
                 <DollarSign className="h-8 w-8 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(totalMonthlyRent / 1000).toFixed(1)}K</p>
+                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalMonthlyRent)}</p>
                 <p className="text-sm text-gray-600">Monthly Rent</p>
                 <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
@@ -1023,7 +1025,7 @@ const Lease = () => {
       {/* Additional Stats Row */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="text-center p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
-          <div className="text-2xl font-bold text-emerald-600 mb-1">${(totalDeposits / 1000).toFixed(1)}K</div>
+                            <div className="text-2xl font-bold text-emerald-600 mb-1">{formatCurrency(totalDeposits)}</div>
           <div className="text-sm text-gray-600 mb-1">Security Deposits</div>
           <div className="text-xs text-emerald-600">Total held</div>
         </div>
@@ -1031,7 +1033,7 @@ const Lease = () => {
         <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-100">
           <div className="text-2xl font-bold text-blue-600 mb-1">{avgTenantRating.toFixed(1)}</div>
           <div className="text-sm text-gray-600 mb-1">Avg. Rating</div>
-          <div className="text-xs text-blue-600">Tenant satisfaction</div>
+          <div className="text-xs text-blue-600">Lease status</div>
         </div>
         
         <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
@@ -1041,7 +1043,7 @@ const Lease = () => {
         </div>
         
         <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-50 to-white border border-yellow-100">
-          <div className="text-2xl font-bold text-yellow-600 mb-1">${totalLateFees}</div>
+                            <div className="text-2xl font-bold text-yellow-600 mb-1">{formatCurrency(totalLateFees)}</div>
           <div className="text-sm text-gray-600 mb-1">Late Fees</div>
           <div className="text-xs text-yellow-600">This year</div>
         </div>
@@ -1165,16 +1167,16 @@ const Lease = () => {
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1">
-                        <div className="font-semibold text-green-600">${lease.monthlyRent.toLocaleString()}/month</div>
+                        <div className="font-semibold text-green-600">{formatCurrency(lease.monthlyRent)}/month</div>
                         <div className="text-xs text-gray-600">
-                          Deposit: ${lease.deposit.toLocaleString()}
+                          Deposit: {formatCurrency(lease.deposit)}
                         </div>
                         <div className="text-xs text-gray-600">
-                          Total collected: ${lease.totalCollected.toLocaleString()}
+                          Total collected: {formatCurrency(lease.totalCollected)}
                         </div>
                         {lease.lateFees > 0 && (
                           <div className="text-xs text-red-600">
-                            Late fees: ${lease.lateFees}
+                            Late fees: {formatCurrency(lease.lateFees)}
                           </div>
                         )}
                       </div>
@@ -1350,7 +1352,7 @@ const Lease = () => {
                         }
                       </div>
                       <div className="text-xs text-red-600 font-medium">
-                        {lease.latePayments > 0 ? `Late fees: $${lease.lateFees}` : 'Action required'}
+                                                    {lease.latePayments > 0 ? `Late fees: ${formatCurrency(lease.lateFees)}` : 'Action required'}
                       </div>
                     </div>
                     <Button size="sm" variant="destructive" className="hover:bg-red-700">

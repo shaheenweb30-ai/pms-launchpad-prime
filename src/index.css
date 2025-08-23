@@ -9,6 +9,15 @@
     scroll-behavior: smooth;
   }
   
+  /* RTL Support */
+  [dir="rtl"] {
+    direction: rtl;
+  }
+  
+  [dir="ltr"] {
+    direction: ltr;
+  }
+  
   :root {
     /* Professional color palette */
     --background: 0 0% 100%;
@@ -73,6 +82,57 @@
 
     /* Animations & transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* RTL Layout Support */
+  .rtl {
+    direction: rtl;
+  }
+  
+  .ltr {
+    direction: ltr;
+  }
+  
+  /* RTL Sidebar Adjustments */
+  .rtl .sidebar {
+    border-left: 1px solid hsl(var(--sidebar-border));
+    border-right: none;
+  }
+  
+  .ltr .sidebar {
+    border-right: 1px solid hsl(var(--sidebar-border));
+    border-left: none;
+  }
+  
+  /* RTL Text Alignment */
+  .rtl .text-left {
+    text-align: right;
+  }
+  
+  .rtl .text-right {
+    text-align: left;
+  }
+  
+  /* RTL Margin Adjustments */
+  .rtl .ml-auto {
+    margin-left: unset;
+    margin-right: auto;
+  }
+  
+  .rtl .mr-auto {
+    margin-right: unset;
+    margin-left: auto;
+  }
+  
+  /* RTL Padding Adjustments */
+  .rtl .pl-4 {
+    padding-left: unset;
+    padding-right: 1rem;
+  }
+  
+  .rtl .pr-4 {
+    padding-right: unset;
+    padding-left: 1rem;
   }
 
   .dark {

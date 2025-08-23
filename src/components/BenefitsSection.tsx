@@ -26,9 +26,9 @@ const BenefitsSection = () => {
     },
     {
       icon: CheckCircle,
-      title: t('benefits.satisfaction.title'), 
-      description: t('benefits.satisfaction.description'),
-      metric: t('benefits.satisfaction.metric'),
+      title: t('benefits.quality.title'), 
+      description: t('benefits.quality.description'),
+      metric: t('benefits.quality.metric'),
       color: "text-[#834b9d]",
       bgColor: "bg-[#834b9d]/10",
       borderColor: "border-[#834b9d]/20"

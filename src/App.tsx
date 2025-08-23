@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AccessControlProvider } from "@/contexts/AccessControlContext";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ProtectedLayout from "@/components/ProtectedLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -31,18 +32,32 @@ import Settings from "./pages/Settings";
 import AdminAccessControl from "./pages/AdminAccessControl";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <AccessControlProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <ErrorBoundary>
+const App = () => {
+  const { i18n } = useTranslation();
+
+  // Initialize language from localStorage on app startup
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('preferredLanguage');
+    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ar')) {
+      i18n.changeLanguage(savedLanguage);
+    }
+  }, [i18n]);
+
+    return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthProvider>
+          <AccessControlProvider>
+            <CurrencyProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <ErrorBoundary>
               <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/benefits" element={<Benefits />} />
@@ -210,10 +225,12 @@ const App = () => (
             </Routes>
           </ErrorBoundary>
         </BrowserRouter>
+            </CurrencyProvider>
         </AccessControlProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;

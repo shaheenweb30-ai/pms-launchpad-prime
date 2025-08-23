@@ -38,9 +38,11 @@ import {
   MoreHorizontal
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 const Dashboard = () => {
   const { profile } = useAuth();
+  const { formatCurrency } = useCurrency();
 
   const stats = [
     {
@@ -61,17 +63,17 @@ const Dashboard = () => {
       icon: Users,
       color: 'green',
       progress: 94,
-      detail: '96% satisfaction rate'
+      detail: '96% completion rate'
     },
     {
       title: 'Monthly Revenue',
-      value: '$24,580',
+      value: formatCurrency(24580),
       change: '+12% vs last month',
       trend: 'up',
       icon: DollarSign,
       color: 'emerald',
       progress: 78,
-      detail: 'Target: $30,000'
+      detail: `Target: ${formatCurrency(30000)}`
     },
     {
       title: 'Occupancy Rate',
@@ -89,7 +91,7 @@ const Dashboard = () => {
     {
       type: 'payment',
       message: 'Rent payment received from Sarah Johnson',
-      amount: '$1,200',
+      amount: formatCurrency(1200),
       time: '2 hours ago',
       status: 'success',
       property: 'Oak Street Apartments #4B',
@@ -496,11 +498,11 @@ const Dashboard = () => {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Total Value</span>
-                <span className="font-semibold text-green-600">$2.4M</span>
+                                    <span className="font-semibold text-green-600">{formatCurrency(2400000)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Average Rent</span>
-                <span className="font-semibold">$1,850</span>
+                                    <span className="font-semibold">{formatCurrency(1850)}</span>
               </div>
             </div>
           </CardContent>

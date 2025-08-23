@@ -47,19 +47,22 @@ interface ProtectedLayoutProps {
 }
 
 const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  
+  // Get current language direction
+  const isRTL = i18n.language === 'ar';
 
   const handleSignOut = async () => {
     try {
       await signOut();
       toast({
-        title: "Signed out successfully",
-        description: "You have been signed out of PropertyFlow.",
+        title: t('sidebar.signOut'),
+        description: t('sidebar.signOutSuccess'),
       });
       navigate('/');
     } catch (error) {
@@ -73,37 +76,37 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
 
   const navigationItems = [
     {
-      title: 'Dashboard',
+      title: t('sidebar.dashboard'),
       href: '/dashboard',
       icon: Home,
       isActive: location.pathname === '/dashboard'
     },
     {
-      title: 'Analytics',
+      title: t('sidebar.analytics'),
       href: '/analytics',
       icon: BarChart3,
       isActive: location.pathname === '/analytics'
     },
     {
-      title: 'Properties',
+      title: t('sidebar.properties'),
       href: '/properties',
       icon: Building2,
       isActive: location.pathname === '/properties' || location.pathname.startsWith('/properties/')
     },
     {
-      title: 'Tenants',
+      title: t('sidebar.tenants'),
       href: '/tenants',
       icon: Users,
       isActive: location.pathname === '/tenants'
     },
     {
-      title: 'Leases',
+      title: t('sidebar.leases'),
       href: '/leases',
       icon: ClipboardList,
       isActive: location.pathname === '/leases'
     },
     {
-      title: 'Applications',
+      title: t('sidebar.applications'),
       href: '/applications',
       icon: UserCheck,
       isActive: location.pathname === '/applications'
@@ -112,19 +115,19 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
 
   const financialItems = [
     {
-      title: 'Financials',
+      title: t('sidebar.financials'),
       href: '/financials',
       icon: DollarSign,
       isActive: location.pathname === '/financials'
     },
     {
-      title: 'Rent Collection',
+      title: t('sidebar.rentCollection'),
       href: '/rent-collection',
       icon: CreditCard,
       isActive: location.pathname === '/rent-collection'
     },
     {
-      title: 'Expenses',
+      title: t('sidebar.expenses'),
       href: '/expenses',
       icon: Receipt,
       isActive: location.pathname === '/expenses'
@@ -133,25 +136,25 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
 
   const operationsItems = [
     {
-      title: 'Maintenance',
+      title: t('sidebar.maintenance'),
       href: '/maintenance',
       icon: Wrench,
       isActive: location.pathname === '/maintenance'
     },
     {
-      title: 'Inspections',
+      title: t('sidebar.inspections'),
       href: '/inspections',
       icon: Search,
       isActive: location.pathname === '/inspections'
     },
     {
-      title: 'Documents',
+      title: t('sidebar.documents'),
       href: '/documents',
       icon: FolderOpen,
       isActive: location.pathname === '/documents'
     },
     {
-      title: 'Reports',
+      title: t('sidebar.reports'),
       href: '/reports',
       icon: FileText,
       isActive: location.pathname === '/reports'
@@ -160,152 +163,157 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex h-screen bg-background w-full protected-layout">
-        {/* Sidebar */}
-        <Sidebar>
-          <SidebarHeader className="border-b border-border/5">
-            <div className="flex items-center gap-2 px-2 py-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">PF</span>
+      <div 
+        className={`flex h-screen bg-background w-full protected-layout ${isRTL ? 'rtl' : 'ltr'}`}
+        dir={isRTL ? 'rtl' : 'ltr'}
+      >
+        {/* Sidebar - Conditionally positioned based on language */}
+        {!isRTL ? (
+          <Sidebar className="border-r border-border/5">
+            <SidebarHeader className="border-b border-border/5">
+              <div className="flex items-center gap-2 px-2 py-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">PF</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">PropertyFlow</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {profile?.first_name || user?.email}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">PropertyFlow</p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {profile?.first_name || user?.email}
-                </p>
-              </div>
-            </div>
-          </SidebarHeader>
-          
-          <SidebarContent>
-            {/* Main Navigation */}
-            <SidebarGroup>
-              <SidebarGroupLabel>Overview</SidebarGroupLabel>
-              <SidebarMenu>
-                {navigationItems.map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={item.isActive}
-                      tooltip={item.title}
-                    >
-                      <Link to={item.href}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroup>
-
-            <SidebarSeparator />
-
-            {/* Financial Management */}
-            <SidebarGroup>
-              <SidebarGroupLabel>Financial</SidebarGroupLabel>
-              <SidebarMenu>
-                {financialItems.map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={item.isActive}
-                      tooltip={item.title}
-                    >
-                      <Link to={item.href}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroup>
-
-            <SidebarSeparator />
-
-            {/* Operations */}
-            <SidebarGroup>
-              <SidebarGroupLabel>Operations</SidebarGroupLabel>
-              <SidebarMenu>
-                {operationsItems.map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={item.isActive}
-                      tooltip={item.title}
-                    >
-                      <Link to={item.href}>
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroup>
-          </SidebarContent>
-
-          <SidebarFooter className="border-t border-border/5">
-            <SidebarGroup>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === '/settings'}
-                    tooltip="Settings"
-                  >
-                    <Link to="/settings">
-                      <Settings className="h-4 w-4" />
-                      <span>Settings</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                    tooltip="Profile"
-                  >
-                    <User className="h-4 w-4" />
-                    <span>Profile</span>
-                    <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                
-                {isProfileDropdownOpen && (
-                  <SidebarMenu>
-                    <SidebarMenuItem>
+            </SidebarHeader>
+            
+            <SidebarContent>
+              {/* Main Navigation */}
+              <SidebarGroup>
+                <SidebarGroupLabel>{t('sidebar.overview')}</SidebarGroupLabel>
+                <SidebarMenu>
+                  {navigationItems.map((item) => (
+                    <SidebarMenuItem key={item.href}>
                       <SidebarMenuButton
-                        onClick={handleSignOut}
-                        tooltip="Sign Out"
-                        variant="outline"
+                        asChild
+                        isActive={item.isActive}
+                        tooltip={item.title}
                       >
-                        <LogOut className="h-4 w-4" />
-                        <span>Sign Out</span>
+                        <Link to={item.href}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  </SidebarMenu>
-                )}
-              </SidebarMenu>
-            </SidebarGroup>
-          </SidebarFooter>
-        </Sidebar>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroup>
+
+              <SidebarSeparator />
+
+              {/* Financial Management */}
+              <SidebarGroup>
+                <SidebarGroupLabel>{t('sidebar.financial')}</SidebarGroupLabel>
+                <SidebarMenu>
+                  {financialItems.map((item) => (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={item.isActive}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.href}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroup>
+
+              <SidebarSeparator />
+
+              {/* Operations */}
+              <SidebarGroup>
+                <SidebarGroupLabel>{t('sidebar.operations')}</SidebarGroupLabel>
+                <SidebarMenu>
+                  {operationsItems.map((item) => (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={item.isActive}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.href}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroup>
+            </SidebarContent>
+
+            <SidebarFooter className="border-t border-border/5">
+              <SidebarGroup>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={location.pathname === '/settings'}
+                      tooltip={t('sidebar.settings')}
+                    >
+                      <Link to="/settings">
+                        <Settings className="h-4 w-4" />
+                        <span>{t('sidebar.settings')}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                      tooltip={t('sidebar.profile')}
+                    >
+                      <User className="h-4 w-4" />
+                      <span>{t('sidebar.profile')}</span>
+                      <ChevronDown className={`h-4 w-4 ${isRTL ? 'mr-auto' : 'ml-auto'} transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  
+                  {isProfileDropdownOpen && (
+                    <SidebarMenu>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          onClick={handleSignOut}
+                          tooltip={t('sidebar.signOut')}
+                          variant="outline"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          <span>{t('sidebar.signOut')}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  )}
+                </SidebarMenu>
+              </SidebarGroup>
+            </SidebarFooter>
+          </Sidebar>
+        ) : null}
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-w-0 w-full">
           {/* Top Header */}
           <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
-            <SidebarTrigger className="-ml-1" />
+            <SidebarTrigger className={isRTL ? '-mr-1' : '-ml-1'} />
             <div className="flex items-center gap-2 px-4 text-sm">
               <span className="text-muted-foreground">/</span>
               <span className="font-medium capitalize">
-                {location.pathname.split('/')[1] || 'Dashboard'}
+                {location.pathname.split('/')[1] || t('sidebar.dashboard')}
               </span>
             </div>
             
-            <div className="ml-auto flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="relative">
+            <div className={`${isRTL ? 'mr-auto' : 'ml-auto'} flex items-center gap-2`}>
+              <Button variant="ghost" size="icon" className="relative" title={t('sidebar.notifications')}>
                 <Bell className="h-4 w-4" />
                 <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs">
                   3
@@ -338,6 +346,139 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
             {children}
           </div>
         </div>
+
+        {/* Sidebar for Arabic RTL - positioned on the right */}
+        {isRTL ? (
+          <Sidebar className="border-l border-border/5">
+            <SidebarHeader className="border-b border-border/5">
+              <div className="flex items-center gap-2 px-2 py-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">PF</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">PropertyFlow</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {profile?.first_name || user?.email}
+                  </p>
+                </div>
+              </div>
+            </SidebarHeader>
+            
+            <SidebarContent>
+              {/* Main Navigation */}
+              <SidebarGroup>
+                <SidebarGroupLabel>{t('sidebar.overview')}</SidebarGroupLabel>
+                <SidebarMenu>
+                  {navigationItems.map((item) => (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={item.isActive}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.href}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroup>
+
+              <SidebarSeparator />
+
+              {/* Financial Management */}
+              <SidebarGroup>
+                <SidebarGroupLabel>{t('sidebar.financial')}</SidebarGroupLabel>
+                <SidebarMenu>
+                  {financialItems.map((item) => (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={item.isActive}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.href}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroup>
+
+              <SidebarSeparator />
+
+              {/* Operations */}
+              <SidebarGroup>
+                <SidebarGroupLabel>{t('sidebar.operations')}</SidebarGroupLabel>
+                <SidebarMenu>
+                  {operationsItems.map((item) => (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={item.isActive}
+                        tooltip={item.title}
+                      >
+                        <Link to={item.href}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroup>
+            </SidebarContent>
+
+            <SidebarFooter className="border-t border-border/5">
+              <SidebarGroup>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={location.pathname === '/settings'}
+                      tooltip={t('sidebar.settings')}
+                    >
+                      <Link to="/settings">
+                        <Settings className="h-4 w-4" />
+                        <span>{t('sidebar.settings')}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                      tooltip={t('sidebar.profile')}
+                    >
+                      <User className="h-4 w-4" />
+                      <span>{t('sidebar.profile')}</span>
+                      <ChevronDown className={`h-4 w-4 ${isRTL ? 'mr-auto' : 'ml-auto'} transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  
+                  {isProfileDropdownOpen && (
+                    <SidebarMenu>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          onClick={handleSignOut}
+                          tooltip={t('sidebar.signOut')}
+                          variant="outline"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          <span>{t('sidebar.signOut')}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  )}
+                </SidebarMenu>
+              </SidebarGroup>
+            </SidebarFooter>
+          </Sidebar>
+        ) : null}
       </div>
     </SidebarProvider>
   );

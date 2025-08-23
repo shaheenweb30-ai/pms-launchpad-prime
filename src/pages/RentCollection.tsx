@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -113,6 +114,7 @@ import {
 } from "@/components/ui/tabs";
 
 const RentCollection = () => {
+  const { formatCurrency } = useCurrency();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [propertyFilter, setPropertyFilter] = useState('all');
@@ -432,7 +434,7 @@ const RentCollection = () => {
               <div className="flex items-center gap-4 pt-2">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                  <span>${totalCollected.toLocaleString()} collected this month</span>
+                  <span>{formatCurrency(totalCollected)} collected this month</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="h-4 w-4" />
@@ -467,7 +469,7 @@ const RentCollection = () => {
                 <DollarSign className="h-8 w-8 text-green-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(totalCollected / 1000).toFixed(1)}K</p>
+                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalCollected)}</p>
                 <p className="text-sm text-gray-600">Total Collected</p>
                 <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
@@ -503,7 +505,7 @@ const RentCollection = () => {
                 <AlertCircle className="h-8 w-8 text-orange-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(totalLateFees / 1000).toFixed(1)}K</p>
+                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalLateFees)}</p>
                 <p className="text-sm text-gray-600">Late Fees</p>
                 <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
                   <Zap className="h-3 w-3" />
@@ -521,7 +523,7 @@ const RentCollection = () => {
                 <TrendingDown className="h-8 w-8 text-red-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(overdueAmount / 1000).toFixed(1)}K</p>
+                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(overdueAmount)}</p>
                 <p className="text-sm text-gray-600">Overdue Amount</p>
                 <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
                   <AlertTriangle className="h-3 w-3" />
@@ -544,7 +546,7 @@ const RentCollection = () => {
         <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
           <div className="text-2xl font-bold text-purple-600 mb-1">{avgTenantRating.toFixed(1)}</div>
           <div className="text-sm text-gray-600 mb-1">Avg Tenant Rating</div>
-          <div className="text-xs text-purple-600">Overall satisfaction</div>
+          <div className="text-xs text-purple-600">Payment score</div>
         </div>
         
         <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-50 to-white border border-yellow-100">
@@ -671,10 +673,10 @@ const RentCollection = () => {
                     </TableCell>
                     <TableCell className="text-sm text-gray-600">{payment.month}</TableCell>
                     <TableCell>
-                      <div className="font-medium text-gray-900">${payment.amount.toLocaleString()}</div>
+                      <div className="font-medium text-gray-900">{formatCurrency(payment.amount)}</div>
                       {payment.lateFees > 0 && (
                         <div className="text-xs text-orange-600 font-medium">
-                          +${payment.lateFees} late fees
+                                                      +{formatCurrency(payment.lateFees)} late fees
                         </div>
                       )}
                       <div className="text-xs text-gray-500">
@@ -838,11 +840,11 @@ const RentCollection = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-100">
                 <span className="text-sm font-medium text-green-700">Expected Revenue</span>
-                <span className="text-lg font-bold text-green-800">${totalExpected.toLocaleString()}</span>
+                <span className="text-lg font-bold text-green-800">{formatCurrency(totalExpected)}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
                 <span className="text-sm font-medium text-blue-700">Collected Revenue</span>
-                <span className="text-lg font-bold text-blue-800">${totalCollected.toLocaleString()}</span>
+                <span className="text-lg font-bold text-blue-800">{formatCurrency(totalCollected)}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
                 <span className="text-sm font-medium text-purple-700">Collection Rate</span>
@@ -850,7 +852,7 @@ const RentCollection = () => {
               </div>
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg border border-orange-100">
                 <span className="text-sm font-medium text-orange-700">Late Fees</span>
-                <span className="text-lg font-bold text-orange-800">${totalLateFees.toLocaleString()}</span>
+                <span className="text-lg font-bold text-orange-800">{formatCurrency(totalLateFees)}</span>
               </div>
               <div className="mt-4 p-3 bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg border border-gray-100">
                 <div className="flex items-center justify-between mb-2">
@@ -895,7 +897,7 @@ const RentCollection = () => {
                 </div>
                 <div className="space-y-2">
                   <Label>Amount</Label>
-                  <div className="p-2 border rounded font-medium">${selectedPayment.amount.toLocaleString()}</div>
+                  <div className="p-2 border rounded font-medium">{formatCurrency(selectedPayment.amount)}</div>
                 </div>
                 <div className="space-y-2">
                   <Label>Status</Label>
@@ -909,7 +911,7 @@ const RentCollection = () => {
                 </div>
                 <div className="space-y-2">
                   <Label>Late Fees</Label>
-                  <div className="p-2 border rounded">${selectedPayment.lateFees.toLocaleString()}</div>
+                  <div className="p-2 border rounded">{formatCurrency(selectedPayment.lateFees)}</div>
                 </div>
                 {selectedPayment.paidDate && (
                   <div className="space-y-2">

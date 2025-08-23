@@ -995,7 +995,7 @@ const Tenants = () => {
         <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-100">
           <div className="text-2xl font-bold text-blue-600 mb-1">{avgTenantRating.toFixed(1)}</div>
           <div className="text-sm text-gray-600 mb-1">Avg. Rating</div>
-          <div className="text-xs text-blue-600">Tenant satisfaction</div>
+          <div className="text-xs text-blue-600">Tenant rating</div>
         </div>
         
         <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">

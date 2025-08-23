@@ -43,9 +43,9 @@ const Benefits = () => {
     },
     {
       icon: CheckCircle,
-      title: t('benefits.satisfaction.title'), 
-      description: t('benefits.satisfaction.description'),
-      metric: t('benefits.satisfaction.metric'),
+      title: t('benefits.quality.title'), 
+      description: t('benefits.quality.description'),
+      metric: t('benefits.quality.metric'),
       color: "text-purple-600",
       bgColor: "bg-purple-100"
     },
@@ -149,7 +149,7 @@ const Benefits = () => {
             Transform Your Property Management
           </h1>
           <p className="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto mb-8">
-            Discover how PropertyFlow delivers measurable results that drive growth, efficiency, and tenant satisfaction
+            Discover how PropertyFlow delivers measurable results that drive growth, efficiency, and service quality
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-white text-primary hover:bg-white/90">
