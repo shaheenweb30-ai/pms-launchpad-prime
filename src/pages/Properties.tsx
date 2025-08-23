@@ -1,0 +1,728 @@
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { 
+  Building2, 
+  Users, 
+  DollarSign, 
+  MapPin,
+  Plus,
+  Search,
+  Filter,
+  Grid3X3,
+  List,
+  MoreHorizontal,
+  Edit,
+  Eye,
+  Trash2,
+  Home,
+  Building,
+  TrendingUp,
+  TrendingDown,
+  Star,
+  Calendar,
+  Phone,
+  Mail,
+  Globe,
+  Camera,
+  Settings,
+  BarChart3,
+  PieChart,
+  LineChart,
+  Activity,
+  Target,
+  Zap,
+  Shield,
+  Wrench,
+  Clock,
+  AlertCircle,
+  CheckCircle,
+  ArrowUpRight,
+  Download,
+  Share,
+  RefreshCw,
+  Minus
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const Properties = () => {
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
+
+  const properties = [
+    {
+      id: 1,
+      name: 'Oak Street Apartments',
+      address: '123 Oak Street, Downtown',
+      city: 'Downtown',
+      type: 'Apartment',
+      units: 24,
+      occupiedUnits: 22,
+      monthlyRent: 28800,
+      image: '/placeholder.svg',
+      status: 'active',
+      occupancyRate: 92,
+      lastInspection: '2024-12-01',
+      maintenanceScore: 95,
+      tenantSatisfaction: 4.6,
+      yearBuilt: 2018,
+      propertyValue: 2800000,
+      monthlyExpenses: 8500,
+      netIncome: 20300,
+      roi: 8.7,
+      trend: 'up',
+      change: '+2.1%'
+    },
+    {
+      id: 2,
+      name: 'Riverside Complex',
+      address: '456 River Road, Westside',
+      city: 'Westside',
+      type: 'Complex',
+      units: 48,
+      occupiedUnits: 45,
+      monthlyRent: 54000,
+      image: '/placeholder.svg',
+      status: 'active',
+      occupancyRate: 94,
+      lastInspection: '2024-11-28',
+      maintenanceScore: 92,
+      tenantSatisfaction: 4.8,
+      yearBuilt: 2020,
+      propertyValue: 5200000,
+      monthlyExpenses: 12000,
+      netIncome: 42000,
+      roi: 9.7,
+      trend: 'up',
+      change: '+3.2%'
+    },
+    {
+      id: 3,
+      name: 'Downtown Lofts',
+      address: '789 Main Street, City Center',
+      city: 'City Center',
+      type: 'Loft',
+      units: 12,
+      occupiedUnits: 11,
+      monthlyRent: 16500,
+      image: '/placeholder.svg',
+      status: 'active',
+      occupancyRate: 92,
+      lastInspection: '2024-12-05',
+      maintenanceScore: 88,
+      tenantSatisfaction: 4.4,
+      yearBuilt: 2019,
+      propertyValue: 1800000,
+      monthlyExpenses: 4500,
+      netIncome: 12000,
+      roi: 8.0,
+      trend: 'stable',
+      change: '0.0%'
+    },
+    {
+      id: 4,
+      name: 'Suburban Homes',
+      address: '321 Elm Avenue, Suburbs',
+      city: 'Suburbs',
+      type: 'House',
+      units: 8,
+      occupiedUnits: 7,
+      monthlyRent: 11200,
+      image: '/placeholder.svg',
+      status: 'maintenance',
+      occupancyRate: 88,
+      lastInspection: '2024-11-15',
+      maintenanceScore: 75,
+      tenantSatisfaction: 4.2,
+      yearBuilt: 2017,
+      propertyValue: 1200000,
+      monthlyExpenses: 3800,
+      netIncome: 7400,
+      roi: 7.4,
+      trend: 'down',
+      change: '-1.8%'
+    },
+    {
+      id: 5,
+      name: 'Harbor View Condos',
+      address: '555 Harbor Drive, Waterfront',
+      city: 'Waterfront',
+      type: 'Condo',
+      units: 16,
+      occupiedUnits: 15,
+      monthlyRent: 24000,
+      image: '/placeholder.svg',
+      status: 'active',
+      occupancyRate: 94,
+      lastInspection: '2024-12-10',
+      maintenanceScore: 96,
+      tenantSatisfaction: 4.9,
+      yearBuilt: 2021,
+      propertyValue: 3200000,
+      monthlyExpenses: 6800,
+      netIncome: 17200,
+      roi: 6.5,
+      trend: 'up',
+      change: '+1.5%'
+    },
+    {
+      id: 6,
+      name: 'Mountain Ridge Estates',
+      address: '888 Ridge Road, Highlands',
+      city: 'Highlands',
+      type: 'Estate',
+      units: 6,
+      occupiedUnits: 5,
+      monthlyRent: 18000,
+      image: '/placeholder.svg',
+      status: 'active',
+      occupancyRate: 83,
+      lastInspection: '2024-11-20',
+      maintenanceScore: 89,
+      tenantSatisfaction: 4.7,
+      yearBuilt: 2016,
+      propertyValue: 2800000,
+      monthlyExpenses: 5200,
+      netIncome: 12800,
+      roi: 5.5,
+      trend: 'up',
+      change: '+0.8%'
+    }
+  ];
+
+  const filteredProperties = properties.filter(property => {
+    const matchesSearch = property.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         property.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         property.city.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || property.status === statusFilter;
+    const matchesType = typeFilter === 'all' || property.type === typeFilter;
+    
+    return matchesSearch && matchesStatus && matchesType;
+  });
+
+  const totalProperties = properties.length;
+  const totalUnits = properties.reduce((sum, property) => sum + property.units, 0);
+  const totalOccupied = properties.reduce((sum, property) => sum + property.occupiedUnits, 0);
+  const totalRevenue = properties.reduce((sum, property) => sum + property.monthlyRent, 0);
+  const totalValue = properties.reduce((sum, property) => sum + property.propertyValue, 0);
+  const avgROI = properties.reduce((sum, property) => sum + property.roi, 0) / properties.length;
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'maintenance':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'vacant':
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'Apartment':
+        return <Building2 className="h-4 w-4" />;
+      case 'Complex':
+        return <Building2 className="h-4 w-4" />;
+      case 'Loft':
+        return <Building className="h-4 w-4" />;
+      case 'House':
+        return <Home className="h-4 w-4" />;
+      case 'Condo':
+        return <Building2 className="h-4 w-4" />;
+      case 'Estate':
+        return <Home className="h-4 w-4" />;
+      default:
+        return <Building2 className="h-4 w-4" />;
+    }
+  };
+
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'up':
+        return <TrendingUp className="h-4 w-4 text-green-600" />;
+      case 'down':
+        return <TrendingDown className="h-4 w-4 text-red-600" />;
+      case 'stable':
+        return <Minus className="h-4 w-4 text-gray-600" />;
+      default:
+        return <Minus className="h-4 w-4 text-gray-600" />;
+    }
+  };
+
+  const getTrendColor = (trend: string) => {
+    switch (trend) {
+      case 'up':
+        return 'text-green-600';
+      case 'down':
+        return 'text-red-600';
+      case 'stable':
+        return 'text-gray-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
+  const PropertyCard = ({ property }: { property: typeof properties[0] }) => (
+    <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-gray-50/50 shadow-lg hover:shadow-2xl">
+      <CardHeader className="p-0 relative">
+        <div className="h-48 bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
+          <Building2 className="h-16 w-16 text-blue-600 relative z-10" />
+          <div className="absolute top-3 right-3">
+            <Badge className={getStatusColor(property.status)}>
+              {property.status === 'active' ? 'Active' : 'Maintenance'}
+            </Badge>
+          </div>
+          <div className="absolute bottom-3 left-3">
+            <Badge variant="secondary" className="bg-white/80 text-gray-700">
+              {property.occupancyRate}% Occupied
+            </Badge>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1">
+            <h3 className="font-bold text-xl text-gray-900 mb-2">{property.name}</h3>
+            <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+              <MapPin className="h-4 w-4 text-blue-500" />
+              <span>{property.address}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="p-1 rounded bg-blue-50">
+                {getTypeIcon(property.type)}
+              </div>
+              <Badge variant="outline" className="border-blue-200 text-blue-700">
+                {property.type}
+              </Badge>
+            </div>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem>
+                <Eye className="h-4 w-4 mr-2" />
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Property
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                View Analytics
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-600">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Property
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        <div className="space-y-3 mb-6">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="text-lg font-bold text-gray-900">{property.occupiedUnits}/{property.units}</div>
+              <div className="text-xs text-gray-600">Units</div>
+            </div>
+            <div className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="text-lg font-bold text-green-600">{property.occupancyRate}%</div>
+              <div className="text-xs text-gray-600">Occupancy</div>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">Monthly Revenue:</span>
+              <span className="font-semibold text-lg text-green-600">${property.monthlyRent.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">Net Income:</span>
+              <span className="font-semibold text-blue-600">${property.netIncome.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">ROI:</span>
+              <div className="flex items-center gap-2">
+                <span className={`font-semibold ${getTrendColor(property.trend)}`}>{property.roi}%</span>
+                <Badge variant="outline" className="text-xs">
+                  {property.change}
+                </Badge>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">Maintenance Score:</span>
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{property.maintenanceScore}%</span>
+                <Progress value={property.maintenanceScore} className="w-16 h-2" />
+              </div>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">Tenant Satisfaction:</span>
+              <div className="flex items-center gap-1">
+                <span className="font-medium">{property.tenantSatisfaction}</span>
+                <Star className="h-4 w-4 text-yellow-500 fill-current" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <div className="text-xs text-gray-500">
+            Last inspection: {new Date(property.lastInspection).toLocaleDateString()}
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+              <Users className="h-4 w-4 mr-1" />
+              Tenants
+            </Button>
+            <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Eye className="h-4 w-4 mr-1" />
+              View
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="space-y-8 p-1">
+      {/* Enhanced Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 via-white to-blue-50 p-8 border border-green-100/50">
+        <div className="absolute inset-0 bg-gradient-to-br from-green-50/20 to-blue-50/20 opacity-30"></div>
+        <div className="relative z-10">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                Property Portfolio 🏢
+              </h1>
+              <p className="text-lg text-gray-600 max-w-2xl">
+                Manage and monitor your complete property portfolio. Track performance, occupancy rates, and financial metrics across all your properties.
+              </p>
+              <div className="flex items-center gap-4 pt-2">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span>{totalProperties} properties managed</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Clock className="h-4 w-4" />
+                  <span>Last updated: {new Date().toLocaleTimeString()}</span>
+                </div>
+              </div>
+            </div>
+            <div className="hidden lg:flex items-center gap-3">
+              <Button variant="outline" className="border-green-200 text-green-700 hover:bg-green-50">
+                <Download className="h-4 w-4 mr-2" />
+                Export Portfolio
+              </Button>
+              <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Portfolio Analytics
+              </Button>
+              <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Property
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Stats Overview */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
+                <Building2 className="h-8 w-8 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-gray-900">{totalProperties}</p>
+                <p className="text-sm text-gray-600">Total Properties</p>
+                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                  <TrendingUp className="h-3 w-3" />
+                  +2 this year
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
+                <Users className="h-8 w-8 text-green-600" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-gray-900">{totalOccupied}/{totalUnits}</p>
+                <p className="text-sm text-gray-600">Occupied Units</p>
+                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                  <TrendingUp className="h-3 w-3" />
+                  {Math.round((totalOccupied / totalUnits) * 100)}% occupancy
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-emerald-50/50 shadow-lg hover:shadow-2xl">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-emerald-100 group-hover:bg-emerald-200 transition-colors duration-300">
+                <DollarSign className="h-8 w-8 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-gray-900">${(totalRevenue / 1000).toFixed(1)}K</p>
+                <p className="text-sm text-gray-600">Monthly Revenue</p>
+                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                  <TrendingUp className="h-3 w-3" />
+                  +12.5% vs last month
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-purple-50/50 shadow-lg hover:shadow-2xl">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
+                <Target className="h-8 w-8 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-gray-900">{avgROI.toFixed(1)}%</p>
+                <p className="text-sm text-gray-600">Avg. ROI</p>
+                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                  <TrendingUp className="h-3 w-3" />
+                  +1.2% vs last year
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Enhanced Filters and Search */}
+      <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search properties by name, address, or city..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 border-gray-200 focus:border-blue-500"
+                />
+              </div>
+              
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-40 border-gray-200">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="maintenance">Maintenance</SelectItem>
+                  <SelectItem value="vacant">Vacant</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-40 border-gray-200">
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="Apartment">Apartment</SelectItem>
+                  <SelectItem value="Complex">Complex</SelectItem>
+                  <SelectItem value="Loft">Loft</SelectItem>
+                  <SelectItem value="House">House</SelectItem>
+                  <SelectItem value="Condo">Condo</SelectItem>
+                  <SelectItem value="Estate">Estate</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
+                <Filter className="h-4 w-4 mr-2" />
+                More Filters
+              </Button>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <div className="border border-gray-200 rounded-lg p-1 bg-gray-50">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className={viewMode === 'grid' ? 'bg-white shadow-sm' : ''}
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className={viewMode === 'list' ? 'bg-white shadow-sm' : ''}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Properties Grid/List */}
+      {viewMode === 'grid' ? (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredProperties.map((property) => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </div>
+      ) : (
+        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+          <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+            <CardTitle className="flex items-center gap-3 text-lg">
+              <div className="p-2 rounded-lg bg-blue-50">
+                <List className="h-5 w-5 text-blue-600" />
+              </div>
+              Properties List View
+              <Badge variant="secondary" className="ml-auto">{filteredProperties.length} properties</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-gray-100">
+              {filteredProperties.map((property) => (
+                <div key={property.id} className="p-6 hover:bg-gray-50/50 transition-colors duration-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center border border-blue-200">
+                        <Building2 className="h-8 w-8 text-blue-600" />
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-semibold text-gray-900">{property.name}</h3>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <MapPin className="h-4 w-4 text-blue-500" />
+                          <span>{property.address}</span>
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                          <span className="flex items-center gap-1">
+                            <Users className="h-3 w-3" />
+                            {property.occupiedUnits}/{property.units} units
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Target className="h-3 w-3" />
+                            {property.occupancyRate}% occupied
+                          </span>
+                          <span className="flex items-center gap-1 font-semibold text-green-600">
+                            <DollarSign className="h-3 w-3" />
+                            ${property.monthlyRent.toLocaleString()}/mo
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className={`text-lg font-bold ${getTrendColor(property.trend)}`}>{property.roi}% ROI</span>
+                          <Badge variant="outline" className="text-xs">
+                            {property.change}
+                          </Badge>
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Net: ${property.netIncome.toLocaleString()}/mo
+                        </div>
+                      </div>
+                      <Badge className={getStatusColor(property.status)}>
+                        {property.status === 'active' ? 'Active' : 'Maintenance'}
+                      </Badge>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Property
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <BarChart3 className="h-4 w-4 mr-2" />
+                            View Analytics
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete Property
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {filteredProperties.length === 0 && (
+        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+          <CardContent className="p-12 text-center">
+            <Building2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-600 mb-2">No properties found</h3>
+            <p className="text-gray-500 mb-4">
+              Try adjusting your search criteria or filters to find what you're looking for.
+            </p>
+            <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Your First Property
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
+
+export default Properties;

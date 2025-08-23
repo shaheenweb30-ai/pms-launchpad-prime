@@ -1,0 +1,897 @@
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { 
+  Calendar,
+  FileText,
+  Users,
+  Building2,
+  DollarSign,
+  Clock,
+  AlertCircle,
+  CheckCircle,
+  Plus,
+  Search,
+  Filter,
+  Download,
+  Edit,
+  Eye,
+  MoreHorizontal,
+  TrendingUp,
+  TrendingDown,
+  Star,
+  Home,
+  User,
+  Shield,
+  Award,
+  MessageSquare,
+  CreditCard,
+  ArrowUpRight,
+  Share,
+  RefreshCw,
+  Minus,
+  Zap,
+  Target,
+  Activity,
+  BarChart3,
+  PieChart,
+  LineChart,
+  CalendarDays,
+  FileCheck,
+  FileX,
+  FileClock,
+  Building,
+  MapPin,
+  Timer,
+  CheckCircle2,
+  XCircle,
+  Clock4,
+  AlertTriangle,
+  Info,
+  ChevronRight,
+  ExternalLink,
+  Copy,
+  Printer,
+  Send,
+  Archive,
+  Trash2,
+  Settings,
+  Bell,
+  HelpCircle
+} from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const Lease = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [propertyFilter, setPropertyFilter] = useState('all');
+  const [leaseTypeFilter, setLeaseTypeFilter] = useState('all');
+
+  // Enhanced lease data with more details
+  const leases = [
+    {
+      id: 'L001',
+      property: 'Oak Street Apartments - Unit 101',
+      tenant: 'John Smith',
+      startDate: '2024-01-01',
+      endDate: '2024-12-31',
+      monthlyRent: 1800,
+      deposit: 1800,
+      status: 'active',
+      nextPayment: '2024-12-01',
+      latePayments: 0,
+      leaseType: 'residential',
+      autoRenew: true,
+      daysRemaining: 31,
+      totalCollected: 19800,
+      lastPayment: '2024-11-01',
+      paymentHistory: 'excellent',
+      tenantRating: 4.8,
+      maintenanceRequests: 1,
+      communicationScore: 95,
+      propertyValue: 2800000,
+      monthlyExpenses: 8500,
+      lateFees: 0,
+      securityDeposit: 1800,
+      utilities: 'included',
+      parking: 'included',
+      petPolicy: 'allowed',
+      smokingPolicy: 'not allowed'
+    },
+    {
+      id: 'L002',
+      property: 'Downtown Lofts - Unit 205',
+      tenant: 'Sarah Johnson',
+      startDate: '2024-03-01',
+      endDate: '2025-02-28',
+      monthlyRent: 2200,
+      deposit: 2200,
+      status: 'active',
+      nextPayment: '2024-12-01',
+      latePayments: 1,
+      leaseType: 'residential',
+      autoRenew: false,
+      daysRemaining: 89,
+      totalCollected: 19800,
+      lastPayment: '2024-11-01',
+      paymentHistory: 'good',
+      tenantRating: 4.6,
+      maintenanceRequests: 2,
+      communicationScore: 88,
+      propertyValue: 1800000,
+      monthlyExpenses: 4500,
+      lateFees: 50,
+      securityDeposit: 2200,
+      utilities: 'tenant pays',
+      parking: 'included',
+      petPolicy: 'not allowed',
+      smokingPolicy: 'not allowed'
+    },
+    {
+      id: 'L003',
+      property: 'Riverside Complex - Unit 312',
+      tenant: 'Mike Davis',
+      startDate: '2024-06-01',
+      endDate: '2025-05-31',
+      monthlyRent: 1600,
+      deposit: 1600,
+      status: 'active',
+      nextPayment: '2024-12-01',
+      latePayments: 0,
+      leaseType: 'residential',
+      autoRenew: true,
+      daysRemaining: 156,
+      totalCollected: 9600,
+      lastPayment: '2024-11-01',
+      paymentHistory: 'excellent',
+      tenantRating: 4.9,
+      maintenanceRequests: 0,
+      communicationScore: 98,
+      propertyValue: 2800000,
+      monthlyExpenses: 7200,
+      lateFees: 0,
+      securityDeposit: 1600,
+      utilities: 'included',
+      parking: 'included',
+      petPolicy: 'allowed',
+      smokingPolicy: 'not allowed'
+    },
+    {
+      id: 'L004',
+      property: 'Suburban Homes - 123 Main St',
+      tenant: 'Lisa Wilson',
+      startDate: '2023-09-01',
+      endDate: '2024-08-31',
+      monthlyRent: 2800,
+      deposit: 2800,
+      status: 'expired',
+      nextPayment: 'N/A',
+      latePayments: 2,
+      leaseType: 'residential',
+      autoRenew: false,
+      daysRemaining: -122,
+      totalCollected: 30800,
+      lastPayment: '2024-07-01',
+      paymentHistory: 'fair',
+      tenantRating: 4.2,
+      maintenanceRequests: 3,
+      communicationScore: 75,
+      propertyValue: 1200000,
+      monthlyExpenses: 3800,
+      lateFees: 200,
+      securityDeposit: 2800,
+      utilities: 'tenant pays',
+      parking: 'included',
+      petPolicy: 'allowed',
+      smokingPolicy: 'not allowed'
+    },
+    {
+      id: 'L005',
+      property: 'Commercial Plaza - Suite 100',
+      tenant: 'Tech Solutions Inc',
+      startDate: '2024-01-01',
+      endDate: '2026-12-31',
+      monthlyRent: 4500,
+      deposit: 9000,
+      status: 'active',
+      nextPayment: '2024-12-01',
+      latePayments: 0,
+      leaseType: 'commercial',
+      autoRenew: false,
+      daysRemaining: 761,
+      totalCollected: 49500,
+      lastPayment: '2024-11-01',
+      paymentHistory: 'excellent',
+      tenantRating: 5.0,
+      maintenanceRequests: 0,
+      communicationScore: 100,
+      propertyValue: 3200000,
+      monthlyExpenses: 6800,
+      lateFees: 0,
+      securityDeposit: 9000,
+      utilities: 'tenant pays',
+      parking: 'included',
+      petPolicy: 'N/A',
+      smokingPolicy: 'N/A'
+    },
+    {
+      id: 'L006',
+      property: 'Harbor View Condos - Unit 7B',
+      tenant: 'James Thompson',
+      startDate: '2024-08-01',
+      endDate: '2025-07-31',
+      monthlyRent: 2200,
+      deposit: 2200,
+      status: 'active',
+      nextPayment: '2024-12-01',
+      latePayments: 0,
+      leaseType: 'residential',
+      autoRenew: true,
+      daysRemaining: 212,
+      totalCollected: 8800,
+      lastPayment: '2024-11-01',
+      paymentHistory: 'excellent',
+      tenantRating: 5.0,
+      maintenanceRequests: 0,
+      communicationScore: 100,
+      propertyValue: 3200000,
+      monthlyExpenses: 6800,
+      lateFees: 0,
+      securityDeposit: 2200,
+      utilities: 'included',
+      parking: 'included',
+      petPolicy: 'not allowed',
+      smokingPolicy: 'not allowed'
+    },
+    {
+      id: 'L007',
+      property: 'Mountain Ridge Estates - Unit 3',
+      tenant: 'Maria Garcia',
+      startDate: '2024-11-01',
+      endDate: '2025-10-31',
+      monthlyRent: 1900,
+      deposit: 1900,
+      status: 'active',
+      nextPayment: '2024-12-01',
+      latePayments: 1,
+      leaseType: 'residential',
+      autoRenew: false,
+      daysRemaining: 304,
+      totalCollected: 1900,
+      lastPayment: '2024-11-01',
+      paymentHistory: 'poor',
+      tenantRating: 3.8,
+      maintenanceRequests: 4,
+      communicationScore: 65,
+      propertyValue: 2800000,
+      monthlyExpenses: 5200,
+      lateFees: 100,
+      securityDeposit: 1900,
+      utilities: 'tenant pays',
+      parking: 'included',
+      petPolicy: 'allowed',
+      smokingPolicy: 'not allowed'
+    }
+  ];
+
+  const properties = [
+    'All Properties',
+    'Oak Street Apartments - Unit 101',
+    'Downtown Lofts - Unit 205',
+    'Riverside Complex - Unit 312',
+    'Suburban Homes - 123 Main St',
+    'Commercial Plaza - Suite 100',
+    'Harbor View Condos - Unit 7B',
+    'Mountain Ridge Estates - Unit 3'
+  ];
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'expired':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'expired':
+        return <AlertCircle className="h-4 w-4 text-red-600" />;
+      case 'pending':
+        return <Clock className="h-4 w-4 text-yellow-600" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-600" />;
+    }
+  };
+
+  const getLeaseTypeColor = (type: string) => {
+    switch (type) {
+      case 'residential':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'commercial':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getLeaseTypeIcon = (type: string) => {
+    switch (type) {
+      case 'residential':
+        return <Home className="h-4 w-4 text-blue-600" />;
+      case 'commercial':
+        return <Building className="h-4 w-4 text-purple-600" />;
+      default:
+        return <Building2 className="h-4 w-4 text-gray-600" />;
+    }
+  };
+
+  const getPaymentHistoryColor = (history: string) => {
+    switch (history) {
+      case 'excellent': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
+      case 'good': return 'bg-green-100 text-green-800 border-green-200';
+      case 'fair': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'poor': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getLeaseStatusColor = (daysRemaining: number) => {
+    if (daysRemaining <= 0) return 'text-red-600';
+    if (daysRemaining <= 30) return 'text-red-600';
+    if (daysRemaining <= 90) return 'text-orange-600';
+    return 'text-green-600';
+  };
+
+  const getLeaseStatusText = (daysRemaining: number) => {
+    if (daysRemaining <= 0) return 'Expired';
+    if (daysRemaining <= 30) return 'Expiring Soon';
+    if (daysRemaining <= 90) return 'Expiring Soon';
+    return 'Active';
+  };
+
+  const getLeaseStatusBadge = (daysRemaining: number) => {
+    if (daysRemaining <= 0) return 'bg-red-100 text-red-800 border-red-200';
+    if (daysRemaining <= 30) return 'bg-red-100 text-red-800 border-red-200';
+    if (daysRemaining <= 90) return 'bg-orange-100 text-orange-800 border-orange-200';
+    return 'bg-green-100 text-green-800 border-green-200';
+  };
+
+  const filteredLeases = leases.filter(lease => {
+    const matchesSearch = lease.tenant.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         lease.property.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         lease.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || lease.status === statusFilter;
+    const matchesProperty = propertyFilter === 'all' || lease.property === propertyFilter;
+    const matchesType = leaseTypeFilter === 'all' || lease.leaseType === leaseTypeFilter;
+    
+    return matchesSearch && matchesStatus && matchesProperty && matchesType;
+  });
+
+  const activeLeases = leases.filter(lease => lease.status === 'active').length;
+  const expiredLeases = leases.filter(lease => lease.status === 'expired').length;
+  const totalMonthlyRent = leases.filter(lease => lease.status === 'active')
+    .reduce((sum, lease) => sum + lease.monthlyRent, 0);
+  const expiringSoon = leases.filter(lease => {
+    const endDate = new Date(lease.endDate);
+    const today = new Date();
+    const diffTime = endDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 90 && diffDays > 0;
+  }).length;
+  const totalDeposits = leases.reduce((sum, lease) => sum + lease.deposit, 0);
+  const avgTenantRating = leases.reduce((sum, lease) => sum + lease.tenantRating, 0) / leases.length;
+  const totalLatePayments = leases.reduce((sum, lease) => sum + lease.latePayments, 0);
+  const avgCommunicationScore = leases.reduce((sum, lease) => sum + lease.communicationScore, 0) / leases.length;
+  const totalLateFees = leases.reduce((sum, lease) => sum + lease.lateFees, 0);
+
+  return (
+    <div className="space-y-8 p-1">
+      {/* Enhanced Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-8 border border-blue-100/50">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-indigo-50/20 opacity-30"></div>
+        <div className="relative z-10">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Lease Management 📋
+              </h1>
+              <p className="text-lg text-gray-600 max-w-2xl">
+                Manage your property leases, track tenant agreements, and monitor lease performance. Streamline your leasing operations for maximum efficiency and profitability.
+              </p>
+              <div className="flex items-center gap-4 pt-2">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span>{activeLeases} active leases</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Clock className="h-4 w-4" />
+                  <span>Last updated: {new Date().toLocaleTimeString()}</span>
+                </div>
+              </div>
+            </div>
+            <div className="hidden lg:flex items-center gap-3">
+              <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+                <Download className="h-4 w-4 mr-2" />
+                Export Leases
+              </Button>
+              <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Lease Analytics
+              </Button>
+              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <Plus className="h-4 w-4 mr-2" />
+                New Lease
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Summary Cards */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
+                <FileCheck className="h-8 w-8 text-green-600" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-gray-900">{activeLeases}</p>
+                <p className="text-sm text-gray-600">Active Leases</p>
+                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                  <TrendingUp className="h-3 w-3" />
+                  {Math.round((activeLeases / leases.length) * 100)}% of total
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
+                <DollarSign className="h-8 w-8 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-gray-900">${(totalMonthlyRent / 1000).toFixed(1)}K</p>
+                <p className="text-sm text-gray-600">Monthly Rent</p>
+                <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
+                  <TrendingUp className="h-3 w-3" />
+                  Total monthly income
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-orange-50/50 shadow-lg hover:shadow-2xl">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
+                <Clock className="h-8 w-8 text-orange-600" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-gray-900">{expiringSoon}</p>
+                <p className="text-sm text-gray-600">Expiring Soon</p>
+                <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
+                  <AlertTriangle className="h-3 w-3" />
+                  Within 90 days
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-red-50/50 shadow-lg hover:shadow-2xl">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-red-100 group-hover:bg-red-200 transition-colors duration-300">
+                <FileX className="h-8 w-8 text-red-600" />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-gray-900">{expiredLeases}</p>
+                <p className="text-sm text-gray-600">Expired Leases</p>
+                <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
+                  <TrendingDown className="h-3 w-3" />
+                  Need attention
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Additional Stats Row */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
+          <div className="text-2xl font-bold text-emerald-600 mb-1">${(totalDeposits / 1000).toFixed(1)}K</div>
+          <div className="text-sm text-gray-600 mb-1">Security Deposits</div>
+          <div className="text-xs text-emerald-600">Total held</div>
+        </div>
+        
+        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-100">
+          <div className="text-2xl font-bold text-blue-600 mb-1">{avgTenantRating.toFixed(1)}</div>
+          <div className="text-sm text-gray-600 mb-1">Avg. Rating</div>
+          <div className="text-xs text-blue-600">Tenant satisfaction</div>
+        </div>
+        
+        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
+          <div className="text-2xl font-bold text-purple-600 mb-1">{avgCommunicationScore.toFixed(0)}%</div>
+          <div className="text-sm text-gray-600 mb-1">Communication</div>
+          <div className="text-xs text-purple-600">Response rate</div>
+        </div>
+        
+        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-50 to-white border border-yellow-100">
+          <div className="text-2xl font-bold text-yellow-600 mb-1">${totalLateFees}</div>
+          <div className="text-sm text-gray-600 mb-1">Late Fees</div>
+          <div className="text-xs text-yellow-600">This year</div>
+        </div>
+      </div>
+
+      {/* Enhanced Filters and Search */}
+      <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-xl">
+            <FileText className="h-5 w-5 text-blue-600" />
+            Lease Overview
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex-1">
+              <Label htmlFor="search" className="text-sm font-medium text-gray-700 mb-2 block">Search Leases</Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  id="search"
+                  placeholder="Search by tenant, property, or lease ID..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 border-gray-200 focus:border-blue-500"
+                />
+              </div>
+            </div>
+            
+            <div className="w-full md:w-48">
+              <Label htmlFor="status" className="text-sm font-medium text-gray-700 mb-2 block">Status</Label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="border-gray-200">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="expired">Expired</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="w-full md:w-48">
+              <Label htmlFor="property" className="text-sm font-medium text-gray-700 mb-2 block">Property</Label>
+              <Select value={propertyFilter} onValueChange={setPropertyFilter}>
+                <SelectTrigger className="border-gray-200">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {properties.map((property) => (
+                    <SelectItem key={property} value={property}>
+                      {property}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="w-full md:w-48">
+              <Label htmlFor="type" className="text-sm font-medium text-gray-700 mb-2 block">Lease Type</Label>
+              <Select value={leaseTypeFilter} onValueChange={setLeaseTypeFilter}>
+                <SelectTrigger className="border-gray-200">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="residential">Residential</SelectItem>
+                  <SelectItem value="commercial">Commercial</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Enhanced Leases Table */}
+          <div className="rounded-md border border-gray-200 overflow-hidden">
+            <Table>
+              <TableHeader className="bg-gray-50">
+                <TableRow>
+                  <TableHead className="font-semibold text-gray-700">Lease ID</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Property & Tenant</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Lease Period</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Financial Details</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Status & Type</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Next Payment</TableHead>
+                  <TableHead className="font-semibold text-gray-700">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredLeases.map((lease) => (
+                  <TableRow key={lease.id} className="hover:bg-gray-50 transition-colors duration-200">
+                    <TableCell className="font-medium text-blue-600">{lease.id}</TableCell>
+                    <TableCell>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Building2 className="h-4 w-4 text-gray-500" />
+                          <span className="font-medium text-gray-900 max-w-[200px] truncate">{lease.property}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm text-gray-600">{lease.tenant}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm space-y-1">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-3 w-3 text-gray-500" />
+                          <span className="font-medium">{new Date(lease.startDate).toLocaleDateString()}</span>
+                        </div>
+                        <div className="text-gray-500">to</div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-3 w-3 text-gray-500" />
+                          <span className="font-medium">{new Date(lease.endDate).toLocaleDateString()}</span>
+                        </div>
+                        <div className={`text-xs font-medium ${getLeaseStatusColor(lease.daysRemaining)}`}>
+                          {lease.daysRemaining > 0 ? `${lease.daysRemaining} days remaining` : 'Expired'}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="font-semibold text-green-600">${lease.monthlyRent.toLocaleString()}/month</div>
+                        <div className="text-xs text-gray-600">
+                          Deposit: ${lease.deposit.toLocaleString()}
+                        </div>
+                        <div className="text-xs text-gray-600">
+                          Total collected: ${lease.totalCollected.toLocaleString()}
+                        </div>
+                        {lease.lateFees > 0 && (
+                          <div className="text-xs text-red-600">
+                            Late fees: ${lease.lateFees}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-2">
+                        <Badge className={getStatusColor(lease.status)}>
+                          <div className="flex items-center gap-1">
+                            {getStatusIcon(lease.status)}
+                            {lease.status.charAt(0).toUpperCase() + lease.status.slice(1)}
+                          </div>
+                        </Badge>
+                        <Badge className={getLeaseTypeColor(lease.leaseType)}>
+                          <div className="flex items-center gap-1">
+                            {getLeaseTypeIcon(lease.leaseType)}
+                            {lease.leaseType.charAt(0).toUpperCase() + lease.leaseType.slice(1)}
+                          </div>
+                        </Badge>
+                        <Badge className={getPaymentHistoryColor(lease.paymentHistory)}>
+                          <Star className="h-3 w-3 mr-1" />
+                          {lease.paymentHistory}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {lease.status === 'active' ? (
+                        <div className="space-y-2">
+                          <div className="text-sm font-medium text-blue-600">
+                            {new Date(lease.nextPayment).toLocaleDateString()}
+                          </div>
+                          {lease.latePayments > 0 && (
+                            <div className="text-xs text-red-600 flex items-center gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              {lease.latePayments} late payment{lease.latePayments > 1 ? 's' : ''}
+                            </div>
+                          )}
+                          <div className="text-xs text-gray-600">
+                            Last: {new Date(lease.lastPayment).toLocaleDateString()}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-gray-500">N/A</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Lease
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <FileText className="h-4 w-4 mr-2" />
+                            Download PDF
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Copy className="h-4 w-4 mr-2" />
+                            Copy Lease ID
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Printer className="h-4 w-4 mr-2" />
+                            Print Lease
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-red-600">
+                            <AlertCircle className="h-4 w-4 mr-2" />
+                            Terminate Lease
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {filteredLeases.length === 0 && (
+            <div className="text-center py-12">
+              <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-lg font-semibold text-gray-600 mb-2">No leases found</p>
+              <p className="text-sm text-gray-500 mb-4">
+                Try adjusting your search criteria or create a new lease
+              </p>
+              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Create Your First Lease
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Enhanced Quick Actions */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-orange-50 to-yellow-50 border-b border-orange-100">
+            <CardTitle className="flex items-center gap-2 text-orange-800">
+              <Calendar className="h-5 w-5" />
+              Upcoming Renewals
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="space-y-3">
+              {leases
+                .filter(lease => {
+                  const endDate = new Date(lease.endDate);
+                  const today = new Date();
+                  const diffTime = endDate.getTime() - today.getTime();
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                  return diffDays <= 90 && diffDays > 0;
+                })
+                .map((lease) => (
+                  <div key={lease.id} className="flex items-center justify-between p-4 border border-orange-200 rounded-lg bg-orange-50/50 hover:bg-orange-100/50 transition-colors duration-200">
+                    <div className="space-y-1">
+                      <div className="font-medium text-gray-900">{lease.property}</div>
+                      <div className="text-sm text-gray-600">
+                        Expires: {new Date(lease.endDate).toLocaleDateString()}
+                      </div>
+                      <div className="text-xs text-orange-600 font-medium">
+                        {lease.daysRemaining} days remaining
+                      </div>
+                    </div>
+                    <Button size="sm" variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-100">
+                      <RefreshCw className="h-4 w-4 mr-1" />
+                      Renew
+                    </Button>
+                  </div>
+                ))}
+              {expiringSoon === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                  <p>No leases expiring soon</p>
+                  <p className="text-sm">All leases are in good standing</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b border-red-100">
+            <CardTitle className="flex items-center gap-2 text-red-800">
+              <AlertTriangle className="h-5 w-5" />
+              Attention Required
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="space-y-3">
+              {leases
+                .filter(lease => lease.latePayments > 0 || lease.status === 'expired')
+                .map((lease) => (
+                  <div key={lease.id} className="flex items-center justify-between p-4 border border-red-200 rounded-lg bg-red-50/50 hover:bg-red-100/50 transition-colors duration-200">
+                    <div className="space-y-1">
+                      <div className="font-medium text-gray-900">{lease.property}</div>
+                      <div className="text-sm text-gray-600">
+                        {lease.latePayments > 0 
+                          ? `${lease.latePayments} late payment${lease.latePayments > 1 ? 's' : ''}`
+                          : 'Lease expired'
+                        }
+                      </div>
+                      <div className="text-xs text-red-600 font-medium">
+                        {lease.latePayments > 0 ? `Late fees: $${lease.lateFees}` : 'Action required'}
+                      </div>
+                    </div>
+                    <Button size="sm" variant="destructive" className="hover:bg-red-700">
+                      {lease.latePayments > 0 ? 'Follow Up' : 'Renew'}
+                    </Button>
+                  </div>
+                ))}
+              {leases.filter(lease => lease.latePayments > 0 || lease.status === 'expired').length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                  <p>All leases are in good standing</p>
+                  <p className="text-sm">No immediate action required</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default Lease;
