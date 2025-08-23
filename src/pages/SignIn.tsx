@@ -29,11 +29,8 @@ const SignIn = () => {
   useEffect(() => {
     if (user && profile && !loading) {
       console.log('Profile loaded, redirecting...', profile.role);
-      if (profile.role === 'homeowner') {
-        navigate('/dashboard');
-      } else {
-        navigate('/dashboard');
-      }
+      // Redirect to home page since dashboard no longer exists
+      navigate('/');
     }
   }, [user, profile, loading, navigate]);
 

@@ -118,16 +118,17 @@ const SignUp = () => {
             {/* User Type Field */}
             <div>
               <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-2">
-                I am a
+                User Role
               </label>
               <Select value={formData.userType} onValueChange={(value) => handleInputChange('userType', value)}>
                 <SelectTrigger className="h-11 border-gray-300 focus:border-[#ed1c24] focus:ring-[#ed1c24] rounded-lg text-sm" disabled={isLoading}>
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="owner">Property Owner</SelectItem>
+                  <SelectItem value="homeowner">Property Owner</SelectItem>
                   <SelectItem value="tenant">Tenant</SelectItem>
-                  <SelectItem value="maintainer">Maintainer</SelectItem>
+                  <SelectItem value="vendor">Maintainer/Vendor</SelectItem>
+                  <SelectItem value="admin">Administrator</SelectItem>
                 </SelectContent>
               </Select>
             </div>

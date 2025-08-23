@@ -168,13 +168,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const [firstName, ...lastNameParts] = name.trim().split(' ');
       const lastName = lastNameParts.join(' ') || '';
 
-      // Map user type to database role
-      const roleMap: { [key: string]: Database['public']['Enums']['user_role'] } = {
-        'owner': 'homeowner',
-        'tenant': 'tenant',
-        'maintainer': 'vendor'
-      };
-
       // Sign up with Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -194,7 +187,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             email: data.user.email!,
             first_name: firstName,
             last_name: lastName,
-            role: roleMap[userType] || 'tenant',
+            role: userType as Database['public']['Enums']['user_role'],
             is_active: true,
             email_verified: false,
           });

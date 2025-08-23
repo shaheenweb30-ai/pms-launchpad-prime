@@ -110,14 +110,7 @@ const Navigation = () => {
                 {/* Profile Dropdown */}
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-[#a5afbe]/20 py-2 z-50">
-                    <Link 
-                      to="/dashboard" 
-                      onClick={closeProfileDropdown}
-                      className="flex items-center px-4 py-2 text-[#231f20] hover:bg-[#f8f9fa] transition-colors"
-                    >
-                      <User className="w-4 h-4 mr-3 text-[#a5afbe]" />
-                      Dashboard
-                    </Link>
+
                     <button
                       onClick={() => {
                         handleSignOut();
@@ -220,17 +213,7 @@ const Navigation = () => {
                       {/* Mobile Profile Dropdown */}
                       {isProfileDropdownOpen && (
                         <div className="mt-2 ml-4 bg-[#f8f9fa] rounded-lg py-2">
-                          <Link 
-                            to="/dashboard" 
-                            onClick={() => {
-                              closeProfileDropdown();
-                              closeMenu();
-                            }}
-                            className="flex items-center px-3 py-2 text-[#231f20] hover:bg-[#ed1c24]/5 transition-colors rounded-lg mx-2"
-                          >
-                            <User className="w-4 h-4 mr-3 text-[#a5afbe]" />
-                            Dashboard
-                          </Link>
+
                           <button
                             onClick={() => {
                               handleSignOut();
