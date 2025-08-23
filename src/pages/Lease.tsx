@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/textarea';
 import { 
   Calendar,
   FileText,
@@ -100,6 +101,27 @@ const Lease = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [propertyFilter, setPropertyFilter] = useState('all');
   const [leaseTypeFilter, setLeaseTypeFilter] = useState('all');
+  const [showAddLeaseModal, setShowAddLeaseModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [newLease, setNewLease] = useState({
+    property: '',
+    tenant: '',
+    startDate: '',
+    endDate: '',
+    monthlyRent: '',
+    deposit: '',
+    leaseType: 'residential',
+    autoRenew: false,
+    status: 'active',
+    utilities: 'included',
+    parking: 'included',
+    petPolicy: 'not allowed',
+    smokingPolicy: 'not allowed',
+    securityDeposit: '',
+    lateFees: '',
+    notes: ''
+  });
 
   // Enhanced lease data with more details
   const leases = [
@@ -426,6 +448,79 @@ const Lease = () => {
   const avgCommunicationScore = leases.reduce((sum, lease) => sum + lease.communicationScore, 0) / leases.length;
   const totalLateFees = leases.reduce((sum, lease) => sum + lease.lateFees, 0);
 
+  // Add Lease Modal Helper Functions
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setNewLease(prev => ({ ...prev, [field]: value }));
+  };
+
+  const resetForm = () => {
+    setNewLease({
+      property: '',
+      tenant: '',
+      startDate: '',
+      endDate: '',
+      monthlyRent: '',
+      deposit: '',
+      leaseType: 'residential',
+      autoRenew: false,
+      status: 'active',
+      utilities: 'included',
+      parking: 'included',
+      petPolicy: 'not allowed',
+      smokingPolicy: 'not allowed',
+      securityDeposit: '',
+      lateFees: '',
+      notes: ''
+    });
+    setCurrentStep(1);
+  };
+
+  const nextStep = () => {
+    if (currentStep < 4) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const canProceedToNext = () => {
+    switch (currentStep) {
+      case 1:
+        return newLease.property && newLease.tenant && newLease.startDate && newLease.endDate;
+      case 2:
+        return newLease.monthlyRent && newLease.deposit;
+      case 3:
+        return newLease.securityDeposit;
+      default:
+        return true;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('New Lease Data:', newLease);
+      alert('Lease created successfully!');
+      
+      resetForm();
+      setShowAddLeaseModal(false);
+    } catch (error) {
+      console.error('Error creating lease:', error);
+      alert('Error creating lease. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="space-y-8 p-1">
       {/* Enhanced Header */}
@@ -460,10 +555,391 @@ const Lease = () => {
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Lease Analytics
               </Button>
-              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                <Plus className="h-4 w-4 mr-2" />
-                New Lease
-              </Button>
+              <Dialog open={showAddLeaseModal} onOpenChange={setShowAddLeaseModal}>
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                    <Plus className="h-4 w-4 mr-2" />
+                    New Lease
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2 text-xl">
+                      <FileText className="h-6 w-6 text-blue-600" />
+                      Create New Lease
+                    </DialogTitle>
+                    <DialogDescription>
+                      Complete the form below to create a new lease agreement for your property.
+                    </DialogDescription>
+                    
+                    {/* Step Indicator */}
+                    <div className="flex items-center justify-center mt-6">
+                      <div className="flex items-center">
+                        {[1, 2, 3, 4].map((step) => (
+                          <div key={step} className="flex items-center">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                              step < currentStep ? 'bg-green-500 text-white' : 
+                              step === currentStep ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'
+                            }`}>
+                              {step < currentStep ? '✓' : step}
+                            </div>
+                            {step < 4 && (
+                              <div className={`w-12 h-0.5 mx-2 ${
+                                step < currentStep ? 'bg-green-500' : 'bg-gray-200'
+                              }`} />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Step Labels */}
+                    <div className="flex items-center justify-center mt-2 text-xs text-gray-600">
+                      <span className={currentStep === 1 ? 'text-blue-600 font-medium' : ''}>Basic Info</span>
+                      <span className="mx-4">•</span>
+                      <span className={currentStep === 2 ? 'text-blue-600 font-medium' : ''}>Financial Terms</span>
+                      <span className="mx-4">•</span>
+                      <span className={currentStep === 3 ? 'text-blue-600 font-medium' : ''}>Policies & Settings</span>
+                      <span className="mx-4">•</span>
+                      <span className={currentStep === 4 ? 'text-blue-600 font-medium' : ''}>Review & Submit</span>
+                    </div>
+                  </DialogHeader>
+                  
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Step 1: Basic Information */}
+                    {currentStep === 1 && (
+                      <div className="space-y-6">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-gray-900">Basic Lease Information</h3>
+                          <p className="text-gray-600">Let's start with the essential details about the lease</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="property">Property *</Label>
+                            <Select value={newLease.property} onValueChange={(value) => handleInputChange('property', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select property" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Oak Street Apartments - Unit 101">Oak Street Apartments - Unit 101</SelectItem>
+                                <SelectItem value="Downtown Lofts - Unit 205">Downtown Lofts - Unit 205</SelectItem>
+                                <SelectItem value="Riverside Complex - Unit 312">Riverside Complex - Unit 312</SelectItem>
+                                <SelectItem value="Suburban Homes - Unit 15">Suburban Homes - Unit 15</SelectItem>
+                                <SelectItem value="Harbor View Condos - Unit 7B">Harbor View Condos - Unit 7B</SelectItem>
+                                <SelectItem value="Mountain Ridge Estates - Unit 3">Mountain Ridge Estates - Unit 3</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="tenant">Tenant Name *</Label>
+                            <Input
+                              id="tenant"
+                              placeholder="e.g., John Smith"
+                              value={newLease.tenant}
+                              onChange={(e) => handleInputChange('tenant', e.target.value)}
+                              required
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="startDate">Lease Start Date *</Label>
+                            <Input
+                              id="startDate"
+                              type="date"
+                              value={newLease.startDate}
+                              onChange={(e) => handleInputChange('startDate', e.target.value)}
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="endDate">Lease End Date *</Label>
+                            <Input
+                              id="endDate"
+                              type="date"
+                              value={newLease.endDate}
+                              onChange={(e) => handleInputChange('endDate', e.target.value)}
+                              required
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="leaseType">Lease Type</Label>
+                          <Select value={newLease.leaseType} onValueChange={(value) => handleInputChange('leaseType', value)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select lease type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="residential">Residential</SelectItem>
+                              <SelectItem value="commercial">Commercial</SelectItem>
+                              <SelectItem value="short-term">Short-term</SelectItem>
+                              <SelectItem value="month-to-month">Month-to-Month</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 2: Financial Terms */}
+                    {currentStep === 2 && (
+                      <div className="space-y-6">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-gray-900">Financial Terms</h3>
+                          <p className="text-gray-600">Set up the financial aspects of the lease agreement</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="monthlyRent">Monthly Rent *</Label>
+                            <Input
+                              id="monthlyRent"
+                              type="number"
+                              placeholder="e.g., 1800"
+                              value={newLease.monthlyRent}
+                              onChange={(e) => handleInputChange('monthlyRent', e.target.value)}
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="deposit">Security Deposit *</Label>
+                            <Input
+                              id="deposit"
+                              type="number"
+                              placeholder="e.g., 1800"
+                              value={newLease.deposit}
+                              onChange={(e) => handleInputChange('deposit', e.target.value)}
+                              required
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="securityDeposit">Additional Security Deposit</Label>
+                            <Input
+                              id="securityDeposit"
+                              type="number"
+                              placeholder="e.g., 500"
+                              value={newLease.securityDeposit}
+                              onChange={(e) => handleInputChange('securityDeposit', e.target.value)}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="lateFees">Late Payment Fees</Label>
+                            <Input
+                              id="lateFees"
+                              type="number"
+                              placeholder="e.g., 50"
+                              value={newLease.lateFees}
+                              onChange={(e) => handleInputChange('lateFees', e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="autoRenew">Auto-Renewal</Label>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id="autoRenew"
+                              checked={newLease.autoRenew}
+                              onChange={(e) => handleInputChange('autoRenew', e.target.checked)}
+                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <Label htmlFor="autoRenew">Automatically renew lease when it expires</Label>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 3: Policies & Settings */}
+                    {currentStep === 3 && (
+                      <div className="space-y-6">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-gray-900">Policies & Settings</h3>
+                          <p className="text-gray-600">Configure lease policies and property rules</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="utilities">Utilities</Label>
+                            <Select value={newLease.utilities} onValueChange={(value) => handleInputChange('utilities', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select utilities policy" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="included">Included in Rent</SelectItem>
+                                <SelectItem value="tenant pays">Tenant Pays</SelectItem>
+                                <SelectItem value="split">Split Between Parties</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="parking">Parking</Label>
+                            <Select value={newLease.parking} onValueChange={(value) => handleInputChange('parking', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select parking policy" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="included">Included in Rent</SelectItem>
+                                <SelectItem value="additional fee">Additional Fee</SelectItem>
+                                <SelectItem value="not available">Not Available</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="petPolicy">Pet Policy</Label>
+                            <Select value={newLease.petPolicy} onValueChange={(value) => handleInputChange('petPolicy', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select pet policy" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="allowed">Pets Allowed</SelectItem>
+                                <SelectItem value="not allowed">No Pets</SelectItem>
+                                <SelectItem value="case-by-case">Case by Case</SelectItem>
+                                <SelectItem value="additional deposit">Additional Deposit Required</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="smokingPolicy">Smoking Policy</Label>
+                            <Select value={newLease.smokingPolicy} onValueChange={(value) => handleInputChange('smokingPolicy', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select smoking policy" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="not allowed">Not Allowed</SelectItem>
+                                <SelectItem value="allowed">Allowed</SelectItem>
+                                <SelectItem value="designated areas">Designated Areas Only</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="notes">Additional Notes</Label>
+                          <Textarea
+                            id="notes"
+                            placeholder="Any additional terms, conditions, or special arrangements"
+                            value={newLease.notes}
+                            onChange={(e) => handleInputChange('notes', e.target.value)}
+                            rows={4}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 4: Review & Submit */}
+                    {currentStep === 4 && (
+                      <div className="space-y-6">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-gray-900">Review & Submit</h3>
+                          <p className="text-gray-600">Please review all the information before creating the lease</p>
+                        </div>
+                        
+                        <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <h4 className="font-semibold text-gray-900 mb-2">Basic Information</h4>
+                              <div className="space-y-1 text-sm text-gray-600">
+                                <p><span className="font-medium">Property:</span> {newLease.property}</p>
+                                <p><span className="font-medium">Tenant:</span> {newLease.tenant}</p>
+                                <p><span className="font-medium">Start Date:</span> {newLease.startDate}</p>
+                                <p><span className="font-medium">End Date:</span> {newLease.endDate}</p>
+                                <p><span className="font-medium">Lease Type:</span> {newLease.leaseType}</p>
+                              </div>
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-gray-900 mb-2">Financial Terms</h4>
+                              <div className="space-y-1 text-sm text-gray-600">
+                                <p><span className="font-medium">Monthly Rent:</span> ${newLease.monthlyRent}/month</p>
+                                <p><span className="font-medium">Security Deposit:</span> ${newLease.deposit}</p>
+                                <p><span className="font-medium">Additional Deposit:</span> ${newLease.securityDeposit || 'None'}</p>
+                                <p><span className="font-medium">Late Fees:</span> ${newLease.lateFees || 'None'}</p>
+                                <p><span className="font-medium">Auto-Renewal:</span> {newLease.autoRenew ? 'Yes' : 'No'}</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="border-t pt-4">
+                            <h4 className="font-semibold text-gray-900 mb-2">Policies & Settings</h4>
+                            <div className="space-y-1 text-sm text-gray-600">
+                              <p><span className="font-medium">Utilities:</span> {newLease.utilities}</p>
+                              <p><span className="font-medium">Parking:</span> {newLease.parking}</p>
+                              <p><span className="font-medium">Pet Policy:</span> {newLease.petPolicy}</p>
+                              <p><span className="font-medium">Smoking Policy:</span> {newLease.smokingPolicy}</p>
+                              {newLease.notes && <p><span className="font-medium">Notes:</span> {newLease.notes}</p>}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Navigation Buttons */}
+                    <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => {
+                          resetForm();
+                          setShowAddLeaseModal(false);
+                        }}
+                        disabled={isSubmitting}
+                      >
+                        Cancel
+                      </Button>
+                      
+                      <div className="flex items-center gap-2">
+                        {currentStep > 1 && (
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={prevStep}
+                            disabled={isSubmitting}
+                          >
+                            Previous
+                          </Button>
+                        )}
+                        
+                        {currentStep < 4 ? (
+                          <Button 
+                            type="button"
+                            onClick={nextStep}
+                            disabled={!canProceedToNext() || isSubmitting}
+                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                          >
+                            Next
+                          </Button>
+                        ) : (
+                          <Button 
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                          >
+                            {isSubmitting ? (
+                              <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                Creating Lease...
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <FileText className="h-4 w-4" />
+                                Create Lease
+                              </div>
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
@@ -793,7 +1269,10 @@ const Lease = () => {
               <p className="text-sm text-gray-500 mb-4">
                 Try adjusting your search criteria or create a new lease
               </p>
-              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+              <Button 
+                onClick={() => setShowAddLeaseModal(true)}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Your First Lease
               </Button>

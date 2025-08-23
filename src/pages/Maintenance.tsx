@@ -1,10 +1,22 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/components/ui/sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Wrench,
   Plus,
@@ -117,6 +129,38 @@ import {
 const Maintenance = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [newRequest, setNewRequest] = useState({
+    title: '',
+    description: '',
+    property: '',
+    unit: '',
+    tenant: '',
+    priority: 'medium',
+    category: 'plumbing',
+    estimatedCost: '',
+    dueDate: '',
+    estimatedDuration: '',
+    contactMethod: 'phone',
+    tenantAvailability: '',
+    specialInstructions: '',
+    emergencyLevel: false,
+    followUpRequired: false
+  });
+  const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
+  const [recentlyCreatedId, setRecentlyCreatedId] = useState<number | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const newRequestRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to newly created request
+  useEffect(() => {
+    if (recentlyCreatedId && newRequestRef.current) {
+      newRequestRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      });
+    }
+  }, [recentlyCreatedId]);
 
   // Enhanced maintenance requests data with more details
   const maintenanceRequests = [
@@ -426,6 +470,153 @@ const Maintenance = () => {
     return 'text-red-600';
   };
 
+  const handleCreateRequest = async () => {
+    // Validate required fields
+    const errors: {[key: string]: string} = {};
+    
+    if (!newRequest.title.trim()) errors.title = 'Title is required';
+    if (!newRequest.description.trim()) errors.description = 'Description is required';
+    if (!newRequest.property.trim()) errors.property = 'Property is required';
+    if (!newRequest.unit.trim()) errors.unit = 'Unit is required';
+    if (!newRequest.tenant.trim()) errors.tenant = 'Tenant name is required';
+    
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    
+    // Clear any previous errors
+    setFormErrors({});
+    setIsCreating(true);
+    
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const request = {
+        id: maintenanceRequests.length + 1,
+        ...newRequest,
+        estimatedCost: parseFloat(newRequest.estimatedCost) || 0,
+        status: 'pending',
+        dateReported: new Date().toISOString().split('T')[0],
+        urgencyScore: newRequest.emergencyLevel ? 95 : 
+                     newRequest.priority === 'urgent' ? 90 :
+                     newRequest.priority === 'high' ? 75 :
+                     newRequest.priority === 'medium' ? 55 : 35,
+        assignedVendor: null,
+        completionTime: null,
+        vendorRating: null,
+        tenantSatisfaction: null,
+        photosCount: 0,
+        updatesCount: 0,
+        warranty: '1 year',
+        lastUpdate: new Date().toISOString().split('T')[0]
+      };
+
+      // In a real app, this would be sent to an API
+      maintenanceRequests.unshift(request);
+      
+      // Set recently created ID for highlighting
+      setRecentlyCreatedId(request.id);
+      
+      // Clear highlight after 5 seconds
+      setTimeout(() => setRecentlyCreatedId(null), 5000);
+      
+      // Reset form and close modal
+      setNewRequest({
+        title: '',
+        description: '',
+        property: '',
+        unit: '',
+        tenant: '',
+        priority: 'medium',
+        category: 'plumbing',
+        estimatedCost: '',
+        dueDate: '',
+        estimatedDuration: '',
+        contactMethod: 'phone',
+        tenantAvailability: '',
+        specialInstructions: '',
+        emergencyLevel: false,
+        followUpRequired: false
+      });
+      setFormErrors({});
+      setIsCreateModalOpen(false);
+      toast.success(`Maintenance request "${request.title}" created successfully!`, {
+        description: `${request.property} - Unit ${request.unit} | Priority: ${request.priority.toUpperCase()}`,
+        duration: 5000,
+      });
+    } catch (error) {
+      toast.error('Failed to create maintenance request. Please try again.');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setNewRequest(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    // Clear error for this field when user starts typing
+    if (formErrors[field]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
+  };
+
+  const handleOpenCreateModal = () => {
+    const defaultDueDate = new Date();
+    defaultDueDate.setDate(defaultDueDate.getDate() + 7);
+    
+    setNewRequest({
+      title: '',
+      description: '',
+      property: '',
+      unit: '',
+      tenant: '',
+      priority: 'medium',
+      category: 'plumbing',
+      estimatedCost: '',
+      dueDate: defaultDueDate.toISOString().split('T')[0],
+      estimatedDuration: '',
+      contactMethod: 'phone',
+      tenantAvailability: '',
+      specialInstructions: '',
+      emergencyLevel: false,
+      followUpRequired: false
+    });
+    setIsCreateModalOpen(true);
+    setFormErrors({});
+  };
+
+  const handleCloseCreateModal = () => {
+    setIsCreateModalOpen(false);
+    setFormErrors({});
+    setNewRequest({
+      title: '',
+      description: '',
+      property: '',
+      unit: '',
+      tenant: '',
+      priority: 'medium',
+      category: 'plumbing',
+      estimatedCost: '',
+      dueDate: '',
+      estimatedDuration: '',
+      contactMethod: 'phone',
+      tenantAvailability: '',
+      specialInstructions: '',
+      emergencyLevel: false,
+      followUpRequired: false
+    });
+  };
+
   return (
     <div className="space-y-6">
             {/* Enhanced Header */}
@@ -460,7 +651,10 @@ const Maintenance = () => {
                 <Download className="h-4 w-4 mr-2" />
                 Export Report
               </Button>
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button 
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                onClick={handleOpenCreateModal}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Request
             </Button>
@@ -469,7 +663,368 @@ const Maintenance = () => {
         </div>
       </div>
 
-            {/* Enhanced Stats Overview */}
+      {/* Create Maintenance Request Modal */}
+      <Dialog open={isCreateModalOpen} onOpenChange={handleCloseCreateModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Create New Maintenance Request 🔧
+            </DialogTitle>
+            <DialogDescription>
+              Fill out the form below to create a new maintenance request. All fields marked with * are required.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-6 py-4">
+            {/* Basic Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Basic Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Request Title *</Label>
+                  <Input
+                    id="title"
+                    placeholder="e.g., Kitchen Faucet Leak"
+                    value={newRequest.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    className={formErrors.title ? 'border-red-500 focus:border-red-500' : ''}
+                  />
+                  {formErrors.title && <p className="text-red-500 text-xs mt-1">{formErrors.title}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category *</Label>
+                  <Select value={newRequest.category} onValueChange={(value) => handleInputChange('category', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="plumbing">Plumbing</SelectItem>
+                      <SelectItem value="electrical">Electrical</SelectItem>
+                      <SelectItem value="hvac">HVAC</SelectItem>
+                      <SelectItem value="appliance">Appliance</SelectItem>
+                      <SelectItem value="structural">Structural</SelectItem>
+                      <SelectItem value="security">Security</SelectItem>
+                      <SelectItem value="landscaping">Landscaping</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="description">Description *</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Provide a detailed description of the issue..."
+                  rows={3}
+                  value={newRequest.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  className={formErrors.description ? 'border-red-500 focus:border-red-500' : ''}
+                />
+                <div className="flex justify-between items-center">
+                  {formErrors.description && <p className="text-red-500 text-xs">{formErrors.description}</p>}
+                  <p className={`text-xs ml-auto ${newRequest.description.length < 20 ? 'text-orange-600' : 'text-gray-500'}`}>
+                    {newRequest.description.length} characters
+                    {newRequest.description.length < 20 && ' (recommend at least 20)'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Property & Tenant Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Property & Tenant</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="property">Property *</Label>
+                  <Input
+                    id="property"
+                    placeholder="e.g., Oak Street Apartments"
+                    value={newRequest.property}
+                    onChange={(e) => handleInputChange('property', e.target.value)}
+                    className={formErrors.property ? 'border-red-500 focus:border-red-500' : ''}
+                  />
+                  {formErrors.property && <p className="text-red-500 text-xs mt-1">{formErrors.property}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="unit">Unit *</Label>
+                  <Input
+                    id="unit"
+                    placeholder="e.g., 4B"
+                    value={newRequest.unit}
+                    onChange={(e) => handleInputChange('unit', e.target.value)}
+                    className={formErrors.unit ? 'border-red-500 focus:border-red-500' : ''}
+                  />
+                  {formErrors.unit && <p className="text-red-500 text-xs mt-1">{formErrors.unit}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tenant">Tenant Name *</Label>
+                  <Input
+                    id="tenant"
+                    placeholder="e.g., Sarah Johnson"
+                    value={newRequest.tenant}
+                    onChange={(e) => handleInputChange('tenant', e.target.value)}
+                    className={formErrors.tenant ? 'border-red-500 focus:border-red-500' : ''}
+                  />
+                  {formErrors.tenant && <p className="text-red-500 text-xs mt-1">{formErrors.tenant}</p>}
+                </div>
+              </div>
+            </div>
+
+            {/* Priority & Scheduling */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Priority & Scheduling</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="priority">Priority Level *</Label>
+                  <Select value={newRequest.priority} onValueChange={(value) => handleInputChange('priority', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dueDate">Due Date</Label>
+                  <Input
+                    id="dueDate"
+                    type="date"
+                    value={newRequest.dueDate}
+                    onChange={(e) => handleInputChange('dueDate', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="estimatedDuration">Estimated Duration</Label>
+                  <Input
+                    id="estimatedDuration"
+                    placeholder="e.g., 2-4 hours"
+                    value={newRequest.estimatedDuration}
+                    onChange={(e) => handleInputChange('estimatedDuration', e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              {/* Real-time Urgency Score Display */}
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-100">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-gray-700">Calculated Urgency Score:</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      (newRequest.emergencyLevel ? 95 : 
+                       newRequest.priority === 'urgent' ? 90 :
+                       newRequest.priority === 'high' ? 75 :
+                       newRequest.priority === 'medium' ? 55 : 35) >= 90 ? 'bg-red-100 text-red-800' :
+                      (newRequest.emergencyLevel ? 95 : 
+                       newRequest.priority === 'urgent' ? 90 :
+                       newRequest.priority === 'high' ? 75 :
+                       newRequest.priority === 'medium' ? 55 : 35) >= 70 ? 'bg-orange-100 text-orange-800' :
+                      (newRequest.emergencyLevel ? 95 : 
+                       newRequest.priority === 'urgent' ? 90 :
+                       newRequest.priority === 'high' ? 75 :
+                       newRequest.priority === 'medium' ? 55 : 35) >= 50 ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-green-100 text-green-800'
+                    }`}>
+                      {newRequest.emergencyLevel ? 95 : 
+                       newRequest.priority === 'urgent' ? 90 :
+                       newRequest.priority === 'high' ? 75 :
+                       newRequest.priority === 'medium' ? 55 : 35}
+                    </div>
+                    <span className="text-xs text-gray-500">/ 100</span>
+                  </div>
+                </div>
+                <div className="mt-2 text-xs text-gray-600">
+                  {newRequest.emergencyLevel && '🚨 Emergency level selected - 24hr response required'}
+                  {!newRequest.emergencyLevel && newRequest.priority === 'urgent' && '⚡ Urgent priority - immediate attention needed'}
+                  {!newRequest.emergencyLevel && newRequest.priority === 'high' && '🔴 High priority - schedule within 48 hours'}
+                  {!newRequest.emergencyLevel && newRequest.priority === 'medium' && '🟡 Medium priority - schedule within 1 week'}
+                  {!newRequest.emergencyLevel && newRequest.priority === 'low' && '🟢 Low priority - schedule when convenient'}
+                </div>
+              </div>
+            </div>
+
+            {/* Cost & Contact */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Cost & Contact</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="estimatedCost">Estimated Cost ($)</Label>
+                  <Input
+                    id="estimatedCost"
+                    type="number"
+                    placeholder="0.00"
+                    value={newRequest.estimatedCost}
+                    onChange={(e) => handleInputChange('estimatedCost', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contactMethod">Preferred Contact Method</Label>
+                  <Select value={newRequest.contactMethod} onValueChange={(value) => handleInputChange('contactMethod', value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="phone">Phone</SelectItem>
+                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="text">Text</SelectItem>
+                      <SelectItem value="in-person">In Person</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Details */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Additional Details</h3>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="tenantAvailability">Tenant Availability</Label>
+                  <Input
+                    id="tenantAvailability"
+                    placeholder="e.g., weekdays 9-5, weekends only"
+                    value={newRequest.tenantAvailability}
+                    onChange={(e) => handleInputChange('tenantAvailability', e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="specialInstructions">Special Instructions</Label>
+                  <Textarea
+                    id="specialInstructions"
+                    placeholder="Any special considerations, access requirements, or notes..."
+                    rows={2}
+                    value={newRequest.specialInstructions}
+                    onChange={(e) => handleInputChange('specialInstructions', e.target.value)}
+                  />
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="emergencyLevel"
+                      checked={newRequest.emergencyLevel}
+                      onChange={(e) => handleInputChange('emergencyLevel', e.target.checked)}
+                      className="rounded border-gray-300"
+                    />
+                    <Label htmlFor="emergencyLevel" className="text-sm font-medium">
+                      Emergency Level (24hr response required)
+                    </Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="followUpRequired"
+                      checked={newRequest.followUpRequired}
+                      onChange={(e) => handleInputChange('followUpRequired', e.target.checked)}
+                      className="rounded border-gray-300"
+                    />
+                    <Label htmlFor="followUpRequired" className="text-sm font-medium">
+                      Follow-up Required
+                    </Label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Request Preview */}
+            {(newRequest.title || newRequest.description || newRequest.property || newRequest.unit || newRequest.tenant) && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Request Preview</h3>
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Badge variant={getPriorityColor(newRequest.priority || 'medium')}>
+                        {(newRequest.priority || 'medium').toUpperCase()}
+                      </Badge>
+                      <Badge variant="secondary">
+                        {newRequest.category || 'plumbing'}
+                      </Badge>
+                      {newRequest.emergencyLevel && (
+                        <Badge variant="destructive">
+                          🚨 EMERGENCY
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-semibold text-gray-900">
+                        {newRequest.title || 'Request Title'}
+                      </h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {newRequest.description || 'Description will appear here...'}
+                      </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-500">Property:</span>
+                        <span className="ml-2 font-medium">{newRequest.property || 'Not specified'}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Unit:</span>
+                        <span className="ml-2 font-medium">{newRequest.unit || 'Not specified'}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Tenant:</span>
+                        <span className="ml-2 font-medium">{newRequest.tenant || 'Not specified'}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Due:</span>
+                        <span className="ml-2 font-medium">
+                          {newRequest.dueDate ? new Date(newRequest.dueDate).toLocaleDateString() : 'Not specified'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="text-xs text-gray-500">
+                      Estimated cost: ${newRequest.estimatedCost || '0'} | 
+                      Duration: {newRequest.estimatedDuration || 'Not specified'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={handleCloseCreateModal}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateRequest}
+              disabled={!newRequest.title || !newRequest.description || !newRequest.property || !newRequest.unit || !newRequest.tenant || isCreating}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              {isCreating ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Request
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Enhanced Stats Overview */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
             <CardContent className="p-6">
@@ -608,7 +1163,23 @@ const Maintenance = () => {
         {filteredRequests.map((request) => {
           const StatusIcon = getStatusIcon(request.status);
           return (
-            <Card key={request.id} className="hover:shadow-lg transition-shadow">
+            <Card 
+              key={request.id} 
+              ref={recentlyCreatedId === request.id ? newRequestRef : null}
+              className={`hover:shadow-lg transition-all duration-300 relative ${
+                recentlyCreatedId === request.id 
+                  ? 'ring-2 ring-green-500 ring-opacity-50 bg-gradient-to-r from-green-50 to-white shadow-lg' 
+                  : ''
+              }`}
+            >
+              {recentlyCreatedId === request.id && (
+                <div className="absolute top-3 right-3 z-10">
+                  <Badge className="bg-green-500 text-white animate-pulse">
+                    <Plus className="h-3 w-3 mr-1" />
+                    New
+                  </Badge>
+                </div>
+              )}
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
@@ -717,7 +1288,10 @@ const Maintenance = () => {
             <p className="text-muted-foreground mb-4">
               {searchQuery || statusFilter !== 'all' ? 'Try adjusting your filters' : 'All caught up! No pending maintenance requests.'}
             </p>
-            <Button className="bg-gradient-to-r from-[#ed1c24] to-[#225fac]">
+            <Button 
+              className="bg-gradient-to-r from-[#ed1c24] to-[#225fac]"
+              onClick={handleOpenCreateModal}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Create Request
             </Button>

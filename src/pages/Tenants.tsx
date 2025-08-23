@@ -5,6 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { 
   Users, 
   Plus,
@@ -66,6 +69,31 @@ const Tenants = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [paymentFilter, setPaymentFilter] = useState('all');
   const [propertyFilter, setPropertyFilter] = useState('all');
+  const [showAddTenantModal, setShowAddTenantModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [newTenant, setNewTenant] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    property: '',
+    unit: '',
+    rent: '',
+    leaseStart: '',
+    leaseEnd: '',
+    status: 'active',
+    paymentStatus: 'current',
+    paymentHistory: 'good',
+    emergencyContact: '',
+    emergencyPhone: '',
+    pets: 'no',
+    vehicleInfo: '',
+    employmentStatus: 'employed',
+    employer: '',
+    annualIncome: '',
+    references: '',
+    notes: ''
+  });
 
   const tenants = [
     {
@@ -324,7 +352,84 @@ const Tenants = () => {
     if (daysRemaining <= 0) return 'bg-red-100 text-red-800 border-red-200';
     if (daysRemaining <= 30) return 'bg-red-100 text-red-800 border-red-200';
     if (daysRemaining <= 90) return 'bg-orange-100 text-orange-800 border-orange-200';
-    return 'bg-green-100 text-green-800 border-green-200';
+    return 'bg-green-100 text-red-800 border-green-200';
+  };
+
+  // Add Tenant Modal Helper Functions
+  const handleInputChange = (field: string, value: string) => {
+    setNewTenant(prev => ({ ...prev, [field]: value }));
+  };
+
+  const resetForm = () => {
+    setNewTenant({
+      name: '',
+      email: '',
+      phone: '',
+      property: '',
+      unit: '',
+      rent: '',
+      leaseStart: '',
+      leaseEnd: '',
+      status: 'active',
+      paymentStatus: 'current',
+      paymentHistory: 'good',
+      emergencyContact: '',
+      emergencyPhone: '',
+      pets: 'no',
+      vehicleInfo: '',
+      employmentStatus: 'employed',
+      employer: '',
+      annualIncome: '',
+      references: '',
+      notes: ''
+    });
+    setCurrentStep(1);
+  };
+
+  const nextStep = () => {
+    if (currentStep < 4) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const canProceedToNext = () => {
+    switch (currentStep) {
+      case 1:
+        return newTenant.name && newTenant.email && newTenant.phone && newTenant.property && newTenant.unit && newTenant.rent;
+      case 2:
+        return newTenant.leaseStart && newTenant.leaseEnd;
+      case 3:
+        return newTenant.emergencyContact && newTenant.emergencyPhone;
+      default:
+        return true;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('New Tenant Data:', newTenant);
+      alert('Tenant added successfully!');
+      
+      resetForm();
+      setShowAddTenantModal(false);
+    } catch (error) {
+      console.error('Error adding tenant:', error);
+      alert('Error adding tenant. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -361,10 +466,444 @@ const Tenants = () => {
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Tenant Analytics
               </Button>
-              <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Tenant
-              </Button>
+              <Dialog open={showAddTenantModal} onOpenChange={setShowAddTenantModal}>
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Tenant
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2 text-xl">
+                      <Users className="h-6 w-6 text-purple-600" />
+                      Add New Tenant
+                    </DialogTitle>
+                    <DialogDescription>
+                      Complete the form below to add a new tenant to your property management system.
+                    </DialogDescription>
+                    
+                    {/* Step Indicator */}
+                    <div className="flex items-center justify-center mt-6">
+                      <div className="flex items-center">
+                        {[1, 2, 3, 4].map((step) => (
+                          <div key={step} className="flex items-center">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                              step < currentStep ? 'bg-green-500 text-white' : 
+                              step === currentStep ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-600'
+                            }`}>
+                              {step < currentStep ? '✓' : step}
+                            </div>
+                            {step < 4 && (
+                              <div className={`w-12 h-0.5 mx-2 ${
+                                step < currentStep ? 'bg-green-500' : 'bg-gray-200'
+                              }`} />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Step Labels */}
+                    <div className="flex items-center justify-center mt-2 text-xs text-gray-600">
+                      <span className={currentStep === 1 ? 'text-purple-600 font-medium' : ''}>Basic Info</span>
+                      <span className="mx-4">•</span>
+                      <span className={currentStep === 2 ? 'text-purple-600 font-medium' : ''}>Lease Details</span>
+                      <span className="mx-4">•</span>
+                      <span className={currentStep === 3 ? 'text-purple-600 font-medium' : ''}>Emergency & Additional</span>
+                      <span className="mx-4">•</span>
+                      <span className={currentStep === 4 ? 'text-purple-600 font-medium' : ''}>Review & Submit</span>
+                    </div>
+                  </DialogHeader>
+                  
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Step 1: Basic Information */}
+                    {currentStep === 1 && (
+                      <div className="space-y-6">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-gray-900">Basic Tenant Information</h3>
+                          <p className="text-gray-600">Let's start with the essential details about your tenant</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="name">Full Name *</Label>
+                            <Input
+                              id="name"
+                              placeholder="e.g., John Doe"
+                              value={newTenant.name}
+                              onChange={(e) => handleInputChange('name', e.target.value)}
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="email">Email Address *</Label>
+                            <Input
+                              id="email"
+                              type="email"
+                              placeholder="e.g., john.doe@email.com"
+                              value={newTenant.email}
+                              onChange={(e) => handleInputChange('email', e.target.value)}
+                              required
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="phone">Phone Number *</Label>
+                            <Input
+                              id="phone"
+                              placeholder="e.g., (555) 123-4567"
+                              value={newTenant.phone}
+                              onChange={(e) => handleInputChange('phone', e.target.value)}
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="property">Property *</Label>
+                            <Select value={newTenant.property} onValueChange={(value) => handleInputChange('property', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select property" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {properties.slice(1).map((property) => (
+                                  <SelectItem key={property} value={property}>
+                                    {property}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="unit">Unit/Address *</Label>
+                            <Input
+                              id="unit"
+                              placeholder="e.g., 4B or 123 Main St"
+                              value={newTenant.unit}
+                              onChange={(e) => handleInputChange('unit', e.target.value)}
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="rent">Monthly Rent *</Label>
+                            <Input
+                              id="rent"
+                              type="number"
+                              placeholder="e.g., 1200"
+                              value={newTenant.rent}
+                              onChange={(e) => handleInputChange('rent', e.target.value)}
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 2: Lease Details */}
+                    {currentStep === 2 && (
+                      <div className="space-y-6">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-gray-900">Lease Agreement Details</h3>
+                          <p className="text-gray-600">Set up the lease terms and payment information</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="leaseStart">Lease Start Date *</Label>
+                            <Input
+                              id="leaseStart"
+                              type="date"
+                              value={newTenant.leaseStart}
+                              onChange={(e) => handleInputChange('leaseStart', e.target.value)}
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="leaseEnd">Lease End Date *</Label>
+                            <Input
+                              id="leaseEnd"
+                              type="date"
+                              value={newTenant.leaseEnd}
+                              onChange={(e) => handleInputChange('leaseEnd', e.target.value)}
+                              required
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="status">Tenant Status</Label>
+                            <Select value={newTenant.status} onValueChange={(value) => handleInputChange('status', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="active">Active</SelectItem>
+                                <SelectItem value="expiring">Expiring Soon</SelectItem>
+                                <SelectItem value="inactive">Inactive</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="paymentStatus">Payment Status</Label>
+                            <Select value={newTenant.paymentStatus} onValueChange={(value) => handleInputChange('paymentStatus', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select payment status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="current">Current</SelectItem>
+                                <SelectItem value="late">Late</SelectItem>
+                                <SelectItem value="overdue">Overdue</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="paymentHistory">Payment History</Label>
+                          <Select value={newTenant.paymentHistory} onValueChange={(value) => handleInputChange('paymentHistory', value)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select payment history" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="excellent">Excellent</SelectItem>
+                              <SelectItem value="good">Good</SelectItem>
+                              <SelectItem value="fair">Fair</SelectItem>
+                              <SelectItem value="poor">Poor</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 3: Emergency & Additional Information */}
+                    {currentStep === 3 && (
+                      <div className="space-y-6">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-gray-900">Emergency & Additional Information</h3>
+                          <p className="text-gray-600">Important details for property management and emergencies</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="emergencyContact">Emergency Contact Name *</Label>
+                            <Input
+                              id="emergencyContact"
+                              placeholder="e.g., Jane Doe"
+                              value={newTenant.emergencyContact}
+                              onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="emergencyPhone">Emergency Contact Phone *</Label>
+                            <Input
+                              id="emergencyPhone"
+                              placeholder="e.g., (555) 987-6543"
+                              value={newTenant.emergencyPhone}
+                              onChange={(e) => handleInputChange('emergencyPhone', e.target.value)}
+                              required
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="pets">Pets</Label>
+                            <Select value={newTenant.pets} onValueChange={(value) => handleInputChange('pets', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select pet policy" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="no">No Pets</SelectItem>
+                                <SelectItem value="yes">Has Pets</SelectItem>
+                                <SelectItem value="case-by-case">Case by Case</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="vehicleInfo">Vehicle Information</Label>
+                            <Input
+                              id="vehicleInfo"
+                              placeholder="e.g., 2020 Honda Civic - ABC123"
+                              value={newTenant.vehicleInfo}
+                              onChange={(e) => handleInputChange('vehicleInfo', e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="employmentStatus">Employment Status</Label>
+                            <Select value={newTenant.employmentStatus} onValueChange={(value) => handleInputChange('employmentStatus', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select employment status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="employed">Employed</SelectItem>
+                                <SelectItem value="self-employed">Self-Employed</SelectItem>
+                                <SelectItem value="student">Student</SelectItem>
+                                <SelectItem value="retired">Retired</SelectItem>
+                                <SelectItem value="unemployed">Unemployed</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="employer">Employer</Label>
+                            <Input
+                              id="employer"
+                              placeholder="e.g., ABC Company"
+                              value={newTenant.employer}
+                              onChange={(e) => handleInputChange('employer', e.target.value)}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="annualIncome">Annual Income</Label>
+                          <Input
+                            id="annualIncome"
+                            type="number"
+                            placeholder="e.g., 75000"
+                            value={newTenant.annualIncome}
+                            onChange={(e) => handleInputChange('annualIncome', e.target.value)}
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="references">References</Label>
+                          <Textarea
+                            id="references"
+                            placeholder="List any references or previous landlords"
+                            value={newTenant.references}
+                            onChange={(e) => handleInputChange('references', e.target.value)}
+                            rows={3}
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="notes">Additional Notes</Label>
+                          <Textarea
+                            id="notes"
+                            placeholder="Any additional information about the tenant"
+                            value={newTenant.notes}
+                            onChange={(e) => handleInputChange('notes', e.target.value)}
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 4: Review & Submit */}
+                    {currentStep === 4 && (
+                      <div className="space-y-6">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-gray-900">Review & Submit</h3>
+                          <p className="text-gray-600">Please review all the information before submitting</p>
+                        </div>
+                        
+                        <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <h4 className="font-semibold text-gray-900 mb-2">Basic Information</h4>
+                              <div className="space-y-1 text-sm text-gray-600">
+                                <p><span className="font-medium">Name:</span> {newTenant.name}</p>
+                                <p><span className="font-medium">Email:</span> {newTenant.email}</p>
+                                <p><span className="font-medium">Phone:</span> {newTenant.phone}</p>
+                                <p><span className="font-medium">Property:</span> {newTenant.property}</p>
+                                <p><span className="font-medium">Unit:</span> {newTenant.unit}</p>
+                                <p><span className="font-medium">Rent:</span> ${newTenant.rent}/month</p>
+                              </div>
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-gray-900 mb-2">Lease Details</h4>
+                              <div className="space-y-1 text-sm text-gray-600">
+                                <p><span className="font-medium">Start Date:</span> {newTenant.leaseStart}</p>
+                                <p><span className="font-medium">End Date:</span> {newTenant.leaseEnd}</p>
+                                <p><span className="font-medium">Status:</span> {newTenant.status}</p>
+                                <p><span className="font-medium">Payment Status:</span> {newTenant.paymentStatus}</p>
+                                <p><span className="font-medium">Payment History:</span> {newTenant.paymentHistory}</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="border-t pt-4">
+                            <h4 className="font-semibold text-gray-900 mb-2">Additional Information</h4>
+                            <div className="space-y-1 text-sm text-gray-600">
+                              <p><span className="font-medium">Emergency Contact:</span> {newTenant.emergencyContact} ({newTenant.emergencyPhone})</p>
+                              <p><span className="font-medium">Pets:</span> {newTenant.pets}</p>
+                              <p><span className="font-medium">Employment:</span> {newTenant.employmentStatus}</p>
+                              {newTenant.employer && <p><span className="font-medium">Employer:</span> {newTenant.employer}</p>}
+                              {newTenant.annualIncome && <p><span className="font-medium">Annual Income:</span> ${newTenant.annualIncome}</p>}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Navigation Buttons */}
+                    <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => {
+                          resetForm();
+                          setShowAddTenantModal(false);
+                        }}
+                        disabled={isSubmitting}
+                      >
+                        Cancel
+                      </Button>
+                      
+                      <div className="flex items-center gap-2">
+                        {currentStep > 1 && (
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={prevStep}
+                            disabled={isSubmitting}
+                          >
+                            Previous
+                          </Button>
+                        )}
+                        
+                        {currentStep < 4 ? (
+                          <Button 
+                            type="button"
+                            onClick={nextStep}
+                            disabled={!canProceedToNext() || isSubmitting}
+                            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                          >
+                            Next
+                          </Button>
+                        ) : (
+                          <Button 
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                          >
+                            {isSubmitting ? (
+                              <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                Adding Tenant...
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <Users className="h-4 w-4" />
+                                Add Tenant
+                              </div>
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
@@ -710,7 +1249,10 @@ const Tenants = () => {
             <p className="text-gray-500 mb-4">
               {searchQuery ? 'Try adjusting your search criteria or filters' : 'Get started by adding your first tenant'}
             </p>
-            <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+            <Button 
+              onClick={() => setShowAddTenantModal(true)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add Your First Tenant
             </Button>

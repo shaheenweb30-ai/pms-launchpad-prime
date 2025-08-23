@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AccessControlProvider } from "@/contexts/AccessControlContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ProtectedLayout from "@/components/ProtectedLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -27,6 +28,7 @@ import Tenants from "./pages/Tenants";
 import Financials from "./pages/Financials";
 import Maintenance from "./pages/Maintenance";
 import Settings from "./pages/Settings";
+import AdminAccessControl from "./pages/AdminAccessControl";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
 
@@ -36,11 +38,12 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ErrorBoundary>
-            <Routes>
+        <AccessControlProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ErrorBoundary>
+              <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/benefits" element={<Benefits />} />
               <Route path="/pricing" element={<Pricing />} />
@@ -190,11 +193,24 @@ const App = () => (
                 } 
               />
               
+              {/* Admin Access Control Route */}
+              <Route 
+                path="/admin-access-control" 
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <ProtectedLayout>
+                      <AdminAccessControl />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </ErrorBoundary>
         </BrowserRouter>
+        </AccessControlProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
