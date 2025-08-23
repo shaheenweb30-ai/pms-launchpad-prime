@@ -5,6 +5,10 @@
 /* Modern PMS Design System - Professional Property Management Theme */
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
   :root {
     /* Professional color palette */
     --background: 0 0% 100%;

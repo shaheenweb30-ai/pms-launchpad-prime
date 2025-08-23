@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Building2, Menu, X, User, Users, Wrench, DollarSign, BarChart3, Settings, LogOut } from 'lucide-react';
+import { Building2, Menu, X, User, LogOut, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -11,6 +11,8 @@ const Navigation = () => {
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
     try {
@@ -29,6 +31,22 @@ const Navigation = () => {
   };
 
   const closeMenu = () => setIsMenuOpen(false);
+  const toggleProfileDropdown = () => setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  const closeProfileDropdown = () => setIsProfileDropdownOpen(false);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#a5afbe]/20 shadow-sm">
@@ -44,73 +62,40 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            <Link 
-              to="/#features" 
+            <button 
+              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
               className="text-[#a5afbe] hover:text-[#ed1c24] transition-colors duration-300 font-medium rounded-full px-4 py-2 hover:bg-[#f8f9fa]"
             >
               Features
-            </Link>
-            <Link 
-              to="/#benefits" 
+            </button>
+            <button 
+              onClick={() => document.getElementById('benefits')?.scrollIntoView({ behavior: 'smooth' })}
               className="text-[#a5afbe] hover:text-[#ed1c24] transition-colors duration-300 font-medium rounded-full px-4 py-2 hover:bg-[#f8f9fa]"
             >
               Benefits
-            </Link>
-            <Link 
-              to="/#pricing" 
+            </button>
+            <button 
+              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
               className="text-[#a5afbe] hover:text-[#ed1c24] transition-colors duration-300 font-medium rounded-full px-4 py-2 hover:bg-[#f8f9fa]"
             >
               Pricing
-            </Link>
-            <Link 
-              to="/#contact" 
+            </button>
+            <button 
+              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
               className="text-[#a5afbe] hover:text-[#ed1c24] transition-colors duration-300 font-medium rounded-full px-4 py-2 hover:bg-[#f8f9fa]"
             >
               Contact
-            </Link>
+            </button>
           </div>
 
           {/* Desktop Auth Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
             {user ? (
-              <div className="flex items-center space-x-4">
-                <Link to="/dashboard">
-                  <Button variant="outline" className="border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full">
-                    <User className="w-4 h-4 mr-2" />
-                    Dashboard
-                  </Button>
-                </Link>
-                <Link to="/tenants">
-                  <Button variant="outline" className="border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full">
-                    <Users className="w-4 h-4 mr-2" />
-                    Tenants
-                  </Button>
-                </Link>
-                <Link to="/maintenance">
-                  <Button variant="outline" className="border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full">
-                    <Wrench className="w-4 h-4 mr-2" />
-                    Maintenance
-                  </Button>
-                </Link>
-                <Link to="/financials">
-                  <Button variant="outline" className="border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full">
-                    <DollarSign className="w-4 h-4 mr-2" />
-                    Financials
-                  </Button>
-                </Link>
-                <Link to="/reports">
-                  <Button variant="outline" className="border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full">
-                    <BarChart3 className="w-4 h-4 mr-2" />
-                    Reports
-                  </Button>
-                </Link>
-                <Link to="/settings">
-                  <Button variant="outline" className="border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Settings
-                  </Button>
-                </Link>
-                <div className="flex items-center space-x-2 text-sm">
+              <div className="relative" ref={profileDropdownRef}>
+                <button
+                  onClick={toggleProfileDropdown}
+                  className="flex items-center space-x-2 text-sm hover:opacity-80 transition-opacity cursor-pointer p-2 rounded-lg hover:bg-[#f8f9fa]"
+                >
                   <div className="w-8 h-8 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-full flex items-center justify-center">
                     <span className="text-white font-medium text-sm">
                       {profile?.first_name?.[0] || user.email?.[0] || 'U'}
@@ -119,15 +104,32 @@ const Navigation = () => {
                   <span className="text-[#231f20] font-medium">
                     {profile?.first_name || user.email}
                   </span>
-                </div>
-                <Button
-                  onClick={handleSignOut}
-                  variant="outline"
-                  className="border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
-                </Button>
+                  <ChevronDown className={`w-4 h-4 text-[#a5afbe] transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {/* Profile Dropdown */}
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-[#a5afbe]/20 py-2 z-50">
+                    <Link 
+                      to="/dashboard" 
+                      onClick={closeProfileDropdown}
+                      className="flex items-center px-4 py-2 text-[#231f20] hover:bg-[#f8f9fa] transition-colors"
+                    >
+                      <User className="w-4 h-4 mr-3 text-[#a5afbe]" />
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleSignOut();
+                        closeProfileDropdown();
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-[#231f20] hover:bg-[#f8f9fa] transition-colors"
+                    >
+                      <LogOut className="w-4 h-4 mr-3 text-[#a5afbe]" />
+                      Sign Out
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <>
@@ -158,67 +160,92 @@ const Navigation = () => {
         {isMenuOpen && (
           <div className="lg:hidden border-t border-[#a5afbe]/20 bg-white/95 backdrop-blur-sm">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <Link 
-                to="/#features" 
-                className="block px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
-                onClick={closeMenu}
+              <button 
+                onClick={() => {
+                  document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                  closeMenu();
+                }}
+                className="block w-full text-left px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
               >
                 Features
-              </Link>
-              <Link 
-                to="/#benefits" 
-                className="block px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
-                onClick={closeMenu}
+              </button>
+              <button 
+                onClick={() => {
+                  document.getElementById('benefits')?.scrollIntoView({ behavior: 'smooth' });
+                  closeMenu();
+                }}
+                className="block w-full text-left px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
               >
                 Benefits
-              </Link>
-              <Link 
-                to="/#pricing" 
-                className="block px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
-                onClick={closeMenu}
+              </button>
+              <button 
+                onClick={() => {
+                  document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+                  closeMenu();
+                }}
+                className="block w-full text-left px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
               >
                 Pricing
-              </Link>
-              <Link 
-                to="/#contact" 
-                className="block px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
-                onClick={closeMenu}
+              </button>
+              <button 
+                onClick={() => {
+                  document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                  closeMenu();
+                }}
+                className="block w-full text-left px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
               >
                 Contact
-              </Link>
+              </button>
               
-                             {/* Mobile Auth Section */}
-               <div className="pt-4 border-t border-[#a5afbe]/20">
-                 {user ? (
-                   <div className="space-y-3">
-                     <Link to="/dashboard" onClick={closeMenu}>
-                       <Button variant="outline" className="w-full border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full">
-                         <User className="w-4 h-4 mr-2" />
-                         Dashboard
-                       </Button>
-                     </Link>
-                     <div className="flex items-center space-x-3 px-3 py-2">
-                       <div className="w-8 h-8 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-full flex items-center justify-center">
-                         <span className="text-white font-medium text-sm">
-                           {profile?.first_name?.[0] || user.email?.[0] || 'U'}
-                         </span>
-                       </div>
-                       <span className="text-[#231f20] font-medium">
-                         {profile?.first_name || user.email}
-                       </span>
-                     </div>
-                     <Button
-                       onClick={() => {
-                         handleSignOut();
-                         closeMenu();
-                       }}
-                       variant="outline"
-                       className="w-full border-[#a5afbe]/30 hover:border-[#ed1c24] hover:bg-[#ed1c24]/5 text-[#231f20] rounded-full"
-                     >
-                       <LogOut className="w-4 h-4 mr-2" />
-                       Sign Out
-                     </Button>
-                   </div>
+              {/* Mobile Auth Section */}
+              <div className="pt-4 border-t border-[#a5afbe]/20">
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="relative">
+                      <button
+                        onClick={toggleProfileDropdown}
+                        className="flex items-center w-full px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-full flex items-center justify-center mr-3">
+                          <span className="text-white font-medium text-sm">
+                            {profile?.first_name?.[0] || user.email?.[0] || 'U'}
+                          </span>
+                        </div>
+                        <span className="text-[#231f20] font-medium">
+                          {profile?.first_name || user.email}
+                        </span>
+                        <ChevronDown className={`w-4 h-4 ml-auto transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      
+                      {/* Mobile Profile Dropdown */}
+                      {isProfileDropdownOpen && (
+                        <div className="mt-2 ml-4 bg-[#f8f9fa] rounded-lg py-2">
+                          <Link 
+                            to="/dashboard" 
+                            onClick={() => {
+                              closeProfileDropdown();
+                              closeMenu();
+                            }}
+                            className="flex items-center px-3 py-2 text-[#231f20] hover:bg-[#ed1c24]/5 transition-colors rounded-lg mx-2"
+                          >
+                            <User className="w-4 h-4 mr-3 text-[#a5afbe]" />
+                            Dashboard
+                          </Link>
+                          <button
+                            onClick={() => {
+                              handleSignOut();
+                              closeProfileDropdown();
+                              closeMenu();
+                            }}
+                            className="flex items-center w-full px-3 py-2 text-[#231f20] hover:bg-[#ed1c24]/5 transition-colors rounded-lg mx-2"
+                          >
+                            <LogOut className="w-4 h-4 mr-3 text-[#a5afbe]" />
+                            Sign Out
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 ) : (
                   <div className="space-y-3">
                     <Link to="/signin" onClick={closeMenu}>
