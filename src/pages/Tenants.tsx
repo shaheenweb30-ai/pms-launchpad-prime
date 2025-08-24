@@ -610,50 +610,50 @@ const Tenants = () => {
 
   return (
     <div className="space-y-8 p-1">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 via-white to-pink-50 p-8 border border-purple-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-50/20 to-pink-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Tenant Management 👥
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Tenant Management
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
-                Manage your tenant relationships, track payments, and monitor lease agreements. Build strong partnerships with your tenants for long-term success.
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
+                Streamline your tenant relationships with modern tools and insights
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>{totalTenants} tenants managed</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="font-medium">{totalTenants} tenants managed</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Clock className="h-4 w-4" />
-                  <span>Last updated: {new Date().toLocaleTimeString()}</span>
+                  <span>Updated {new Date().toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
               <Button 
                 variant="outline" 
-                className="border-purple-200 text-purple-700 hover:bg-purple-50"
+                className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
                 onClick={exportTenantsPDF}
                 disabled={isExporting}
               >
                 <Download className="h-4 w-4 mr-2" />
-                {isExporting ? 'Exporting...' : 'Export List'}
+                {isExporting ? 'Exporting...' : 'Export'}
               </Button>
               <Button 
                 variant="outline" 
-                className="border-pink-200 text-pink-700 hover:bg-pink-50"
+                className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
                 onClick={() => setShowTenantAnalyticsModal(true)}
               >
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Tenant Analytics
+                Analytics
               </Button>
               <Dialog open={showAddTenantModal} onOpenChange={setShowAddTenantModal}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Tenant
                   </Button>
@@ -1859,18 +1859,18 @@ const Tenants = () => {
         </Button>
       </div>
 
-      {/* Enhanced Stats Overview */}
+      {/* Modern Minimal Stats Cards */}
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <Users className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <Users className="h-7 w-7 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{totalTenants}</p>
-                <p className="text-sm text-gray-600">Total Tenants</p>
-                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{totalTenants}</p>
+                <p className="text-sm text-slate-600 font-medium">Total Tenants</p>
+                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   +2 this year
                 </div>
@@ -1879,16 +1879,16 @@ const Tenants = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <DollarSign className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <DollarSign className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(totalMonthlyRent / 1000).toFixed(1)}K</p>
-                <p className="text-sm text-gray-600">Monthly Rent</p>
-                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">${(totalMonthlyRent / 1000).toFixed(1)}K</p>
+                <p className="text-sm text-slate-600 font-medium">Monthly Rent</p>
+                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   Total collected
                 </div>
@@ -1897,15 +1897,15 @@ const Tenants = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-red-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-red-100 group-hover:bg-red-200 transition-colors duration-300">
-                <AlertCircle className="h-8 w-8 text-red-600" />
+              <div className="p-3 rounded-2xl bg-red-50 group-hover:bg-red-100 transition-colors duration-200">
+                <AlertCircle className="h-7 w-7 text-red-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{lateTenants}</p>
-                <p className="text-sm text-gray-600">Late Payments</p>
+                <p className="text-3xl font-light text-slate-900">{lateTenants}</p>
+                <p className="text-sm text-slate-600 font-medium">Late Payments</p>
                 <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
                   <TrendingDown className="h-3 w-3" />
                   {totalLatePayments} total late payments
@@ -1915,16 +1915,16 @@ const Tenants = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-yellow-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-yellow-100 group-hover:bg-yellow-200 transition-colors duration-300">
-                <Clock className="h-8 w-8 text-yellow-600" />
+              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+                <Clock className="h-7 w-7 text-amber-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{totalLatePayments}</p>
-                <p className="text-sm text-gray-600">Late Payments</p>
-                <div className="flex items-center gap-1 text-xs text-yellow-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{totalLatePayments}</p>
+                <p className="text-sm text-slate-600 font-medium">Late Payments</p>
+                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
                   <TrendingDown className="h-3 w-3" />
                   This year
                 </div>
@@ -1936,84 +1936,77 @@ const Tenants = () => {
 
 
 
-      {/* Enhanced Search and Filters */}
-      <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+      {/* Modern Minimal Search and Filters */}
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
         <CardContent className="p-6">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4 flex-1">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search tenants by name, email, or property..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 border-gray-200 focus:border-purple-500"
-                />
-              </div>
-              
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-40 border-gray-200">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="expiring">Expiring</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <Select value={paymentFilter} onValueChange={setPaymentFilter}>
-                <SelectTrigger className="w-40 border-gray-200">
-                  <SelectValue placeholder="Payment" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Payments</SelectItem>
-                  <SelectItem value="current">Current</SelectItem>
-                  <SelectItem value="late">Late</SelectItem>
-                  <SelectItem value="overdue">Overdue</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                <SelectTrigger className="w-40 border-gray-200">
-                  <SelectValue placeholder="Property" />
-                </SelectTrigger>
-                <SelectContent>
-                  {properties.map((property) => (
-                    <SelectItem key={property} value={property}>
-                      {property}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="border-gray-200 text-gray-700 hover:bg-gray-50"
-                onClick={() => {
-                  const savedProperties = localStorage.getItem('pms-properties');
-                  if (savedProperties) {
-                    try {
-                      const parsedProperties = JSON.parse(savedProperties);
-                      const propertyNames = ['All Properties', ...parsedProperties.map((prop: any) => prop.name)];
-                      setProperties(propertyNames);
-                    } catch (error) {
-                      console.error('Error parsing saved properties:', error);
-                    }
-                  }
-                }}
-                title="Refresh properties list"
-              >
-                <RefreshCw className="h-4 w-4" />
-              </Button>
-              
-              <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
-                <Filter className="h-4 w-4 mr-2" />
-                More Filters
-              </Button>
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search tenants by name, email, or property..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
+              />
             </div>
+            
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-40 border-slate-200 rounded-xl">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="expiring">Expiring</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select value={paymentFilter} onValueChange={setPaymentFilter}>
+              <SelectTrigger className="w-40 border-slate-200 rounded-xl">
+                <SelectValue placeholder="Payment" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Payments</SelectItem>
+                <SelectItem value="current">Current</SelectItem>
+                <SelectItem value="late">Late</SelectItem>
+                <SelectItem value="overdue">Overdue</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select value={propertyFilter} onValueChange={setPropertyFilter}>
+              <SelectTrigger className="w-40 border-slate-200 rounded-xl">
+                <SelectValue placeholder="Property" />
+              </SelectTrigger>
+              <SelectContent>
+                {properties.map((property) => (
+                  <SelectItem key={property} value={property}>
+                    {property}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
+              onClick={() => {
+                const savedProperties = localStorage.getItem('pms-properties');
+                if (savedProperties) {
+                  try {
+                    const parsedProperties = JSON.parse(savedProperties);
+                    const propertyNames = ['All Properties', ...parsedProperties.map((prop: any) => prop.name)];
+                    setProperties(propertyNames);
+                  } catch (error) {
+                    console.error('Error parsing saved properties:', error);
+                  }
+                }
+              }}
+              title="Refresh properties list"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -2021,13 +2014,13 @@ const Tenants = () => {
       {/* Enhanced Tenants List */}
       <div className="grid gap-4">
         {filteredTenants.map((tenant) => (
-          <Card key={tenant.id} className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-gray-50/50 shadow-lg hover:shadow-2xl">
+          <Card key={tenant.id} className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-6">
-                  <Avatar className="h-16 w-16 border-4 border-purple-100 group-hover:border-purple-200 transition-colors duration-300">
+                  <Avatar className="h-16 w-16 border-4 border-slate-100 group-hover:border-slate-200 transition-colors duration-200">
                     <AvatarImage src={tenant.avatar} alt={tenant.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-lg font-bold">
+                    <AvatarFallback className="bg-gradient-to-br from-slate-600 to-slate-800 text-white text-lg font-bold">
                       {getInitials(tenant.name)}
                     </AvatarFallback>
                   </Avatar>
@@ -2045,11 +2038,11 @@ const Tenants = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="border-purple-200 text-purple-700">
+                      <Badge variant="outline" className="border-slate-200 text-slate-700">
                         <Building2 className="h-3 w-3 mr-1" />
                         {tenant.property}
                       </Badge>
-                      <Badge variant="outline" className="border-blue-200 text-blue-700">
+                      <Badge variant="outline" className="border-slate-200 text-slate-700">
                         <Home className="h-3 w-3 mr-1" />
                         Unit {tenant.unit}
                       </Badge>
@@ -2153,32 +2146,32 @@ const Tenants = () => {
               </div>
 
               {/* Additional Tenant Metrics */}
-              <div className="mt-6 pt-6 border-t border-gray-100">
+              <div className="mt-6 pt-6 border-t border-slate-100">
                 <div className="grid grid-cols-4 gap-4">
-                  <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <div className="text-sm text-gray-600 mb-1">Communication</div>
+                  <div className="text-center p-3 bg-slate-50 rounded-lg">
+                    <div className="text-sm text-slate-600 mb-1">Communication</div>
                     <div className="flex items-center justify-center gap-2">
                       <span className="font-semibold">{tenant.communicationScore}%</span>
                       <Progress value={tenant.communicationScore} className="w-16 h-2" />
                     </div>
                   </div>
                   
-                  <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <div className="text-sm text-gray-600 mb-1">Last Payment</div>
-                    <div className="font-semibold text-green-600">
+                  <div className="text-center p-3 bg-slate-50 rounded-lg">
+                    <div className="text-sm text-slate-600 mb-1">Last Payment</div>
+                    <div className="font-semibold text-emerald-600">
                       {new Date(tenant.lastPayment).toLocaleDateString()}
                     </div>
                   </div>
                   
-                  <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <div className="text-sm text-gray-600 mb-1">Next Payment</div>
-                    <div className="font-semibold text-blue-600">
+                  <div className="text-center p-3 bg-slate-50 rounded-lg">
+                    <div className="text-sm text-slate-600 mb-1">Next Payment</div>
+                    <div className="font-semibold text-slate-700">
                       {new Date(tenant.nextPayment).toLocaleDateString()}
                     </div>
                   </div>
                   
-                  <div className="text-center p-3 bg-gray-50 rounded-lg">
-                    <div className="text-sm text-gray-600 mb-1">Late Payments</div>
+                  <div className="text-center p-3 bg-slate-50 rounded-lg">
+                    <div className="text-sm text-slate-600 mb-1">Late Payments</div>
                     <div className="font-semibold text-red-600">
                       {tenant.latePayments} this year
                     </div>
@@ -2191,16 +2184,16 @@ const Tenants = () => {
       </div>
 
       {filteredTenants.length === 0 && (
-        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-12 text-center">
-            <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">No tenants found</h3>
-            <p className="text-gray-500 mb-4">
+            <Users className="h-16 w-16 text-slate-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-slate-600 mb-2">No tenants found</h3>
+            <p className="text-slate-500 mb-4">
               {searchQuery ? 'Try adjusting your search criteria or filters' : 'Get started by adding your first tenant'}
             </p>
             <Button 
               onClick={() => setShowAddTenantModal(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-6 py-3"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Your First Tenant

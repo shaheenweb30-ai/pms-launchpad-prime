@@ -162,55 +162,55 @@ const Analytics = () => {
 
   return (
     <div className="space-y-8 p-1">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-8 border border-indigo-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/20 to-purple-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Analytics Dashboard 📊
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Analytics Dashboard
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
-                Comprehensive insights and performance metrics for your property portfolio. Track ROI, occupancy rates, and market performance in real-time.
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
+                Comprehensive insights and performance metrics for your property portfolio
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>Data updated 2 minutes ago</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="font-medium">Data updated 2 minutes ago</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Clock className="h-4 w-4" />
-                  <span>Last refresh: {new Date().toLocaleTimeString()}</span>
+                  <span>Updated {new Date().toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Filter className="h-4 w-4 mr-2" />
-                Advanced Filters
+                Filters
               </Button>
-              <Button variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Share className="h-4 w-4 mr-2" />
-                Share Report
+                Share
               </Button>
-              <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                 <Download className="h-4 w-4 mr-2" />
-                Export Report
+                Export
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Time Range Selector */}
-      <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+      {/* Modern Minimal Time Range Selector */}
+      <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
         <div className="flex items-center gap-3">
-          <Calendar className="h-5 w-5 text-indigo-600" />
-          <span className="font-medium text-gray-700">Time Range</span>
+          <Calendar className="h-5 w-5 text-slate-600" />
+          <span className="font-medium text-slate-700">Time Range</span>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
-          <SelectTrigger className="w-48 border-indigo-200">
+          <SelectTrigger className="w-48 border-slate-200 rounded-xl">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -222,22 +222,22 @@ const Analytics = () => {
         </Select>
       </div>
 
-      {/* Enhanced Key Performance Indicators */}
+      {/* Modern Minimal Key Performance Indicators */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-slate-600">
               Portfolio ROI
             </CardTitle>
-            <div className="p-2 rounded-lg bg-green-50 group-hover:bg-green-100 transition-colors duration-300">
-              <Target className="h-5 w-5 text-green-600" />
+            <div className="p-2 rounded-lg bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+              <Target className="h-5 w-5 text-emerald-600" />
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="text-3xl font-bold text-gray-900">{kpiData.totalROI}%</div>
+            <div className="text-3xl font-light text-slate-900">{kpiData.totalROI}%</div>
             <div className="space-y-2">
-              <div className="flex items-center text-sm text-gray-600">
-                <TrendingUp className="h-4 w-4 text-green-600 mr-2" />
+              <div className="flex items-center text-sm text-slate-600">
+                <TrendingUp className="h-4 w-4 text-emerald-600 mr-2" />
                 <span className="font-medium">+2.3% from last quarter</span>
               </div>
               <Progress value={85} className="h-2" />
@@ -245,20 +245,20 @@ const Analytics = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-slate-600">
               Avg. Occupancy
             </CardTitle>
-            <div className="p-2 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors duration-300">
+            <div className="p-2 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
               <Building2 className="h-5 w-5 text-blue-600" />
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="text-3xl font-bold text-gray-900">{kpiData.avgOccupancy}%</div>
+            <div className="text-3xl font-light text-slate-900">{kpiData.avgOccupancy}%</div>
             <div className="space-y-2">
-              <div className="flex items-center text-sm text-gray-600">
-                <TrendingUp className="h-4 w-4 text-green-600 mr-2" />
+              <div className="flex items-center text-sm text-slate-600">
+                <TrendingUp className="h-4 w-4 text-emerald-600 mr-2" />
                 <span className="font-medium">+1.8% vs market avg</span>
               </div>
               <Progress value={92} className="h-2" />
@@ -266,20 +266,20 @@ const Analytics = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-emerald-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-slate-600">
               Revenue Growth
             </CardTitle>
-            <div className="p-2 rounded-lg bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-300">
+            <div className="p-2 rounded-lg bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
               <TrendingUp className="h-5 w-5 text-emerald-600" />
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="text-3xl font-bold text-gray-900">{kpiData.revenueGrowth}%</div>
+            <div className="text-3xl font-light text-slate-900">{kpiData.revenueGrowth}%</div>
             <div className="space-y-2">
-              <div className="flex items-center text-sm text-gray-600">
-                <TrendingUp className="h-4 w-4 text-green-600 mr-2" />
+              <div className="flex items-center text-sm text-slate-600">
+                <TrendingUp className="h-4 w-4 text-emerald-600 mr-2" />
                 <span className="font-medium">YoY growth rate</span>
               </div>
               <Progress value={78} className="h-2" />
@@ -287,20 +287,20 @@ const Analytics = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-orange-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-slate-600">
               Expense Ratio
             </CardTitle>
-            <div className="p-2 rounded-lg bg-orange-50 group-hover:bg-orange-100 transition-colors duration-300">
-              <PieChart className="h-5 w-5 text-orange-600" />
+            <div className="p-2 rounded-lg bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+              <PieChart className="h-5 w-5 text-amber-600" />
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="text-3xl font-bold text-gray-900">{kpiData.expenseRatio}</div>
+            <div className="text-3xl font-light text-slate-900">{kpiData.expenseRatio}</div>
             <div className="space-y-2">
-              <div className="flex items-center text-sm text-gray-600">
-                <TrendingDown className="h-4 w-4 text-green-600 mr-2" />
+              <div className="flex items-center text-sm text-slate-600">
+                <TrendingDown className="h-4 w-4 text-emerald-600 mr-2" />
                 <span className="font-medium">-0.05 from last year</span>
               </div>
               <Progress value={66} className="h-2" />
@@ -308,20 +308,20 @@ const Analytics = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-purple-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-slate-600">
               Net Yield
             </CardTitle>
-            <div className="p-2 rounded-lg bg-purple-50 group-hover:bg-purple-100 transition-colors duration-300">
-              <Activity className="h-5 w-5 text-purple-600" />
+            <div className="p-2 rounded-lg bg-slate-50 group-hover:bg-slate-100 transition-colors duration-200">
+              <Activity className="h-5 w-5 text-slate-600" />
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="text-3xl font-bold text-gray-900">{kpiData.netYield}%</div>
+            <div className="text-3xl font-light text-slate-900">{kpiData.netYield}%</div>
             <div className="space-y-2">
-              <div className="flex items-center text-sm text-gray-600">
-                <TrendingUp className="h-4 w-4 text-green-600 mr-2" />
+              <div className="flex items-center text-sm text-slate-600">
+                <TrendingUp className="h-4 w-4 text-emerald-600 mr-2" />
                 <span className="font-medium">Above industry standard</span>
               </div>
               <Progress value={82} className="h-2" />
@@ -329,20 +329,20 @@ const Analytics = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-slate-600">
               Portfolio Value
             </CardTitle>
-            <div className="p-2 rounded-lg bg-green-50 group-hover:bg-green-100 transition-colors duration-300">
-              <DollarSign className="h-5 w-5 text-green-600" />
+            <div className="p-2 rounded-lg bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+              <DollarSign className="h-5 w-5 text-emerald-600" />
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="text-3xl font-bold text-gray-900">{formatCurrency(kpiData.portfolioValue)}</div>
+            <div className="text-3xl font-light text-slate-900">{formatCurrency(kpiData.portfolioValue)}</div>
             <div className="space-y-2">
-              <div className="flex items-center text-sm text-gray-600">
-                <TrendingUp className="h-4 w-4 text-green-600 mr-2" />
+              <div className="flex items-center text-sm text-slate-600">
+                <TrendingUp className="h-4 w-4 text-emerald-600 mr-2" />
                 <span className="font-medium">+8.2% appreciation</span>
               </div>
               <Progress value={88} className="h-2" />
@@ -401,24 +401,24 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            {/* Occupancy Trends */}
-            <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-              <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+            {/* Modern Minimal Occupancy Trends */}
+            <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+              <CardHeader className="border-b border-slate-100 bg-slate-50/50">
                 <CardTitle className="flex items-center gap-3 text-lg">
-                  <div className="p-2 rounded-lg bg-green-50">
-                    <Users className="h-5 w-5 text-green-600" />
+                  <div className="p-2 rounded-lg bg-emerald-50">
+                    <Users className="h-5 w-5 text-emerald-600" />
                   </div>
                   Occupancy Trends
                   <Badge variant="secondary" className="ml-auto">92.3% avg</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="h-80 bg-gradient-to-br from-green-50 to-blue-50 rounded-xl flex items-center justify-center border border-green-100">
+                <div className="h-80 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-200">
                   <div className="text-center">
-                    <TrendingUp className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                    <p className="text-xl font-semibold text-gray-700 mb-2">Occupancy Rate Chart</p>
-                    <p className="text-sm text-gray-500 mb-4">Monthly occupancy visualization</p>
-                    <Button variant="outline" size="sm" className="border-green-200 text-green-700 hover:bg-green-50">
+                    <TrendingUp className="h-16 w-16 text-slate-500 mx-auto mb-4" />
+                    <p className="text-xl font-semibold text-slate-700 mb-2">Occupancy Rate Chart</p>
+                    <p className="text-sm text-slate-500 mb-4">Monthly occupancy visualization</p>
+                    <Button variant="outline" size="sm" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                       <Eye className="h-4 w-4 mr-2" />
                       View Details
                     </Button>
@@ -428,12 +428,12 @@ const Analytics = () => {
             </Card>
           </div>
 
-          {/* Enhanced Performance Summary Table */}
-          <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-            <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+          {/* Modern Minimal Performance Summary Table */}
+          <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+            <CardHeader className="border-b border-slate-100 bg-slate-50/50">
               <CardTitle className="flex items-center gap-3 text-lg">
-                <div className="p-2 rounded-lg bg-indigo-50">
-                  <BarChart3 className="h-5 w-5 text-indigo-600" />
+                <div className="p-2 rounded-lg bg-slate-100">
+                  <BarChart3 className="h-5 w-5 text-slate-600" />
                 </div>
                 Monthly Performance Summary
                 <Badge variant="secondary" className="ml-auto">Last 6 months</Badge>
@@ -442,31 +442,31 @@ const Analytics = () => {
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50/50">
-                    <tr className="border-b border-gray-100">
-                      <th className="text-left p-4 font-semibold text-gray-700">Month</th>
-                      <th className="text-right p-4 font-semibold text-gray-700">Revenue</th>
-                      <th className="text-right p-4 font-semibold text-gray-700">Expenses</th>
-                      <th className="text-right p-4 font-semibold text-gray-700">Net Income</th>
-                      <th className="text-right p-4 font-semibold text-gray-700">Occupancy</th>
-                      <th className="text-right p-4 font-semibold text-gray-700">ROI</th>
+                  <thead className="bg-slate-50/50">
+                    <tr className="border-b border-slate-100">
+                      <th className="text-left p-4 font-semibold text-slate-700">Month</th>
+                      <th className="text-right p-4 font-semibold text-slate-700">Revenue</th>
+                      <th className="text-right p-4 font-semibold text-slate-700">Expenses</th>
+                      <th className="text-right p-4 font-semibold text-slate-700">Net Income</th>
+                      <th className="text-right p-4 font-semibold text-slate-700">Occupancy</th>
+                      <th className="text-right p-4 font-semibold text-slate-700">ROI</th>
                     </tr>
                   </thead>
                   <tbody>
                     {monthlyPerformance.slice(-6).map((month, index) => (
-                      <tr key={index} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors duration-200">
-                        <td className="p-4 font-medium text-gray-900">{month.month}</td>
-                                          <td className="p-4 text-right font-semibold text-gray-900">{formatCurrency(month.revenue)}</td>
-                  <td className="p-4 text-right text-gray-600">{formatCurrency(month.expenses)}</td>
-                  <td className="p-4 text-right font-semibold text-green-600">
+                      <tr key={index} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors duration-200">
+                        <td className="p-4 font-medium text-slate-900">{month.month}</td>
+                                          <td className="p-4 text-right font-semibold text-slate-900">{formatCurrency(month.revenue)}</td>
+                  <td className="p-4 text-right text-slate-600">{formatCurrency(month.expenses)}</td>
+                  <td className="p-4 text-right font-semibold text-emerald-600">
                     {formatCurrency(month.revenue - month.expenses)}
                   </td>
                         <td className="p-4 text-right">
-                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                          <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200">
                             {month.occupancy}%
                           </Badge>
                         </td>
-                        <td className="p-4 text-right font-semibold text-indigo-600">{month.roi}%</td>
+                        <td className="p-4 text-right font-semibold text-slate-600">{month.roi}%</td>
                       </tr>
                     ))}
                   </tbody>
@@ -478,26 +478,26 @@ const Analytics = () => {
 
         {/* Properties Tab */}
         <TabsContent value="properties" className="space-y-6">
-          <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-            <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+          <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+            <CardHeader className="border-b border-slate-100 bg-slate-50/50">
               <CardTitle className="flex items-center gap-3 text-lg">
-                <div className="p-2 rounded-lg bg-blue-50">
-                  <Building2 className="h-5 w-5 text-blue-600" />
+                <div className="p-2 rounded-lg bg-slate-100">
+                  <Building2 className="h-5 w-5 text-slate-600" />
                 </div>
                 Property Performance Comparison
                 <Badge variant="secondary" className="ml-auto">4 properties</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-slate-100">
                 {propertyPerformance.map((property, index) => (
-                  <div key={index} className="p-6 hover:bg-gray-50/50 transition-colors duration-200">
+                  <div key={index} className="p-6 hover:bg-slate-50/50 transition-colors duration-200">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{property.property}</h3>
-                        <div className="flex items-center gap-6 text-sm text-gray-600">
+                        <h3 className="text-lg font-semibold text-slate-900 mb-2">{property.property}</h3>
+                        <div className="flex items-center gap-6 text-sm text-slate-600">
                           <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-blue-500" />
+                            <Users className="h-4 w-4 text-slate-500" />
                             <span>Occupancy: {property.occupancy}%</span>
                           </div>
                           <div className="flex items-center gap-2">

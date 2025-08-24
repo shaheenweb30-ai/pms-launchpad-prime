@@ -1178,59 +1178,59 @@ const Properties = () => {
 
   return (
     <div className="space-y-8 p-1">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 via-white to-blue-50 p-8 border border-green-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-green-50/20 to-blue-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                {t('properties.title')} 🏢
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                {t('properties.title')}
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 {t('properties.description')}
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>{totalProperties === 0 ? 'No properties yet' : `${totalProperties} ${t('properties.totalProperties')}`}</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="font-medium">{totalProperties === 0 ? 'No properties yet' : `${totalProperties} ${t('properties.totalProperties')}`}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Clock className="h-4 w-4" />
-                  <span>{t('properties.lastUpdated')}: {new Date().toLocaleTimeString()}</span>
+                  <span>Updated {new Date().toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
               <Button 
                 variant="outline" 
-                className="border-green-200 text-green-700 hover:bg-green-50"
+                className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
                 onClick={exportPortfolioPDF}
                 disabled={isExporting}
               >
                 {isExporting ? (
                   <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                                    <div className="w-4 h-4 border-2 border-slate-600 border-t-transparent rounded-full animate-spin"></div>
                 {t('properties.exporting')}
               </div>
             ) : (
               <>
                 <Download className="h-4 w-4 mr-2" />
-                {t('properties.exportPortfolio')}
+                Export
               </>
             )}
               </Button>
               <Button 
                 variant="outline" 
-                className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
                 onClick={() => setShowPortfolioAnalyticsModal(true)}
               >
                 <BarChart3 className="h-4 w-4 mr-2" />
-                {t('properties.portfolioAnalytics')}
+                Analytics
               </Button>
               <Dialog open={showAddPropertyModal} onOpenChange={setShowAddPropertyModal}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                     <Plus className="h-4 w-4 mr-2" />
                     {t('properties.addProperty')}
                   </Button>
@@ -2379,18 +2379,18 @@ const Properties = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Enhanced Stats Overview */}
+      {/* Modern Minimal Stats Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <Building2 className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <Building2 className="h-7 w-7 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{totalProperties}</p>
-                <p className="text-sm text-gray-600">Total Properties</p>
-                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                <p className="text-3xl font-light text-slate-900">{totalProperties}</p>
+                <p className="text-sm text-slate-600 font-medium">Total Properties</p>
+                <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
                   <span>No properties yet</span>
                 </div>
               </div>
@@ -2398,16 +2398,16 @@ const Properties = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <Users className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <Users className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{totalOccupied}/{totalUnits}</p>
-                <p className="text-sm text-gray-600">Occupied Units</p>
-                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                <p className="text-3xl font-light text-slate-900">{totalOccupied}/{totalUnits}</p>
+                <p className="text-sm text-slate-600 font-medium">Occupied Units</p>
+                <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
                   <span>{totalUnits === 0 ? 'No units available' : `${Math.round((totalOccupied / totalUnits) * 100)}% occupancy`}</span>
                 </div>
               </div>
@@ -2415,16 +2415,16 @@ const Properties = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-emerald-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-emerald-100 group-hover:bg-emerald-200 transition-colors duration-300">
-                <DollarSign className="h-8 w-8 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <DollarSign className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${totalRevenue === 0 ? '0' : (totalRevenue / 1000).toFixed(1) + 'K'}</p>
-                <p className="text-sm text-gray-600">Monthly Revenue</p>
-                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                <p className="text-3xl font-light text-slate-900">${totalRevenue === 0 ? '0' : (totalRevenue / 1000).toFixed(1) + 'K'}</p>
+                <p className="text-sm text-slate-600 font-medium">Monthly Revenue</p>
+                <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
                   <span>{totalRevenue === 0 ? 'No revenue yet' : `$${totalRevenue.toLocaleString()}/month`}</span>
                 </div>
               </div>
@@ -2432,16 +2432,16 @@ const Properties = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-purple-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
-                <Target className="h-8 w-8 text-purple-600" />
+              <div className="p-3 rounded-2xl bg-slate-50 group-hover:bg-slate-100 transition-colors duration-200">
+                <Target className="h-7 w-7 text-slate-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{avgROI.toFixed(1)}%</p>
-                <p className="text-sm text-gray-600">Avg. ROI</p>
-                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                <p className="text-3xl font-light text-slate-900">{avgROI.toFixed(1)}%</p>
+                <p className="text-sm text-slate-600 font-medium">Avg. ROI</p>
+                <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
                   <span>No ROI data</span>
                 </div>
               </div>
@@ -2450,53 +2450,49 @@ const Properties = () => {
         </Card>
       </div>
 
-      {/* Enhanced Filters and Search */}
-      <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+      {/* Modern Minimal Search and Filters */}
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
         <CardContent className="p-6">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4 flex-1">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search properties by name, address, or city..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 border-gray-200 focus:border-blue-500"
-                />
-              </div>
-              
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-40 border-gray-200">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="maintenance">Maintenance</SelectItem>
-                  <SelectItem value="vacant">Vacant</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-40 border-gray-200">
-                  <SelectValue placeholder="Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="Apartment">Apartment</SelectItem>
-                  <SelectItem value="Complex">Complex</SelectItem>
-                  <SelectItem value="Loft">Loft</SelectItem>
-                  <SelectItem value="House">House</SelectItem>
-                  <SelectItem value="Condo">Condo</SelectItem>
-                  <SelectItem value="Estate">Estate</SelectItem>
-                </SelectContent>
-              </Select>
-              
-
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search properties by name, address, or city..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
+              />
             </div>
             
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-40 border-slate-200 rounded-xl">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="maintenance">Maintenance</SelectItem>
+                <SelectItem value="vacant">Vacant</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger className="w-40 border-slate-200 rounded-xl">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="Apartment">Apartment</SelectItem>
+                <SelectItem value="Complex">Complex</SelectItem>
+                <SelectItem value="Loft">Loft</SelectItem>
+                <SelectItem value="House">House</SelectItem>
+                <SelectItem value="Condo">Condo</SelectItem>
+                <SelectItem value="Estate">Estate</SelectItem>
+              </SelectContent>
+            </Select>
+            
             <div className="flex items-center gap-2">
-              <div className="border border-gray-200 rounded-lg p-1 bg-gray-50">
+              <div className="border border-slate-200 rounded-lg p-1 bg-slate-50">
                 <Button
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
                   size="sm"
@@ -2527,27 +2523,27 @@ const Properties = () => {
           ))}
         </div>
       ) : (
-        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
             <CardTitle className="flex items-center gap-3 text-lg">
-              <div className="p-2 rounded-lg bg-blue-50">
-                <List className="h-5 w-5 text-blue-600" />
+              <div className="p-2 rounded-lg bg-slate-100">
+                <List className="h-5 w-5 text-slate-600" />
               </div>
               Properties List View
               <Badge variant="secondary" className="ml-auto">{filteredProperties.length} properties</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-slate-100">
               {filteredProperties.map((property) => (
-                <div key={property.id} className="p-6 hover:bg-gray-50/50 transition-colors duration-200">
+                <div key={property.id} className="p-6 hover:bg-slate-50/50 transition-colors duration-200">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center border border-blue-200">
-                        <Building2 className="h-8 w-8 text-blue-600" />
+                      <div className="w-20 h-20 bg-slate-100 rounded-xl flex items-center justify-center border border-slate-200">
+                        <Building2 className="h-8 w-8 text-slate-600" />
                       </div>
                       <div className="space-y-2">
-                        <h3 className="text-lg font-semibold text-gray-900">{property.name}</h3>
+                        <h3 className="text-lg font-semibold text-slate-900">{property.name}</h3>
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <MapPin className="h-4 w-4 text-blue-500" />
                           <span>{property.address}</span>
@@ -2619,13 +2615,13 @@ const Properties = () => {
       )}
 
       {filteredProperties.length === 0 && (
-        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-12 text-center">
-            <Building2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+            <Building2 className="h-16 w-16 text-slate-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-slate-600 mb-2">
               {properties.length === 0 ? 'No properties in your portfolio yet' : 'No properties found'}
             </h3>
-            <p className="text-gray-500 mb-4">
+            <p className="text-slate-500 mb-4">
               {properties.length === 0 
                 ? 'Start building your property portfolio by adding your first property. Track performance, manage tenants, and monitor financial metrics all in one place.'
                 : 'Try adjusting your search criteria or filters to find what you\'re looking for.'
@@ -2633,7 +2629,7 @@ const Properties = () => {
             </p>
             <Button 
               onClick={() => setShowAddPropertyModal(true)}
-              className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+              className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-6 py-3"
             >
               <Plus className="h-4 w-4 mr-2" />
               {properties.length === 0 ? 'Add Your First Property' : 'Add New Property'}

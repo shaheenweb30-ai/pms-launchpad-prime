@@ -247,35 +247,35 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8 p-1">
-      {/* Enhanced Welcome Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-white to-purple-50 p-8 border border-blue-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-purple-50/20 opacity-30"></div>
+      {/* Modern Minimal Welcome Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Welcome back, {profile?.first_name || 'Owner'}! 👋
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Welcome back, {profile?.first_name || 'Owner'}!
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 Here's what's happening with your properties today. Your portfolio is performing excellently with a 94% occupancy rate and growing revenue.
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>All systems operational</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="font-medium">All systems operational</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Clock className="h-4 w-4" />
-                  <span>Last updated: {new Date().toLocaleTimeString()}</span>
+                  <span>Updated {new Date().toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Download className="h-4 w-4 mr-2" />
-                Export Report
+                Export
               </Button>
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Property
               </Button>
@@ -284,20 +284,20 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Enhanced KPI Cards */}
+      {/* Modern Minimal KPI Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
-          <Card key={index} className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-gray-50/50 shadow-lg hover:shadow-2xl">
+          <Card key={index} className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-sm font-medium text-slate-600">
                 {stat.title}
               </CardTitle>
-              <div className={`p-2 rounded-lg bg-${stat.color}-50 group-hover:bg-${stat.color}-100 transition-colors duration-300`}>
+              <div className={`p-2 rounded-lg bg-${stat.color}-50 group-hover:bg-${stat.color}-100 transition-colors duration-200`}>
                 <stat.icon className={`h-5 w-5 text-${stat.color}-600`} />
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
+              <div className="text-3xl font-light text-slate-900">{stat.value}</div>
               <div className="space-y-2">
                 <div className="flex items-center text-sm text-gray-600">
                   {stat.trend === 'up' ? (
@@ -315,16 +315,16 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Performance Metrics Row */}
+      {/* Modern Minimal Performance Metrics Row */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {performanceMetrics.map((metric, index) => (
-          <div key={index} className="text-center p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white border border-gray-100">
-            <div className="text-2xl font-bold text-gray-900 mb-1">{metric.value}</div>
-            <div className="text-sm text-gray-600 mb-1">{metric.label}</div>
-            <div className="text-xs text-gray-500">{metric.period}</div>
+          <div key={index} className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+            <div className="text-2xl font-light text-slate-900 mb-1">{metric.value}</div>
+            <div className="text-sm text-slate-600 mb-1">{metric.label}</div>
+            <div className="text-xs text-slate-500">{metric.period}</div>
             <div className="flex items-center justify-center mt-2">
               {metric.trend === 'up' ? (
-                <TrendingUp className="h-4 w-4 text-green-600" />
+                <TrendingUp className="h-4 w-4 text-emerald-600" />
               ) : (
                 <TrendingDown className="h-4 w-4 text-red-600" />
               )}
@@ -334,43 +334,43 @@ const Dashboard = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Enhanced Recent Activity */}
-        <Card className="lg:col-span-2 hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+        {/* Modern Minimal Recent Activity */}
+        <Card className="lg:col-span-2 border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
             <CardTitle className="flex items-center gap-3 text-lg">
-              <div className="p-2 rounded-lg bg-blue-50">
-                <Bell className="h-5 w-5 text-blue-600" />
+              <div className="p-2 rounded-lg bg-slate-100">
+                <Bell className="h-5 w-5 text-slate-600" />
               </div>
               Recent Activity
               <Badge variant="secondary" className="ml-auto">28 items</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-slate-100">
               {recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-start gap-4 p-4 hover:bg-gray-50/50 transition-colors duration-200">
+                <div key={index} className="flex items-start gap-4 p-4 hover:bg-slate-50/50 transition-colors duration-200">
                   <div className={`p-2 rounded-lg ${activity.bgColor} ${activity.color}`}>
                     <activity.icon className="h-4 w-4" />
                   </div>
                   <div className="flex-1 min-w-0 space-y-1">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-slate-900">
                       {activity.message}
                     </p>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
                       <MapPin className="h-3 w-3" />
                       <span>{activity.property}</span>
                     </div>
                     {activity.amount && (
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-green-600">{activity.amount}</span>
-                        <Badge className="bg-green-100 text-green-800 border-green-200 text-xs">
+                        <span className="text-sm font-semibold text-emerald-600">{activity.amount}</span>
+                        <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-xs">
                           Payment
                         </Badge>
                       </div>
                     )}
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <span className="text-xs text-gray-500">{activity.time}</span>
+                    <span className="text-xs text-slate-500">{activity.time}</span>
                     <Badge className={getStatusColor(activity.status)}>
                       {activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
                     </Badge>
@@ -378,8 +378,8 @@ const Dashboard = () => {
                 </div>
               ))}
             </div>
-            <div className="p-4 border-t border-gray-100 bg-gray-50/30">
-              <Button variant="ghost" className="w-full text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+            <div className="p-4 border-t border-slate-100 bg-slate-50/30">
+              <Button variant="ghost" className="w-full text-slate-600 hover:text-slate-700 hover:bg-slate-50">
                 View All Activity
                 <ArrowUpRight className="h-4 w-4 ml-2" />
               </Button>
@@ -387,12 +387,12 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Enhanced Upcoming Tasks */}
-        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+        {/* Modern Minimal Upcoming Tasks */}
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
             <CardTitle className="flex items-center gap-3 text-lg">
-              <div className="p-2 rounded-lg bg-purple-50">
-                <Calendar className="h-5 w-5 text-purple-600" />
+              <div className="p-2 rounded-lg bg-slate-100">
+                <Calendar className="h-5 w-5 text-slate-600" />
               </div>
               Upcoming Tasks
               <Badge variant="secondary" className="ml-auto">3 pending</Badge>
@@ -445,14 +445,14 @@ const Dashboard = () => {
       </div>
 
       {/* Enhanced Quick Actions */}
-      <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-        <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+        <CardHeader className="border-b border-slate-100 bg-slate-50/50">
           <CardTitle className="flex items-center gap-3 text-lg">
-            <div className="p-2 rounded-lg bg-emerald-50">
-              <Zap className="h-5 w-5 text-emerald-600" />
+            <div className="p-2 rounded-lg bg-slate-100">
+              <Zap className="h-5 w-5 text-slate-600" />
             </div>
             Quick Actions
-            <span className="text-sm font-normal text-gray-500 ml-auto">Frequently used tools</span>
+            <span className="text-sm font-normal text-slate-500 ml-auto">Frequently used tools</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
@@ -461,7 +461,7 @@ const Dashboard = () => {
               <Button
                 key={index}
                 variant="outline"
-                className={`h-24 flex-col gap-3 bg-gradient-to-br ${action.color} ${action.hoverColor} text-white border-0 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105`}
+                className="h-24 flex-col gap-3 bg-slate-900 hover:bg-slate-800 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
               >
                 <action.icon className="h-6 w-6" />
                 <div className="text-center">
@@ -474,14 +474,14 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Additional Dashboard Widgets */}
+      {/* Modern Minimal Additional Dashboard Widgets */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Property Overview */}
-        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
             <CardTitle className="flex items-center gap-3 text-lg">
-              <div className="p-2 rounded-lg bg-blue-50">
-                <Home className="h-5 w-5 text-blue-600" />
+              <div className="p-2 rounded-lg bg-slate-100">
+                <Home className="h-5 w-5 text-slate-600" />
               </div>
               Property Overview
             </CardTitle>
@@ -489,19 +489,19 @@ const Dashboard = () => {
           <CardContent className="p-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Residential Properties</span>
+                <span className="text-sm text-slate-600">Residential Properties</span>
                 <span className="font-semibold">8 units</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Commercial Properties</span>
+                <span className="text-sm text-slate-600">Commercial Properties</span>
                 <span className="font-semibold">4 units</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Total Value</span>
-                                    <span className="font-semibold text-green-600">{formatCurrency(2400000)}</span>
+                <span className="text-sm text-slate-600">Total Value</span>
+                                    <span className="font-semibold text-emerald-600">{formatCurrency(2400000)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Average Rent</span>
+                <span className="text-sm text-slate-600">Average Rent</span>
                                     <span className="font-semibold">{formatCurrency(1850)}</span>
               </div>
             </div>
@@ -509,11 +509,11 @@ const Dashboard = () => {
         </Card>
 
         {/* System Status */}
-        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          <CardHeader className="border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
             <CardTitle className="flex items-center gap-3 text-lg">
-              <div className="p-2 rounded-lg bg-green-50">
-                <Shield className="h-5 w-5 text-green-600" />
+              <div className="p-2 rounded-lg bg-slate-100">
+                <Shield className="h-5 w-5 text-slate-600" />
               </div>
               System Status
             </CardTitle>
@@ -521,29 +521,29 @@ const Dashboard = () => {
           <CardContent className="p-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Database</span>
+                <span className="text-sm text-slate-600">Database</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm text-green-600">Online</span>
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="text-sm text-emerald-600">Online</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">API Services</span>
+                <span className="text-sm text-slate-600">API Services</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm text-green-600">Online</span>
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="text-sm text-emerald-600">Online</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Payment Gateway</span>
+                <span className="text-sm text-slate-600">Payment Gateway</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm text-green-600">Online</span>
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="text-sm text-emerald-600">Online</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Last Backup</span>
-                <span className="text-sm text-gray-600">2 hours ago</span>
+                <span className="text-sm text-slate-600">Last Backup</span>
+                <span className="text-sm text-slate-600">2 hours ago</span>
               </div>
             </div>
           </CardContent>

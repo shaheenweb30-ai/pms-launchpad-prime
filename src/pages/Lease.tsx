@@ -525,41 +525,41 @@ const Lease = () => {
 
   return (
     <div className="space-y-8 p-1">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-8 border border-blue-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-indigo-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Lease Management 📋
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Lease Management
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
-                Manage your property leases, track tenant agreements, and monitor lease performance. Streamline your leasing operations for maximum efficiency and profitability.
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
+                Streamline your leasing operations with modern tools and insights
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>{activeLeases} active leases</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="font-medium">{activeLeases} active leases</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Clock className="h-4 w-4" />
-                  <span>Last updated: {new Date().toLocaleTimeString()}</span>
+                  <span>Updated {new Date().toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Download className="h-4 w-4 mr-2" />
-                Export Leases
+                Export
               </Button>
-              <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Lease Analytics
+                Analytics
               </Button>
               <Dialog open={showAddLeaseModal} onOpenChange={setShowAddLeaseModal}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                     <Plus className="h-4 w-4 mr-2" />
                     New Lease
                   </Button>
@@ -947,18 +947,18 @@ const Lease = () => {
         </div>
       </div>
 
-      {/* Enhanced Summary Cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+      {/* Modern Minimal Stats Cards */}
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <FileCheck className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <FileCheck className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{activeLeases}</p>
-                <p className="text-sm text-gray-600">Active Leases</p>
-                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{activeLeases}</p>
+                <p className="text-sm text-slate-600 font-medium">Active Leases</p>
+                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   {Math.round((activeLeases / leases.length) * 100)}% of total
                 </div>
@@ -967,15 +967,15 @@ const Lease = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <DollarSign className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <DollarSign className="h-7 w-7 text-blue-600" />
               </div>
               <div>
-                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalMonthlyRent)}</p>
-                <p className="text-sm text-gray-600">Monthly Rent</p>
+                <p className="text-3xl font-light text-slate-900">{formatCurrency(totalMonthlyRent)}</p>
+                <p className="text-sm text-slate-600 font-medium">Monthly Rent</p>
                 <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   Total monthly income
@@ -985,16 +985,16 @@ const Lease = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-orange-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
-                <Clock className="h-8 w-8 text-orange-600" />
+              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+                <Clock className="h-7 w-7 text-amber-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{expiringSoon}</p>
-                <p className="text-sm text-gray-600">Expiring Soon</p>
-                <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{expiringSoon}</p>
+                <p className="text-sm text-slate-600 font-medium">Expiring Soon</p>
+                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
                   <AlertTriangle className="h-3 w-3" />
                   Within 90 days
                 </div>
@@ -1003,15 +1003,15 @@ const Lease = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-red-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-red-100 group-hover:bg-red-200 transition-colors duration-300">
-                <FileX className="h-8 w-8 text-red-600" />
+              <div className="p-3 rounded-2xl bg-red-50 group-hover:bg-red-100 transition-colors duration-200">
+                <FileX className="h-7 w-7 text-red-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{expiredLeases}</p>
-                <p className="text-sm text-gray-600">Expired Leases</p>
+                <p className="text-3xl font-light text-slate-900">{expiredLeases}</p>
+                <p className="text-sm text-slate-600 font-medium">Expired Leases</p>
                 <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
                   <TrendingDown className="h-3 w-3" />
                   Need attention
@@ -1022,62 +1022,54 @@ const Lease = () => {
         </Card>
       </div>
 
-      {/* Additional Stats Row */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
-                            <div className="text-2xl font-bold text-emerald-600 mb-1">{formatCurrency(totalDeposits)}</div>
-          <div className="text-sm text-gray-600 mb-1">Security Deposits</div>
-          <div className="text-xs text-emerald-600">Total held</div>
+            {/* Modern Minimal Additional Stats */}
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <div className="text-center p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-3xl font-light text-slate-900 mb-2">{formatCurrency(totalDeposits)}</div>
+          <div className="text-sm text-slate-600 mb-1 font-medium">Security Deposits</div>
+          <div className="text-xs text-slate-500">Total held</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-100">
-          <div className="text-2xl font-bold text-blue-600 mb-1">{avgTenantRating.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg. Rating</div>
-          <div className="text-xs text-blue-600">Lease status</div>
+        <div className="text-center p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-3xl font-light text-slate-900 mb-2">{avgTenantRating.toFixed(1)}</div>
+          <div className="text-sm text-slate-600 mb-1 font-medium">Avg. Rating</div>
+          <div className="text-xs text-slate-500">Lease status</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
-          <div className="text-2xl font-bold text-purple-600 mb-1">{avgCommunicationScore.toFixed(0)}%</div>
-          <div className="text-sm text-gray-600 mb-1">Communication</div>
-          <div className="text-xs text-purple-600">Response rate</div>
+        <div className="text-center p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-3xl font-light text-slate-900 mb-2">{avgCommunicationScore.toFixed(0)}%</div>
+          <div className="text-sm text-slate-600 mb-1 font-medium">Communication</div>
+          <div className="text-xs text-slate-500">Response rate</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-50 to-white border border-yellow-100">
-                            <div className="text-2xl font-bold text-yellow-600 mb-1">{formatCurrency(totalLateFees)}</div>
-          <div className="text-sm text-gray-600 mb-1">Late Fees</div>
-          <div className="text-xs text-yellow-600">This year</div>
+        <div className="text-center p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-3xl font-light text-slate-900 mb-2">{formatCurrency(totalLateFees)}</div>
+          <div className="text-sm text-slate-600 mb-1 font-medium">Late Fees</div>
+          <div className="text-xs text-slate-500">This year</div>
         </div>
       </div>
 
-      {/* Enhanced Filters and Search */}
-      <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <FileText className="h-5 w-5 text-blue-600" />
-            Lease Overview
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
+      {/* Modern Minimal Search and Filters */}
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <Label htmlFor="search" className="text-sm font-medium text-gray-700 mb-2 block">Search Leases</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                   id="search"
                   placeholder="Search by tenant, property, or lease ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-gray-200 focus:border-blue-500"
+                  className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                 />
               </div>
             </div>
             
-            <div className="w-full md:w-48">
-              <Label htmlFor="status" className="text-sm font-medium text-gray-700 mb-2 block">Status</Label>
+            <div className="w-full md:w-40">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="border-gray-200">
-                  <SelectValue />
+                <SelectTrigger className="border-slate-200 rounded-xl">
+                  <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Statuses</SelectItem>
@@ -1088,11 +1080,10 @@ const Lease = () => {
               </Select>
             </div>
             
-            <div className="w-full md:w-48">
-              <Label htmlFor="property" className="text-sm font-medium text-gray-700 mb-2 block">Property</Label>
+            <div className="w-full md:w-40">
               <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                <SelectTrigger className="border-gray-200">
-                  <SelectValue />
+                <SelectTrigger className="border-slate-200 rounded-xl">
+                  <SelectValue placeholder="Property" />
                 </SelectTrigger>
                 <SelectContent>
                   {properties.map((property) => (
@@ -1104,11 +1095,10 @@ const Lease = () => {
               </Select>
             </div>
 
-            <div className="w-full md:w-48">
-              <Label htmlFor="type" className="text-sm font-medium text-gray-700 mb-2 block">Lease Type</Label>
+            <div className="w-full md:w-40">
               <Select value={leaseTypeFilter} onValueChange={setLeaseTypeFilter}>
-                <SelectTrigger className="border-gray-200">
-                  <SelectValue />
+                <SelectTrigger className="border-slate-200 rounded-xl">
+                  <SelectValue placeholder="Lease Type" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Types</SelectItem>
@@ -1118,19 +1108,23 @@ const Lease = () => {
               </Select>
             </div>
           </div>
+        </CardContent>
+      </Card>
 
-          {/* Enhanced Leases Table */}
-          <div className="rounded-md border border-gray-200 overflow-hidden">
+          {/* Modern Minimal Leases Table */}
+          <Card className="border-0 bg-white shadow-sm">
+            <CardContent className="p-0">
+              <div className="rounded-2xl border border-slate-200 overflow-hidden">
             <Table>
-              <TableHeader className="bg-gray-50">
-                <TableRow>
-                  <TableHead className="font-semibold text-gray-700">Lease ID</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Property & Tenant</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Lease Period</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Financial Details</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Status & Type</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Next Payment</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Actions</TableHead>
+              <TableHeader className="bg-slate-50/50">
+                <TableRow className="border-slate-200">
+                  <TableHead className="font-medium text-slate-700 py-4">Lease ID</TableHead>
+                  <TableHead className="font-medium text-slate-700 py-4">Property & Tenant</TableHead>
+                  <TableHead className="font-medium text-slate-700 py-4">Lease Period</TableHead>
+                  <TableHead className="font-medium text-slate-700 py-4">Financial Details</TableHead>
+                  <TableHead className="font-medium text-slate-700 py-4">Status & Type</TableHead>
+                  <TableHead className="font-medium text-slate-700 py-4">Next Payment</TableHead>
+                  <TableHead className="font-medium text-slate-700 py-4">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -1280,8 +1274,8 @@ const Lease = () => {
               </Button>
             </div>
           )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
       {/* Enhanced Quick Actions */}
       <div className="grid gap-6 md:grid-cols-2">
