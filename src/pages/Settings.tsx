@@ -353,39 +353,39 @@ const Settings = () => {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-50 via-white to-gray-50 p-8 border border-slate-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/20 to-gray-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-500/5 to-blue-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-600 to-gray-600 bg-clip-text text-transparent">
-                {t('settings.title')} ⚙️
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                {t('settings.title')}
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 {t('settings.description')}
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"></div>
-                  <span>{t('settings.lastLogin')}: {accountStats.lastLogin}</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-slate-500 rounded-full"></div>
+                  <span className="font-medium">{t('settings.lastLogin')}: {accountStats.lastLogin}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Shield className="h-4 w-4" />
                   <span>{t('settings.securityScore')}: {accountStats.securityScore}/100</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <User className="h-4 w-4" />
                   <span>{t('settings.profileComplete')}: {accountStats.profileCompletion}% complete</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Activity className="h-4 w-4 mr-2" />
                 {t('settings.accountAnalytics')}
               </Button>
-              <Button variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <HelpCircle className="h-4 w-4 mr-2" />
                 Help & Support
               </Button>
@@ -394,9 +394,9 @@ const Settings = () => {
                 disabled={!hasUnsavedChanges}
                 className={`${
                   hasUnsavedChanges 
-                    ? 'bg-gradient-to-r from-slate-600 to-gray-600 hover:from-slate-700 hover:to-gray-700 shadow-lg hover:shadow-xl' 
-                    : 'bg-gray-300 cursor-not-allowed'
-                } transition-all duration-300 transform hover:scale-105`}
+                    ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3' 
+                    : 'bg-slate-300 cursor-not-allowed'
+                }`}
               >
                 <Save className="h-4 w-4 mr-2" />
                 {hasUnsavedChanges ? 'Save All Changes' : 'No Changes'}
@@ -406,17 +406,17 @@ const Settings = () => {
         </div>
       </div>
 
-      {/* Account Overview Cards */}
+      {/* Modern Minimal Account Overview Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-emerald-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-emerald-100 group-hover:bg-emerald-200 transition-colors duration-300">
-                <Shield className="h-8 w-8 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <Shield className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{accountStats.securityScore}</p>
-                <p className="text-sm text-gray-600">Security Score</p>
+                <p className="text-3xl font-light text-slate-900">{accountStats.securityScore}</p>
+                <p className="text-sm text-slate-600 font-medium">Security Score</p>
                 <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <CheckCircle2 className="h-3 w-3" />
                   Account protected
@@ -426,15 +426,15 @@ const Settings = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <User className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <User className="h-7 w-7 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{accountStats.profileCompletion}%</p>
-                <p className="text-sm text-gray-600">Profile Complete</p>
+                <p className="text-3xl font-light text-slate-900">{accountStats.profileCompletion}%</p>
+                <p className="text-sm text-slate-600 font-medium">Profile Complete</p>
                 <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <Target className="h-3 w-3" />
                   {100 - accountStats.profileCompletion}% remaining
@@ -444,16 +444,16 @@ const Settings = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-purple-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
-                <Activity className="h-8 w-8 text-purple-600" />
+              <div className="p-3 rounded-2xl bg-slate-50 group-hover:bg-slate-100 transition-colors duration-200">
+                <Activity className="h-7 w-7 text-slate-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{accountStats.loginCount}</p>
-                <p className="text-sm text-gray-600">Total Logins</p>
-                <div className="flex items-center gap-1 text-xs text-purple-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{accountStats.loginCount}</p>
+                <p className="text-sm text-slate-600 font-medium">Total Logins</p>
+                <div className="flex items-center gap-1 text-xs text-slate-600 mt-1">
                   <Clock className="h-3 w-3" />
                   Active user
                 </div>
@@ -462,16 +462,16 @@ const Settings = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-orange-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
-                <HardDrive className="h-8 w-8 text-orange-600" />
+              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+                <HardDrive className="h-7 w-7 text-amber-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{getStoragePercentage().toFixed(0)}%</p>
-                <p className="text-sm text-gray-600">Storage Used</p>
-                <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{getStoragePercentage().toFixed(0)}%</p>
+                <p className="text-sm text-slate-600 font-medium">Storage Used</p>
+                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
                   <Database className="h-3 w-3" />
                   {systemInfo.storageUsed} of {systemInfo.storageLimit}
                 </div>
@@ -489,42 +489,42 @@ const Settings = () => {
           <TabsTrigger value="preferences">{t('settings.preferences')}</TabsTrigger>
         </TabsList>
 
-        {/* Profile Tab */}
+        {/* Modern Minimal Profile Tab */}
         <TabsContent value="profile" className="space-y-6">
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
-              <CardTitle className="flex items-center gap-2 text-blue-900">
+          <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+            <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+              <CardTitle className="flex items-center gap-2 text-slate-800">
                 <User className="h-6 w-6" />
                 Personal Information
               </CardTitle>
-              <p className="text-sm text-blue-700">Update your personal details and contact information</p>
+              <p className="text-sm text-slate-600">Update your personal details and contact information</p>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
               {/* Profile Picture */}
-              <div className="flex items-center gap-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-blue-100">
+              <div className="flex items-center gap-6 p-4 bg-slate-50/50 rounded-xl border border-slate-200">
                 <Avatar className="h-24 w-24 ring-4 ring-white shadow-lg">
                   <AvatarImage src="/placeholder.svg" alt={`${profileData.firstName} ${profileData.lastName}`} />
-                  <AvatarFallback className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
+                  <AvatarFallback className="text-2xl font-bold bg-slate-600 text-white">
                     {getInitials(profileData.firstName, profileData.lastName)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="space-y-3">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-semibold text-slate-900">
                       {profileData.firstName} {profileData.lastName}
                     </h3>
-                    <p className="text-sm text-gray-600">Profile Photo</p>
+                    <p className="text-sm text-slate-600">Profile Photo</p>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+                    <Button variant="outline" size="sm" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300">
                       <Camera className="h-4 w-4 mr-2" />
                       Change Photo
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-800">
+                    <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-800">
                       Remove
                     </Button>
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-slate-500">
                     JPG, GIF or PNG. 1MB max. Recommended: 400x400 pixels
                   </p>
                 </div>
@@ -534,22 +534,22 @@ const Settings = () => {
               <form onSubmit={handleProfileSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name</Label>
+                    <Label htmlFor="firstName" className="text-sm font-medium text-slate-700">First Name</Label>
                     <Input
                       id="firstName"
                       value={profileData.firstName}
                       onChange={(e) => setProfileData(prev => ({ ...prev, firstName: e.target.value }))}
-                      className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                       placeholder="Enter your first name"
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last Name</Label>
+                    <Label htmlFor="lastName" className="text-sm font-medium text-slate-700">Last Name</Label>
                     <Input
                       id="lastName"
                       value={profileData.lastName}
                       onChange={(e) => setProfileData(prev => ({ ...prev, lastName: e.target.value }))}
-                      className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                       placeholder="Enter your last name"
                     />
                   </div>
@@ -557,89 +557,89 @@ const Settings = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email Address</Label>
                     <Input
                       id="email"
                       type="email"
                       value={profileData.email}
                       onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
-                      className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                       placeholder="your.email@example.com"
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone Number</Label>
+                    <Label htmlFor="phone" className="text-sm font-medium text-slate-700">Phone Number</Label>
                     <Input
                       id="phone"
                       value={profileData.phone}
                       onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                       placeholder="+1 (555) 123-4567"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="company" className="text-sm font-medium text-gray-700">Company</Label>
+                  <Label htmlFor="company" className="text-sm font-medium text-slate-700">Company</Label>
                   <Input
                     id="company"
                     value={profileData.company}
                     onChange={(e) => setProfileData(prev => ({ ...prev, company: e.target.value }))}
-                    className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                     placeholder="Your company name"
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="address" className="text-sm font-medium text-gray-700">Street Address</Label>
+                  <Label htmlFor="address" className="text-sm font-medium text-slate-700">Street Address</Label>
                   <Input
                     id="address"
                     value={profileData.address}
                     onChange={(e) => setProfileData(prev => ({ ...prev, address: e.target.value }))}
-                    className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                    className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                     placeholder="123 Main Street"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-3">
-                    <Label htmlFor="city" className="text-sm font-medium text-gray-700">City</Label>
+                    <Label htmlFor="city" className="text-sm font-medium text-slate-700">City</Label>
                     <Input
                       id="city"
                       value={profileData.city}
                       onChange={(e) => setProfileData(prev => ({ ...prev, city: e.target.value }))}
-                      className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                       placeholder="City"
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="state" className="text-sm font-medium text-gray-700">State</Label>
+                    <Label htmlFor="state" className="text-sm font-medium text-slate-700">State</Label>
                     <Input
                       id="state"
                       value={profileData.state}
                       onChange={(e) => setProfileData(prev => ({ ...prev, state: e.target.value }))}
-                      className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                       placeholder="State"
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="zipCode" className="text-sm font-medium text-gray-700">ZIP Code</Label>
+                    <Label htmlFor="zipCode" className="text-sm font-medium text-slate-700">ZIP Code</Label>
                     <Input
                       id="zipCode"
                       value={profileData.zipCode}
                       onChange={(e) => setProfileData(prev => ({ ...prev, zipCode: e.target.value }))}
-                      className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                       placeholder="12345"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div className="flex items-center gap-2 text-sm text-slate-500">
                     <Info className="h-4 w-4" />
                     <span>All changes are automatically saved</span>
                   </div>
-                  <Button type="submit" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <Button type="submit" className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                     <Save className="h-4 w-4 mr-2" />
                     Save Changes
                   </Button>
@@ -649,26 +649,26 @@ const Settings = () => {
           </Card>
         </TabsContent>
 
-        {/* Notifications Tab */}
+        {/* Modern Minimal Notifications Tab */}
         <TabsContent value="notifications" className="space-y-6">
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
-              <CardTitle className="flex items-center gap-2 text-green-900">
+          <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+            <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+              <CardTitle className="flex items-center gap-2 text-slate-800">
                 <Bell className="h-6 w-6" />
                 Notification Preferences
               </CardTitle>
-              <p className="text-sm text-green-700">Customize how and when you receive notifications</p>
+              <p className="text-sm text-slate-600">Customize how and when you receive notifications</p>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
               <div className="grid gap-6">
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-green-50 rounded-xl border border-green-100">
+                <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-lg bg-green-100">
-                      <Mail className="h-5 w-5 text-green-600" />
+                    <div className="p-2 rounded-lg bg-emerald-100">
+                      <Mail className="h-5 w-5 text-emerald-600" />
                     </div>
                     <div>
-                      <Label htmlFor="emailNotifications" className="text-base font-medium text-gray-900">Email Notifications</Label>
-                      <p className="text-sm text-gray-600">Receive notifications via email</p>
+                      <Label htmlFor="emailNotifications" className="text-base font-medium text-slate-900">Email Notifications</Label>
+                      <p className="text-sm text-slate-600">Receive notifications via email</p>
                     </div>
                   </div>
                   <Switch
@@ -678,14 +678,14 @@ const Settings = () => {
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-blue-100">
+                <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-4">
                     <div className="p-2 rounded-lg bg-blue-100">
                       <Phone className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <Label htmlFor="smsNotifications" className="text-base font-medium text-gray-900">SMS Notifications</Label>
-                      <p className="text-sm text-gray-600">Receive notifications via text message</p>
+                      <Label htmlFor="smsNotifications" className="text-base font-medium text-slate-900">SMS Notifications</Label>
+                      <p className="text-sm text-slate-600">Receive notifications via text message</p>
                     </div>
                   </div>
                   <Switch
@@ -695,14 +695,14 @@ const Settings = () => {
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-purple-50 rounded-xl border border-purple-100">
+                <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-lg bg-purple-100">
-                      <Calendar className="h-5 w-5 text-purple-600" />
+                    <div className="p-2 rounded-lg bg-slate-100">
+                      <Calendar className="h-5 w-5 text-slate-600" />
                     </div>
                     <div>
-                      <Label htmlFor="rentReminders" className="text-base font-medium text-gray-900">Rent Reminders</Label>
-                      <p className="text-sm text-gray-600">Get notified about upcoming rent payments</p>
+                      <Label htmlFor="rentReminders" className="text-base font-medium text-slate-900">Rent Reminders</Label>
+                      <p className="text-sm text-slate-600">Get notified about upcoming rent payments</p>
                     </div>
                   </div>
                   <Switch
@@ -712,14 +712,14 @@ const Settings = () => {
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-orange-50 rounded-xl border border-orange-100">
+                <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-lg bg-orange-100">
-                      <WrenchIcon className="h-5 w-5 text-orange-600" />
+                    <div className="p-2 rounded-lg bg-amber-100">
+                      <WrenchIcon className="h-5 w-5 text-amber-600" />
                     </div>
                     <div>
-                      <Label htmlFor="maintenanceUpdates" className="text-base font-medium text-gray-900">Maintenance Updates</Label>
-                      <p className="text-sm text-gray-600">Updates on maintenance request status</p>
+                      <Label htmlFor="maintenanceUpdates" className="text-base font-medium text-slate-900">Maintenance Updates</Label>
+                      <p className="text-sm text-slate-600">Updates on maintenance request status</p>
                     </div>
                   </div>
                   <Switch
@@ -729,14 +729,14 @@ const Settings = () => {
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-xl border border-indigo-100">
+                <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-lg bg-indigo-100">
-                      <CreditCard className="h-5 w-5 text-indigo-600" />
+                    <div className="p-2 rounded-lg bg-blue-100">
+                      <CreditCard className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <Label htmlFor="paymentAlerts" className="text-base font-medium text-gray-900">Payment Alerts</Label>
-                      <p className="text-sm text-gray-600">Alerts for payment confirmations and issues</p>
+                      <Label htmlFor="paymentAlerts" className="text-base font-medium text-slate-900">Payment Alerts</Label>
+                      <p className="text-sm text-slate-600">Alerts for payment confirmations and issues</p>
                     </div>
                   </div>
                   <Switch
@@ -778,52 +778,52 @@ const Settings = () => {
           </Card>
         </TabsContent>
 
-        {/* Security Tab */}
+        {/* Modern Minimal Security Tab */}
         <TabsContent value="security" className="space-y-6">
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-red-50 to-rose-50 border-b border-red-100">
-              <CardTitle className="flex items-center gap-2 text-red-900">
+          <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+            <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+              <CardTitle className="flex items-center gap-2 text-slate-800">
                 <Shield className="h-6 w-6" />
                 Security Settings
               </CardTitle>
-              <p className="text-sm text-red-700">Protect your account with advanced security features</p>
+              <p className="text-sm text-slate-600">Protect your account with advanced security features</p>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
               <div className="space-y-6">
                 {/* Security Score */}
-                <div className="p-4 bg-gradient-to-r from-gray-50 to-red-50 rounded-xl border border-red-100">
+                <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <Shield className="h-5 w-5 text-red-600" />
-                      <span className="font-medium text-gray-900">Security Score</span>
+                      <span className="font-medium text-slate-900">Security Score</span>
                     </div>
                     <span className={`text-lg font-bold ${getSecurityScoreColor(accountStats.securityScore)}`}>
                       {accountStats.securityScore}/100
                     </span>
                   </div>
                   <Progress value={accountStats.securityScore} className="h-2" />
-                  <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
+                  <div className="flex items-center justify-between mt-2 text-sm text-slate-600">
                     <span>Low</span>
                     <span>High</span>
                   </div>
                 </div>
 
                 {/* Password Change */}
-                <div className="p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-blue-100">
+                <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 rounded-lg bg-blue-100">
                       <Key className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <Label className="text-base font-medium text-gray-900">Change Password</Label>
-                      <p className="text-sm text-gray-600">Last changed: {accountStats.lastPasswordChange}</p>
+                      <Label className="text-base font-medium text-slate-900">Change Password</Label>
+                      <p className="text-sm text-slate-600">Last changed: {accountStats.lastPasswordChange}</p>
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <Input type="password" placeholder="Current password" className="border-blue-200 focus:border-blue-500 focus:ring-blue-500" />
-                    <Input type="password" placeholder="New password" className="border-blue-200 focus:border-blue-500 focus:ring-blue-500" />
-                    <Input type="password" placeholder="Confirm new password" className="border-blue-200 focus:border-blue-500 focus:ring-blue-500" />
-                    <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+                    <Input type="password" placeholder="Current password" className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl" />
+                    <Input type="password" placeholder="New password" className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl" />
+                    <Input type="password" placeholder="Confirm new password" className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl" />
+                    <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300">
                       <Key className="h-4 w-4 mr-2" />
                       Update Password
                     </Button>
@@ -831,43 +831,43 @@ const Settings = () => {
                 </div>
 
                 {/* Two-Factor Authentication */}
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-purple-50 rounded-xl border border-purple-100">
+                <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-lg bg-purple-100">
-                      <ShieldIcon className="h-5 w-5 text-purple-600" />
+                    <div className="p-2 rounded-lg bg-slate-100">
+                      <ShieldIcon className="h-5 w-5 text-slate-600" />
                     </div>
                     <div>
-                      <Label className="text-base font-medium text-gray-900">Two-Factor Authentication</Label>
-                      <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
+                      <Label className="text-base font-medium text-slate-900">Two-Factor Authentication</Label>
+                      <p className="text-sm text-slate-600">Add an extra layer of security to your account</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge className={accountStats.twoFactorEnabled ? "bg-green-100 text-green-800 border-green-200" : "bg-gray-100 text-gray-800 border-gray-200"}>
+                        <Badge className={accountStats.twoFactorEnabled ? "bg-emerald-100 text-emerald-800 border-emerald-200" : "bg-slate-100 text-slate-800 border-slate-200"}>
                           {accountStats.twoFactorEnabled ? "Enabled" : "Disabled"}
                         </Badge>
                       </div>
                     </div>
                   </div>
-                  <Button variant={accountStats.twoFactorEnabled ? "outline" : "default"} className={accountStats.twoFactorEnabled ? "border-purple-200 text-purple-700 hover:bg-purple-50" : "bg-purple-600 hover:bg-purple-700"}>
+                  <Button variant={accountStats.twoFactorEnabled ? "outline" : "default"} className={accountStats.twoFactorEnabled ? "border-slate-200 text-slate-700 hover:bg-slate-50" : "bg-slate-900 hover:bg-slate-800"}>
                     {accountStats.twoFactorEnabled ? "Disable 2FA" : "Enable 2FA"}
                   </Button>
                 </div>
 
                 {/* Login Sessions */}
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-xl border border-indigo-100">
+                <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-xl border border-slate-200">
                   <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-lg bg-indigo-100">
-                      <Activity className="h-5 w-5 text-indigo-600" />
+                    <div className="p-2 rounded-lg bg-blue-100">
+                      <Activity className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <Label className="text-base font-medium text-gray-900">Login Sessions</Label>
-                      <p className="text-sm text-gray-600">Manage your active login sessions</p>
+                      <Label className="text-base font-medium text-slate-900">Login Sessions</Label>
+                      <p className="text-sm text-slate-600">Manage your active login sessions</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge className="bg-indigo-100 text-indigo-800 border-indigo-200">
+                        <Badge className="bg-blue-100 text-blue-800 border-blue-200">
                           {accountStats.activeSessions} active
                         </Badge>
                       </div>
                     </div>
                   </div>
-                  <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+                  <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300">
                     View Sessions
                   </Button>
                 </div>
@@ -876,25 +876,25 @@ const Settings = () => {
           </Card>
         </TabsContent>
 
-        {/* Preferences Tab */}
+        {/* Modern Minimal Preferences Tab */}
         <TabsContent value="preferences" className="space-y-6">
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-100">
-              <CardTitle className="flex items-center gap-2 text-indigo-900">
+          <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+            <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+              <CardTitle className="flex items-center gap-2 text-slate-800">
                 <Globe className="h-6 w-6" />
                 Application Preferences
               </CardTitle>
-              <p className="text-sm text-indigo-700">Customize your application experience and regional settings</p>
+              <p className="text-sm text-slate-600">Customize your application experience and regional settings</p>
             </CardHeader>
             <CardContent className="space-y-6 p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <Label htmlFor="language" className="text-sm font-medium text-gray-700">{t('settings.language')}</Label>
+                  <Label htmlFor="language" className="text-sm font-medium text-slate-700">{t('settings.language')}</Label>
                   <Select value={preferences.language} onValueChange={(value) => {
                     setPreferences(prev => ({ ...prev, language: value }));
                     setHasUnsavedChanges(true);
                   }}>
-                    <SelectTrigger className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
+                    <SelectTrigger className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -905,12 +905,12 @@ const Settings = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="timezone" className="text-sm font-medium text-gray-700">{t('settings.timezone')}</Label>
+                  <Label htmlFor="timezone" className="text-sm font-medium text-slate-700">{t('settings.timezone')}</Label>
                   <Select value={preferences.timezone} onValueChange={(value) => {
                     setPreferences(prev => ({ ...prev, timezone: value }));
                     setHasUnsavedChanges(true);
                   }}>
-                    <SelectTrigger className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
+                    <SelectTrigger className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -923,14 +923,14 @@ const Settings = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="currency" className="text-sm font-medium text-gray-700">{t('settings.currency')}</Label>
+                  <Label htmlFor="currency" className="text-sm font-medium text-slate-700">{t('settings.currency')}</Label>
                   <Select value={tempCurrency.code} onValueChange={(value) => {
                     if (currencies[value]) {
                       setTempCurrency(currencies[value]);
                       setHasUnsavedChanges(true);
                     }
                   }}>
-                    <SelectTrigger className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
+                    <SelectTrigger className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -944,12 +944,12 @@ const Settings = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="dateFormat" className="text-sm font-medium text-gray-700">{t('settings.dateFormat')}</Label>
+                  <Label htmlFor="dateFormat" className="text-sm font-medium text-slate-700">{t('settings.dateFormat')}</Label>
                   <Select value={preferences.dateFormat} onValueChange={(value) => {
                     setPreferences(prev => ({ ...prev, dateFormat: value }));
                     setHasUnsavedChanges(true);
                   }}>
-                    <SelectTrigger className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500">
+                    <SelectTrigger className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -961,8 +961,8 @@ const Settings = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Info className="h-4 w-4" />
                   <span>Click "Save Changes" to apply your preferences</span>
                 </div>

@@ -419,39 +419,39 @@ const RentCollection = () => {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-8 border border-blue-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-indigo-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Rent Collection 💰
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Rent Collection
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 Manage rent payments, track collections, monitor payment status, and optimize your rental income with comprehensive payment analytics.
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                  <span>{formatCurrency(totalCollected)} collected this month</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="font-medium">{formatCurrency(totalCollected)} collected this month</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Calendar className="h-4 w-4" />
                   <span>Collection rate: {collectionRate}%</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Collection Analytics
+                Analytics
               </Button>
-              <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Download className="h-4 w-4 mr-2" />
-                Export Report
+                Export
               </Button>
-              <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                 <Plus className="h-4 w-4 mr-2" />
                 Record Payment
               </Button>
@@ -460,18 +460,18 @@ const RentCollection = () => {
         </div>
       </div>
 
-      {/* Enhanced Summary Cards */}
+      {/* Modern Minimal Summary Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <DollarSign className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <DollarSign className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalCollected)}</p>
-                <p className="text-sm text-gray-600">Total Collected</p>
-                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{formatCurrency(totalCollected)}</p>
+                <p className="text-sm text-slate-600 font-medium">Total Collected</p>
+                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   Including late fees
                 </div>
@@ -480,15 +480,15 @@ const RentCollection = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <TrendingUp className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <TrendingUp className="h-7 w-7 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{collectionRate}%</p>
-                <p className="text-sm text-gray-600">Collection Rate</p>
+                <p className="text-3xl font-light text-slate-900">{collectionRate}%</p>
+                <p className="text-sm text-slate-600 font-medium">Collection Rate</p>
                 <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <Target className="h-3 w-3" />
                   Successful collections
@@ -498,16 +498,16 @@ const RentCollection = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-orange-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
-                <AlertCircle className="h-8 w-8 text-orange-600" />
+              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+                <AlertCircle className="h-7 w-7 text-amber-600" />
               </div>
               <div>
-                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalLateFees)}</p>
-                <p className="text-sm text-gray-600">Late Fees</p>
-                <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{formatCurrency(totalLateFees)}</p>
+                <p className="text-sm text-slate-600 font-medium">Late Fees</p>
+                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
                   <Zap className="h-3 w-3" />
                   Additional revenue
                 </div>
@@ -516,15 +516,15 @@ const RentCollection = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-red-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-red-100 group-hover:bg-red-200 transition-colors duration-300">
-                <TrendingDown className="h-8 w-8 text-red-600" />
+              <div className="p-3 rounded-2xl bg-red-50 group-hover:bg-red-100 transition-colors duration-200">
+                <TrendingDown className="h-7 w-7 text-red-600" />
               </div>
               <div>
-                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(overdueAmount)}</p>
-                <p className="text-sm text-gray-600">Overdue Amount</p>
+                <p className="text-3xl font-light text-slate-900">{formatCurrency(overdueAmount)}</p>
+                <p className="text-sm text-slate-600 font-medium">Overdue Amount</p>
                 <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
                   <AlertTriangle className="h-3 w-3" />
                   Outstanding payments
@@ -535,61 +535,61 @@ const RentCollection = () => {
         </Card>
       </div>
 
-      {/* Additional Financial Metrics */}
+      {/* Modern Minimal Additional Financial Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
-          <div className="text-2xl font-bold text-emerald-600 mb-1">{avgPaymentScore.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Payment Score</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-emerald-600 mb-1">{avgPaymentScore.toFixed(1)}</div>
+          <div className="text-sm text-slate-600 mb-1">Avg Payment Score</div>
           <div className="text-xs text-emerald-600">Tenant reliability</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
-          <div className="text-2xl font-bold text-purple-600 mb-1">{avgTenantRating.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Tenant Rating</div>
-          <div className="text-xs text-purple-600">Payment score</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-slate-600 mb-1">{avgTenantRating.toFixed(1)}</div>
+          <div className="text-sm text-slate-600 mb-1">Avg Tenant Rating</div>
+          <div className="text-xs text-slate-600">Payment score</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-50 to-white border border-yellow-100">
-          <div className="text-2xl font-bold text-yellow-600 mb-1">{autoPayUsers}</div>
-          <div className="text-sm text-gray-600 mb-1">Auto-Pay Users</div>
-          <div className="text-xs text-yellow-600">Automated payments</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-amber-600 mb-1">{autoPayUsers}</div>
+          <div className="text-sm text-slate-600 mb-1">Auto-Pay Users</div>
+          <div className="text-xs text-amber-600">Automated payments</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-white border border-indigo-100">
-          <div className="text-2xl font-bold text-indigo-600 mb-1">{onTimePayments}</div>
-          <div className="text-sm text-gray-600 mb-1">On-Time Payments</div>
-          <div className="text-xs text-indigo-600">Reliable tenants</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-blue-600 mb-1">{onTimePayments}</div>
+          <div className="text-sm text-slate-600 mb-1">On-Time Payments</div>
+          <div className="text-xs text-blue-600">Reliable tenants</div>
         </div>
       </div>
 
-      {/* Enhanced Filters and Search */}
-      <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+      {/* Modern Minimal Filters and Search */}
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+        <CardHeader className="border-b border-slate-100 bg-slate-50/50">
           <CardTitle className="flex items-center gap-2 text-xl">
-            <BarChart3 className="h-5 w-5 text-gray-600" />
+            <BarChart3 className="h-5 w-5 text-slate-600" />
             Payment Overview & Analytics
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1">
-              <Label htmlFor="search" className="text-sm font-medium text-gray-700 mb-2 block">Search Payments</Label>
+              <Label htmlFor="search" className="text-sm font-medium text-slate-700 mb-2 block">Search Payments</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                 <Input
                   id="search"
                   placeholder="Search by tenant, property, or payment ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                 />
               </div>
             </div>
             
             <div className="w-full md:w-40">
-              <Label htmlFor="status" className="text-sm font-medium text-gray-700 mb-2 block">Status</Label>
+              <Label htmlFor="status" className="text-sm font-medium text-slate-700 mb-2 block">Status</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                <SelectTrigger className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -603,9 +603,9 @@ const RentCollection = () => {
             </div>
             
             <div className="w-full md:w-40">
-              <Label htmlFor="property" className="text-sm font-medium text-gray-700 mb-2 block">Property</Label>
+              <Label htmlFor="property" className="text-sm font-medium text-slate-700 mb-2 block">Property</Label>
               <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                <SelectTrigger className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -619,9 +619,9 @@ const RentCollection = () => {
             </div>
 
             <div className="w-full md:w-40">
-              <Label htmlFor="month" className="text-sm font-medium text-gray-700 mb-2 block">Month</Label>
+              <Label htmlFor="month" className="text-sm font-medium text-slate-700 mb-2 block">Month</Label>
               <Select value={monthFilter} onValueChange={setMonthFilter}>
-                <SelectTrigger className="border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                <SelectTrigger className="border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -636,25 +636,25 @@ const RentCollection = () => {
             </div>
           </div>
 
-          {/* Enhanced Payments Table */}
-          <div className="rounded-lg border border-gray-200 overflow-hidden">
+          {/* Modern Minimal Payments Table */}
+          <div className="rounded-lg border border-slate-200 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200">
-                  <TableHead className="font-semibold text-gray-700">Payment ID</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Tenant</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Property</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Month</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Amount</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Due Date</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Status</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Payment Method</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Actions</TableHead>
+                <TableRow className="bg-slate-50/50 border-slate-200">
+                  <TableHead className="font-semibold text-slate-700">Payment ID</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Tenant</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Property</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Month</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Amount</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Due Date</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Status</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Payment Method</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredPayments.map((payment) => (
-                  <TableRow key={payment.id} className="hover:bg-gray-50 transition-colors duration-200">
+                  <TableRow key={payment.id} className="hover:bg-slate-50/50 transition-colors duration-200">
                     <TableCell className="font-medium text-blue-600">{payment.id}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -759,14 +759,14 @@ const RentCollection = () => {
 
           {filteredPayments.length === 0 && (
             <div className="text-center py-12">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <DollarSign className="h-10 w-10 text-blue-600" />
+              <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <DollarSign className="h-10 w-10 text-slate-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No payments found</h3>
-              <p className="text-gray-500 mb-4 max-w-md mx-auto">
+              <h3 className="text-xl font-semibold text-slate-700 mb-2">No payments found</h3>
+              <p className="text-slate-500 mb-4 max-w-md mx-auto">
                 Try adjusting your search criteria, filters, or check back later for new payment records.
               </p>
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+              <div className="flex items-center justify-center gap-2 text-sm text-slate-400">
                 <Search className="h-4 w-4" />
                 <span>Use different search terms or clear filters</span>
               </div>
@@ -775,11 +775,11 @@ const RentCollection = () => {
         </CardContent>
       </Card>
 
-      {/* Enhanced Quick Actions and Analytics */}
+      {/* Modern Minimal Quick Actions and Analytics */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b border-red-100">
-            <CardTitle className="flex items-center gap-2 text-red-800">
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
               <AlertCircle className="h-5 w-5" />
               Overdue Payments
             </CardTitle>
@@ -789,10 +789,10 @@ const RentCollection = () => {
               {rentPayments
                 .filter(payment => payment.status === 'overdue')
                 .map((payment) => (
-                  <div key={payment.id} className="flex items-center justify-between p-4 border border-red-100 rounded-lg bg-red-50/50 hover:bg-red-100/50 transition-colors duration-200">
+                  <div key={payment.id} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg bg-slate-50/50 hover:bg-slate-100/50 transition-colors duration-200">
                     <div className="space-y-1">
-                      <div className="font-semibold text-gray-900">{payment.tenant}</div>
-                      <div className="text-sm text-gray-600">
+                      <div className="font-semibold text-slate-900">{payment.tenant}</div>
+                      <div className="text-sm text-slate-600">
                         {payment.property} - ${payment.amount.toLocaleString()}
                       </div>
                       <div className="flex items-center gap-2">

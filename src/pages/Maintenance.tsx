@@ -619,40 +619,40 @@ const Maintenance = () => {
 
   return (
     <div className="space-y-6">
-            {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-white to-purple-50 p-8 border border-blue-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/20 to-purple-50/20 opacity-30"></div>
+            {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
         <div className="relative z-10">
         <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Maintenance Hub 🔧
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Maintenance Hub
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 Manage maintenance requests and work orders efficiently. Track progress, assign vendors, and ensure quality maintenance across your property portfolio.
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                  <span>{totalRequests} total requests this month</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span className="font-medium">{totalRequests} total requests this month</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Calendar className="h-4 w-4" />
                   <span>Avg urgency: {avgUrgencyScore.toFixed(1)}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Activity className="h-4 w-4 mr-2" />
-                Maintenance Analytics
+                Analytics
               </Button>
-              <Button variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Download className="h-4 w-4 mr-2" />
-                Export Report
+                Export
               </Button>
               <Button 
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3"
                 onClick={handleOpenCreateModal}
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -667,8 +667,8 @@ const Maintenance = () => {
       <Dialog open={isCreateModalOpen} onOpenChange={handleCloseCreateModal}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Create New Maintenance Request 🔧
+            <DialogTitle className="text-2xl font-semibold text-slate-800">
+              Create New Maintenance Request
             </DialogTitle>
             <DialogDescription>
               Fill out the form below to create a new maintenance request. All fields marked with * are required.
@@ -678,7 +678,7 @@ const Maintenance = () => {
           <div className="grid gap-6 py-4">
             {/* Basic Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Basic Information</h3>
+              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Basic Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="title">Request Title *</Label>
@@ -733,7 +733,7 @@ const Maintenance = () => {
 
             {/* Property & Tenant Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Property & Tenant</h3>
+              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Property & Tenant</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="property">Property *</Label>
@@ -773,7 +773,7 @@ const Maintenance = () => {
 
             {/* Priority & Scheduling */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Priority & Scheduling</h3>
+              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Priority & Scheduling</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="priority">Priority Level *</Label>
@@ -810,11 +810,11 @@ const Maintenance = () => {
               </div>
               
               {/* Real-time Urgency Score Display */}
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-100">
+              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium text-gray-700">Calculated Urgency Score:</span>
+                    <Activity className="h-4 w-4 text-slate-600" />
+                    <span className="text-sm font-medium text-slate-700">Calculated Urgency Score:</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
@@ -837,10 +837,10 @@ const Maintenance = () => {
                        newRequest.priority === 'high' ? 75 :
                        newRequest.priority === 'medium' ? 55 : 35}
                     </div>
-                    <span className="text-xs text-gray-500">/ 100</span>
+                    <span className="text-xs text-slate-500">/ 100</span>
                   </div>
                 </div>
-                <div className="mt-2 text-xs text-gray-600">
+                <div className="mt-2 text-xs text-slate-600">
                   {newRequest.emergencyLevel && '🚨 Emergency level selected - 24hr response required'}
                   {!newRequest.emergencyLevel && newRequest.priority === 'urgent' && '⚡ Urgent priority - immediate attention needed'}
                   {!newRequest.emergencyLevel && newRequest.priority === 'high' && '🔴 High priority - schedule within 48 hours'}
@@ -852,7 +852,7 @@ const Maintenance = () => {
 
             {/* Cost & Contact */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Cost & Contact</h3>
+              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Cost & Contact</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="estimatedCost">Estimated Cost ($)</Label>
@@ -883,7 +883,7 @@ const Maintenance = () => {
 
             {/* Additional Details */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Additional Details</h3>
+              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Additional Details</h3>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="tenantAvailability">Tenant Availability</Label>
@@ -939,8 +939,8 @@ const Maintenance = () => {
             {/* Request Preview */}
             {(newRequest.title || newRequest.description || newRequest.property || newRequest.unit || newRequest.tenant) && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Request Preview</h3>
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Request Preview</h3>
+                                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Badge variant={getPriorityColor(newRequest.priority || 'medium')}>
@@ -957,36 +957,36 @@ const Maintenance = () => {
                     </div>
                     
                     <div>
-                      <h4 className="font-semibold text-gray-900">
+                      <h4 className="font-semibold text-slate-900">
                         {newRequest.title || 'Request Title'}
                       </h4>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-slate-600 mt-1">
                         {newRequest.description || 'Description will appear here...'}
                       </p>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="text-gray-500">Property:</span>
+                        <span className="text-slate-500">Property:</span>
                         <span className="ml-2 font-medium">{newRequest.property || 'Not specified'}</span>
                       </div>
                       <div>
-                        <span className="text-gray-500">Unit:</span>
+                        <span className="text-slate-500">Unit:</span>
                         <span className="ml-2 font-medium">{newRequest.unit || 'Not specified'}</span>
                       </div>
                       <div>
-                        <span className="text-gray-500">Tenant:</span>
+                        <span className="text-slate-500">Tenant:</span>
                         <span className="ml-2 font-medium">{newRequest.tenant || 'Not specified'}</span>
                       </div>
                       <div>
-                        <span className="text-gray-500">Due:</span>
+                        <span className="text-slate-500">Due:</span>
                         <span className="ml-2 font-medium">
                           {newRequest.dueDate ? new Date(newRequest.dueDate).toLocaleDateString() : 'Not specified'}
                         </span>
                       </div>
                     </div>
                     
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-slate-500">
                       Estimated cost: ${newRequest.estimatedCost || '0'} | 
                       Duration: {newRequest.estimatedDuration || 'Not specified'}
                     </div>
@@ -1006,7 +1006,7 @@ const Maintenance = () => {
             <Button
               onClick={handleCreateRequest}
               disabled={!newRequest.title || !newRequest.description || !newRequest.property || !newRequest.unit || !newRequest.tenant || isCreating}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3"
             >
               {isCreating ? (
                 <>
@@ -1024,17 +1024,17 @@ const Maintenance = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Enhanced Stats Overview */}
+      {/* Modern Minimal Stats Overview */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
             <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <Wrench className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <Wrench className="h-7 w-7 text-blue-600" />
               </div>
                 <div>
-                <p className="text-3xl font-bold text-gray-900">{totalRequests}</p>
-                <p className="text-sm text-gray-600">Total Requests</p>
+                <p className="text-3xl font-light text-slate-900">{totalRequests}</p>
+                <p className="text-sm text-slate-600 font-medium">Total Requests</p>
                 <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <Activity className="h-3 w-3" />
                   Active portfolio
@@ -1044,16 +1044,16 @@ const Maintenance = () => {
             </CardContent>
           </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-yellow-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
             <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-yellow-100 group-hover:bg-yellow-200 transition-colors duration-300">
-                <Clock className="h-8 w-8 text-yellow-600" />
+              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+                <Clock className="h-7 w-7 text-amber-600" />
               </div>
                 <div>
-                <p className="text-3xl font-bold text-gray-900">{pendingRequests}</p>
-                <p className="text-sm text-gray-600">Pending</p>
-                <div className="flex items-center gap-1 text-xs text-yellow-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{pendingRequests}</p>
+                <p className="text-sm text-slate-600 font-medium">Pending</p>
+                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
                   <Timer className="h-3 w-3" />
                   Awaiting assignment
                 </div>
@@ -1062,15 +1062,15 @@ const Maintenance = () => {
             </CardContent>
           </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-orange-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
             <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
-                <AlertCircle className="h-8 w-8 text-orange-600" />
+              <div className="p-3 rounded-2xl bg-orange-50 group-hover:bg-orange-100 transition-colors duration-200">
+                <AlertCircle className="h-7 w-7 text-orange-600" />
               </div>
                 <div>
-                <p className="text-3xl font-bold text-gray-900">{inProgressRequests}</p>
-                <p className="text-sm text-gray-600">In Progress</p>
+                <p className="text-3xl font-light text-slate-900">{inProgressRequests}</p>
+                <p className="text-sm text-slate-600 font-medium">In Progress</p>
                 <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
                   <Settings className="h-3 w-3" />
                   Active work
@@ -1080,16 +1080,16 @@ const Maintenance = () => {
             </CardContent>
           </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
             <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <CheckCircle className="h-7 w-7 text-emerald-600" />
               </div>
                 <div>
-                <p className="text-3xl font-bold text-gray-900">{completedRequests}</p>
-                <p className="text-sm text-gray-600">Completed</p>
-                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{completedRequests}</p>
+                <p className="text-sm text-slate-600 font-medium">Completed</p>
+                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <Award className="h-3 w-3" />
                   Successfully finished
                 </div>
@@ -1099,47 +1099,47 @@ const Maintenance = () => {
           </Card>
             </div>
 
-      {/* Additional Maintenance Metrics */}
+      {/* Modern Minimal Additional Maintenance Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
-          <div className="text-2xl font-bold text-emerald-600 mb-1">{avgUrgencyScore.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Urgency Score</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-emerald-600 mb-1">{avgUrgencyScore.toFixed(1)}</div>
+          <div className="text-sm text-slate-600 mb-1">Avg Urgency Score</div>
           <div className="text-xs text-emerald-600">Request priority</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
-          <div className="text-2xl font-bold text-purple-600 mb-1">{emergencyRequests}</div>
-          <div className="text-sm text-gray-600 mb-1">Emergency Requests</div>
-          <div className="text-xs text-purple-600">Urgent repairs</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-slate-600 mb-1">{emergencyRequests}</div>
+          <div className="text-sm text-slate-600 mb-1">Emergency Requests</div>
+          <div className="text-xs text-slate-600">Urgent repairs</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-white border border-indigo-100">
-          <div className="text-2xl font-bold text-indigo-600 mb-1">{avgVendorRating.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Vendor Rating</div>
-          <div className="text-xs text-indigo-600">Service quality</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-blue-600 mb-1">{avgVendorRating.toFixed(1)}</div>
+          <div className="text-sm text-slate-600 mb-1">Avg Vendor Rating</div>
+          <div className="text-xs text-blue-600">Service quality</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-red-50 to-white border border-red-100">
-          <div className="text-2xl font-bold text-red-600 mb-1">{followUpRequired}</div>
-          <div className="text-sm text-gray-600 mb-1">Follow-up Required</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-red-600 mb-1">{followUpRequired}</div>
+          <div className="text-sm text-slate-600 mb-1">Follow-up Required</div>
           <div className="text-xs text-red-600">Needs attention</div>
         </div>
         </div>
 
-        {/* Search and Filters */}
+        {/* Modern Minimal Search and Filters */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2 flex-1">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input
                     placeholder="Search maintenance requests..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                   />
                 </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-40 border-slate-200 rounded-xl">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -1151,14 +1151,14 @@ const Maintenance = () => {
               <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="border-slate-200 text-slate-700 hover:bg-slate-50">
             <Filter className="h-4 w-4 mr-2" />
             More Filters
               </Button>
             </div>
       </div>
 
-      {/* Maintenance Requests List */}
+      {/* Modern Minimal Maintenance Requests List */}
       <div className="grid gap-4">
         {filteredRequests.map((request) => {
           const StatusIcon = getStatusIcon(request.status);
@@ -1166,15 +1166,15 @@ const Maintenance = () => {
             <Card 
               key={request.id} 
               ref={recentlyCreatedId === request.id ? newRequestRef : null}
-              className={`hover:shadow-lg transition-all duration-300 relative ${
+              className={`hover:shadow-md transition-all duration-200 relative border-0 bg-white shadow-sm ${
                 recentlyCreatedId === request.id 
-                  ? 'ring-2 ring-green-500 ring-opacity-50 bg-gradient-to-r from-green-50 to-white shadow-lg' 
+                  ? 'ring-2 ring-emerald-500 ring-opacity-50 bg-emerald-50/50 shadow-md' 
                   : ''
               }`}
             >
               {recentlyCreatedId === request.id && (
                 <div className="absolute top-3 right-3 z-10">
-                  <Badge className="bg-green-500 text-white animate-pulse">
+                  <Badge className="bg-emerald-500 text-white animate-pulse">
                     <Plus className="h-3 w-3 mr-1" />
                     New
                   </Badge>
@@ -1183,15 +1183,15 @@ const Maintenance = () => {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
-                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <Wrench className="h-6 w-6 text-gray-600" />
+                    <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center">
+                      <Wrench className="h-6 w-6 text-slate-600" />
                     </div>
                     
                     <div className="space-y-2 flex-1">
                       <div className="flex items-start justify-between">
                       <div>
-                          <h3 className="font-semibold text-lg">{request.title}</h3>
-                          <p className="text-sm text-muted-foreground">{request.description}</p>
+                          <h3 className="font-semibold text-lg text-slate-900">{request.title}</h3>
+                          <p className="text-sm text-slate-600">{request.description}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge variant={getPriorityColor(request.priority)}>
@@ -1206,44 +1206,44 @@ const Maintenance = () => {
                       
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-muted-foreground">Property:</span>
-                          <span className="font-medium">{request.property}</span>
+                          <MapPin className="h-3 w-3 text-slate-500" />
+                          <span className="text-slate-500">Property:</span>
+                          <span className="font-medium text-slate-900">{request.property}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-muted-foreground">Unit:</span>
-                          <span className="font-medium">{request.unit}</span>
+                          <span className="text-slate-500">Unit:</span>
+                          <span className="font-medium text-slate-900">{request.unit}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <User className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-muted-foreground">Tenant:</span>
-                          <span className="font-medium">{request.tenant}</span>
+                          <User className="h-3 w-3 text-slate-500" />
+                          <span className="text-slate-500">Tenant:</span>
+                          <span className="font-medium text-slate-900">{request.tenant}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-muted-foreground">Reported:</span>
-                          <span className="font-medium">{new Date(request.dateReported).toLocaleDateString()}</span>
+                          <Calendar className="h-3 w-3 text-slate-500" />
+                          <span className="text-slate-500">Reported:</span>
+                          <span className="font-medium text-slate-900">{new Date(request.dateReported).toLocaleDateString()}</span>
                         </div>
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4 text-sm">
                           <div className="flex items-center gap-1">
-                            <DollarSign className="h-3 w-3 text-muted-foreground" />
-                            <span className="text-muted-foreground">Est. Cost:</span>
-                            <span className="font-semibold">${request.estimatedCost}</span>
+                            <DollarSign className="h-3 w-3 text-slate-500" />
+                            <span className="text-slate-500">Est. Cost:</span>
+                            <span className="font-semibold text-slate-900">${request.estimatedCost}</span>
                           </div>
                           {request.assignedVendor && (
                             <div className="flex items-center gap-1">
-                              <span className="text-muted-foreground">Vendor:</span>
-                              <span className="font-medium">{request.assignedVendor}</span>
+                              <span className="text-slate-500">Vendor:</span>
+                              <span className="font-medium text-slate-900">{request.assignedVendor}</span>
                             </div>
                           )}
                         </div>
                         
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" className="hover:bg-slate-50">
                               <MoreHorizontal className="h-4 w-4" />
                         </Button>
                           </DropdownMenuTrigger>
@@ -1281,15 +1281,15 @@ const Maintenance = () => {
       </div>
 
       {filteredRequests.length === 0 && (
-        <Card>
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-12 text-center">
-            <Wrench className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No maintenance requests found</h3>
-            <p className="text-muted-foreground mb-4">
+            <Wrench className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2 text-slate-700">No maintenance requests found</h3>
+            <p className="text-slate-500 mb-4">
               {searchQuery || statusFilter !== 'all' ? 'Try adjusting your filters' : 'All caught up! No pending maintenance requests.'}
             </p>
             <Button 
-              className="bg-gradient-to-r from-[#ed1c24] to-[#225fac]"
+              className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-6 py-3"
               onClick={handleOpenCreateModal}
             >
               <Plus className="h-4 w-4 mr-2" />

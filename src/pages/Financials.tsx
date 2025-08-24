@@ -292,39 +292,39 @@ const Financials = () => {
 
   return (
     <div className="space-y-8 p-1">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 via-white to-emerald-50 p-8 border border-green-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-green-50/20 to-emerald-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                Financial Dashboard 💰
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Financial Dashboard
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 Track your revenue, expenses, and profitability. Monitor cash flow, analyze trends, and make informed financial decisions for your property portfolio.
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>${financialData.netIncome.toLocaleString()} net income this month</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="font-medium">${financialData.netIncome.toLocaleString()} net income this month</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Calendar className="h-4 w-4" />
-                  <span>Last updated: {new Date().toLocaleTimeString()}</span>
+                  <span>Updated {new Date().toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-green-200 text-green-700 hover:bg-green-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Financial Analytics
+                Analytics
               </Button>
-              <Button variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Download className="h-4 w-4 mr-2" />
-                Export Report
+                Export
               </Button>
-              <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Transaction
               </Button>
@@ -333,11 +333,11 @@ const Financials = () => {
         </div>
       </div>
 
-      {/* Time Range Selector */}
+      {/* Modern Minimal Time Range Selector */}
       <div className="flex items-center justify-center">
-        <div className="bg-white rounded-xl border border-gray-200 p-1 shadow-sm">
+        <div className="bg-white rounded-xl border border-slate-200 p-1 shadow-sm">
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-48 border-0 bg-transparent">
+            <SelectTrigger className="w-48 border-0 bg-transparent rounded-xl">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -350,18 +350,18 @@ const Financials = () => {
         </div>
       </div>
 
-      {/* Enhanced Financial Overview Cards */}
+      {/* Modern Minimal Financial Overview Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <DollarSign className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <DollarSign className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(financialData.totalRevenue / 1000).toFixed(1)}K</p>
-                <p className="text-sm text-gray-600">Total Revenue</p>
-                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">${(financialData.totalRevenue / 1000).toFixed(1)}K</p>
+                <p className="text-sm text-slate-600 font-medium">Total Revenue</p>
+                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   +{financialData.revenueChange}% from last month
                 </div>
@@ -370,16 +370,16 @@ const Financials = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-red-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-red-100 group-hover:bg-red-200 transition-colors duration-300">
-                <ArrowDownRight className="h-8 w-8 text-red-600" />
+              <div className="p-3 rounded-2xl bg-red-50 group-hover:bg-red-100 transition-colors duration-200">
+                <ArrowDownRight className="h-7 w-7 text-red-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(financialData.totalExpenses / 1000).toFixed(1)}K</p>
-                <p className="text-sm text-gray-600">Total Expenses</p>
-                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">${(financialData.totalExpenses / 1000).toFixed(1)}K</p>
+                <p className="text-sm text-slate-600 font-medium">Total Expenses</p>
+                <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
                   <TrendingDown className="h-3 w-3" />
                   {financialData.expensesChange}% from last month
                 </div>
@@ -388,15 +388,15 @@ const Financials = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-emerald-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-emerald-100 group-hover:bg-emerald-200 transition-colors duration-300">
-                <ArrowUpRight className="h-8 w-8 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <ArrowUpRight className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">${(financialData.netIncome / 1000).toFixed(1)}K</p>
-                <p className="text-sm text-gray-600">Net Income</p>
+                <p className="text-3xl font-light text-slate-900">${(financialData.netIncome / 1000).toFixed(1)}K</p>
+                <p className="text-sm text-slate-600 font-medium">Net Income</p>
                 <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   +{financialData.netIncomeChange}% from last month
@@ -406,15 +406,15 @@ const Financials = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <Percent className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <Percent className="h-7 w-7 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{financialData.profitMargin}%</p>
-                <p className="text-sm text-gray-600">Profit Margin</p>
+                <p className="text-3xl font-light text-slate-900">{financialData.profitMargin}%</p>
+                <p className="text-sm text-slate-600 font-medium">Profit Margin</p>
                 <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <Target className="h-3 w-3" />
                   Target: 65%
@@ -425,56 +425,56 @@ const Financials = () => {
         </Card>
       </div>
 
-      {/* Additional Financial Metrics */}
+      {/* Modern Minimal Additional Financial Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
-          <div className="text-2xl font-bold text-emerald-600 mb-1">${(financialData.cashFlow / 1000).toFixed(1)}K</div>
-          <div className="text-sm text-gray-600 mb-1">Cash Flow</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-emerald-600 mb-1">${(financialData.cashFlow / 1000).toFixed(1)}K</div>
+          <div className="text-sm text-slate-600 mb-1">Cash Flow</div>
           <div className="text-xs text-emerald-600">Available funds</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-100">
-          <div className="text-2xl font-bold text-blue-600 mb-1">{financialData.roi}%</div>
-          <div className="text-sm text-gray-600 mb-1">ROI</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-blue-600 mb-1">{financialData.roi}%</div>
+          <div className="text-sm text-slate-600 mb-1">ROI</div>
           <div className="text-xs text-blue-600">Return on investment</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
-          <div className="text-2xl font-bold text-purple-600 mb-1">{financialData.occupancyRate}%</div>
-          <div className="text-sm text-gray-600 mb-1">Occupancy Rate</div>
-          <div className="text-xs text-purple-600">Properties occupied</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-slate-600 mb-1">{financialData.occupancyRate}%</div>
+          <div className="text-sm text-slate-600 mb-1">Occupancy Rate</div>
+          <div className="text-xs text-slate-600">Properties occupied</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-yellow-50 to-white border border-yellow-100">
-          <div className="text-2xl font-bold text-yellow-600 mb-1">${financialData.averageRent}</div>
-          <div className="text-sm text-gray-600 mb-1">Average Rent</div>
-          <div className="text-xs text-yellow-600">Per unit</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-amber-600 mb-1">${financialData.averageRent}</div>
+          <div className="text-sm text-slate-600 mb-1">Average Rent</div>
+          <div className="text-xs text-amber-600">Per unit</div>
         </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Enhanced Monthly Trends Chart Placeholder */}
-        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-blue-100">
-            <CardTitle className="flex items-center gap-2 text-blue-800">
+        {/* Modern Minimal Monthly Trends Chart Placeholder */}
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
               <LineChart className="h-5 w-5" />
               Monthly Performance
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="h-80 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg flex items-center justify-center border border-blue-100">
+            <div className="h-80 bg-slate-50 rounded-lg flex items-center justify-center border border-slate-200">
               <div className="text-center">
-                <TrendingUp className="h-16 w-16 text-blue-500 mx-auto mb-4" />
-                <p className="text-xl font-semibold text-gray-700 mb-2">Revenue & Expense Chart</p>
-                <p className="text-sm text-gray-600 mb-4">Interactive chart would go here</p>
+                <TrendingUp className="h-16 w-16 text-slate-500 mx-auto mb-4" />
+                <p className="text-xl font-semibold text-slate-700 mb-2">Revenue & Expense Chart</p>
+                <p className="text-sm text-slate-600 mb-4">Interactive chart would go here</p>
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
-                    <div className="text-lg font-bold text-green-600">Revenue</div>
-                    <div className="text-sm text-gray-600">Trending up</div>
+                    <div className="text-lg font-bold text-emerald-600">Revenue</div>
+                    <div className="text-sm text-slate-600">Trending up</div>
                   </div>
                   <div>
                     <div className="text-lg font-bold text-red-600">Expenses</div>
-                    <div className="text-sm text-gray-600">Stable</div>
+                    <div className="text-sm text-slate-600">Stable</div>
                   </div>
                   <div>
                     <div className="text-lg font-bold text-blue-600">Net Income</div>
@@ -486,10 +486,10 @@ const Financials = () => {
           </CardContent>
         </Card>
 
-        {/* Enhanced Expense Breakdown */}
-        <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b border-red-100">
-            <CardTitle className="flex items-center gap-2 text-red-800">
+        {/* Modern Minimal Expense Breakdown */}
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
               <PieChart className="h-5 w-5" />
               Expense Breakdown
             </CardTitle>
@@ -503,12 +503,12 @@ const Financials = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className={`w-3 h-3 rounded-full ${getCategoryColor(expense.color)}`} />
-                        <IconComponent className="h-4 w-4 text-gray-500" />
+                        <IconComponent className="h-4 w-4 text-slate-500" />
                         <span className="font-medium">{expense.category}</span>
                       </div>
                       <div className="text-right">
                         <div className="font-semibold">${expense.amount.toLocaleString()}</div>
-                        <div className="text-xs text-gray-600">{expense.percentage}%</div>
+                        <div className="text-xs text-slate-600">{expense.percentage}%</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -528,20 +528,20 @@ const Financials = () => {
         </Card>
       </div>
 
-      {/* Enhanced Recent Transactions */}
-      <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+      {/* Modern Minimal Recent Transactions */}
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+        <CardHeader className="border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-xl">
-              <Receipt className="h-5 w-5 text-gray-600" />
+              <Receipt className="h-5 w-5 text-slate-600" />
               Recent Transactions
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="border-gray-200 text-gray-700 hover:bg-gray-50">
+              <Button variant="outline" size="sm" className="border-slate-200 text-slate-700 hover:bg-slate-50">
                 <Filter className="h-4 w-4 mr-2" />
                 Filter
               </Button>
-              <Button size="sm" className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
+              <Button size="sm" className="bg-slate-900 hover:bg-slate-800 text-white">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Transaction
               </Button>
@@ -551,22 +551,22 @@ const Financials = () => {
         <CardContent className="p-6">
           <div className="space-y-4">
             {recentTransactions.map((transaction) => (
-              <div key={transaction.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+              <div key={transaction.id} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50/50 transition-colors duration-200">
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'
+                    transaction.type === 'income' ? 'bg-emerald-100' : 'bg-red-100'
                   }`}>
                     {getTransactionIcon(transaction.type, transaction.category)}
                   </div>
                   <div className="space-y-1">
-                    <h4 className="font-semibold text-gray-900">{transaction.description}</h4>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <h4 className="font-semibold text-slate-900">{transaction.description}</h4>
+                    <div className="flex items-center gap-2 text-sm text-slate-600">
                       <Building2 className="h-3 w-3" />
                       <span>{transaction.property}</span>
                       <span>•</span>
                       <span className="capitalize">{transaction.category}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
                       <Calendar className="h-3 w-3" />
                       <span>{new Date(transaction.date).toLocaleDateString()}</span>
                       {transaction.notes && (
@@ -582,11 +582,11 @@ const Financials = () => {
                 <div className="flex items-center gap-4">
                   <div className="text-right">
                     <div className={`font-semibold text-lg ${
-                      transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
+                      transaction.type === 'income' ? 'text-emerald-600' : 'text-red-600'
                     }`}>
                       {transaction.type === 'income' ? '+' : ''}${Math.abs(transaction.amount).toLocaleString()}
                     </div>
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-slate-600">
                       {transaction.paymentMethod}
                     </div>
                   </div>

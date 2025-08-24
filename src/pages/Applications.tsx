@@ -511,39 +511,39 @@ const Applications = () => {
 
   return (
     <div className="space-y-8 p-1">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-8 border border-emerald-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/20 to-teal-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                Rental Applications 📝
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Rental Applications
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 Review and manage rental applications for your properties. Streamline your tenant screening process and make informed decisions with comprehensive applicant data.
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>{totalApplications} applications received</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="font-medium">{totalApplications} applications received</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Clock className="h-4 w-4" />
-                  <span>Last updated: {new Date().toLocaleTimeString()}</span>
+                  <span>Updated {new Date().toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Application Analytics
+                Analytics
               </Button>
-              <Button variant="outline" className="border-teal-200 text-teal-700 hover:bg-teal-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Download className="h-4 w-4 mr-2" />
-                Export Report
+                Export
               </Button>
-              <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                 <Plus className="h-4 w-4 mr-2" />
                 New Application
               </Button>
@@ -552,18 +552,18 @@ const Applications = () => {
         </div>
       </div>
 
-      {/* Enhanced Summary Cards */}
+      {/* Modern Minimal Summary Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-yellow-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-yellow-100 group-hover:bg-yellow-200 transition-colors duration-300">
-                <Clock className="h-8 w-8 text-yellow-600" />
+              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+                <Clock className="h-7 w-7 text-amber-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{pendingApplications}</p>
-                <p className="text-sm text-gray-600">Pending Review</p>
-                <div className="flex items-center gap-1 text-xs text-yellow-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{pendingApplications}</p>
+                <p className="text-sm text-slate-600 font-medium">Pending Review</p>
+                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
                   <AlertTriangle className="h-3 w-3" />
                   Awaiting review
                 </div>
@@ -572,15 +572,15 @@ const Applications = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <Eye className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <Eye className="h-7 w-7 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{underReviewApplications}</p>
-                <p className="text-sm text-gray-600">Under Review</p>
+                <p className="text-3xl font-light text-slate-900">{underReviewApplications}</p>
+                <p className="text-sm text-slate-600 font-medium">Under Review</p>
                 <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <Activity className="h-3 w-3" />
                   Being processed
@@ -590,16 +590,16 @@ const Applications = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <CheckCircle className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{approvedApplications}</p>
-                <p className="text-sm text-gray-600">Approved</p>
-                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{approvedApplications}</p>
+                <p className="text-sm text-slate-600 font-medium">Approved</p>
+                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   Ready for lease
                 </div>
@@ -608,15 +608,15 @@ const Applications = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-red-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-red-100 group-hover:bg-red-200 transition-colors duration-300">
-                <X className="h-8 w-8 text-red-600" />
+              <div className="p-3 rounded-2xl bg-red-50 group-hover:bg-red-100 transition-colors duration-200">
+                <X className="h-7 w-7 text-red-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{rejectedApplications}</p>
-                <p className="text-sm text-gray-600">Rejected</p>
+                <p className="text-3xl font-light text-slate-900">{rejectedApplications}</p>
+                <p className="text-sm text-slate-600 font-medium">Rejected</p>
                 <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
                   <TrendingDown className="h-3 w-3" />
                   Did not meet criteria
@@ -627,61 +627,61 @@ const Applications = () => {
         </Card>
       </div>
 
-      {/* Additional Stats Row */}
+      {/* Modern Minimal Additional Stats Row */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
-          <div className="text-2xl font-bold text-emerald-600 mb-1">{avgApplicationScore.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg. Application Score</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-emerald-600 mb-1">{avgApplicationScore.toFixed(1)}</div>
+          <div className="text-sm text-slate-600 mb-1">Avg. Application Score</div>
           <div className="text-xs text-emerald-600">Quality indicator</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-100">
-          <div className="text-2xl font-bold text-blue-600 mb-1">{avgCreditScore.toFixed(0)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg. Credit Score</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-blue-600 mb-1">{avgCreditScore.toFixed(0)}</div>
+          <div className="text-sm text-slate-600 mb-1">Avg. Credit Score</div>
           <div className="text-xs text-blue-600">Financial health</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
-          <div className="text-2xl font-bold text-purple-600 mb-1">{avgIncomeToRentRatio.toFixed(1)}x</div>
-          <div className="text-sm text-gray-600 mb-1">Income/Rent Ratio</div>
-          <div className="text-xs text-purple-600">Affordability</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-slate-600 mb-1">{avgIncomeToRentRatio.toFixed(1)}x</div>
+          <div className="text-sm text-slate-600 mb-1">Income/Rent Ratio</div>
+          <div className="text-xs text-slate-600">Affordability</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-orange-50 to-white border border-orange-100">
-          <div className="text-2xl font-bold text-orange-600 mb-1">{highPriorityApplications}</div>
-          <div className="text-sm text-gray-600 mb-1">High Priority</div>
-          <div className="text-xs text-orange-600">Need attention</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-amber-600 mb-1">{highPriorityApplications}</div>
+          <div className="text-sm text-slate-600 mb-1">High Priority</div>
+          <div className="text-xs text-amber-600">Need attention</div>
         </div>
       </div>
 
-      {/* Enhanced Filters and Search */}
-      <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+      {/* Modern Minimal Filters and Search */}
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
-            <FileText className="h-5 w-5 text-emerald-600" />
+            <FileText className="h-5 w-5 text-slate-600" />
             Application Overview
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1">
-              <Label htmlFor="search" className="text-sm font-medium text-gray-700 mb-2 block">Search Applications</Label>
+              <Label htmlFor="search" className="text-sm font-medium text-slate-700 mb-2 block">Search Applications</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                 <Input
                   id="search"
                   placeholder="Search by applicant, email, property, or ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-gray-200 focus:border-emerald-500"
+                  className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                 />
               </div>
             </div>
             
             <div className="w-full md:w-48">
-              <Label htmlFor="status" className="text-sm font-medium text-gray-700 mb-2 block">Status</Label>
+              <Label htmlFor="status" className="text-sm font-medium text-slate-700 mb-2 block">Status</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="border-gray-200">
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -695,9 +695,9 @@ const Applications = () => {
             </div>
             
             <div className="w-full md:w-48">
-              <Label htmlFor="property" className="text-sm font-medium text-gray-700 mb-2 block">Property</Label>
+              <Label htmlFor="property" className="text-sm font-medium text-slate-700 mb-2 block">Property</Label>
               <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                <SelectTrigger className="border-gray-200">
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -711,23 +711,23 @@ const Applications = () => {
             </div>
           </div>
 
-          {/* Enhanced Applications Table */}
-          <div className="rounded-md border border-gray-200 overflow-hidden">
+          {/* Modern Minimal Applications Table */}
+          <div className="rounded-md border border-slate-200 overflow-hidden">
             <Table>
-              <TableHeader className="bg-gray-50">
+              <TableHeader className="bg-slate-50/50">
                 <TableRow>
-                  <TableHead className="font-semibold text-gray-700">Application ID</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Applicant & Property</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Application Details</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Financial Metrics</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Score & Rating</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Status & Priority</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Actions</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Application ID</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Applicant & Property</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Application Details</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Financial Metrics</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Score & Rating</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Status & Priority</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredApplications.map((application) => (
-                  <TableRow key={application.id} className="hover:bg-gray-50 transition-colors duration-200">
+                  <TableRow key={application.id} className="hover:bg-slate-50/50 transition-colors duration-200">
                     <TableCell className="font-medium text-emerald-600">{application.id}</TableCell>
                     <TableCell>
                       <div className="space-y-2">
@@ -849,12 +849,12 @@ const Applications = () => {
 
           {filteredApplications.length === 0 && (
             <div className="text-center py-12">
-              <UserCheck className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-lg font-semibold text-gray-600 mb-2">No applications found</p>
-              <p className="text-sm text-gray-500 mb-4">
+              <UserCheck className="h-16 w-16 text-slate-400 mx-auto mb-4" />
+              <p className="text-lg font-semibold text-slate-600 mb-2">No applications found</p>
+              <p className="text-sm text-slate-500 mb-4">
                 Try adjusting your search criteria or check back later
               </p>
-              <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-6 py-3">
                 <Plus className="h-4 w-4 mr-2" />
                 Create New Application
               </Button>

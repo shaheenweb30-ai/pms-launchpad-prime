@@ -513,43 +513,43 @@ const Reports = () => {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-50 via-white to-pink-50 p-8 border border-orange-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-50/20 to-pink-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-orange-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-pink-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent">
-                Reports & Analytics 📊
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Reports & Analytics
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 Generate comprehensive reports and analyze property performance with advanced analytics. Track KPIs, monitor trends, and make data-driven decisions.
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                  <span>{totalReports} reports generated</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <span className="font-medium">{totalReports} reports generated</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <BarChart3 className="h-4 w-4" />
                   <span>{completedReports} completed</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Zap className="h-4 w-4" />
                   <span>{automatedReports} automated</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-orange-200 text-orange-700 hover:bg-orange-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Activity className="h-4 w-4 mr-2" />
-                Report Analytics
+                Analytics
               </Button>
-              <Button variant="outline" className="border-pink-200 text-pink-700 hover:bg-pink-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Settings className="h-4 w-4 mr-2" />
-                Report Settings
+                Settings
               </Button>
-              <Button className="bg-gradient-to-r from-orange-600 to-pink-600 hover:from-orange-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                 <Plus className="h-4 w-4 mr-2" />
                 Generate Report
               </Button>
@@ -558,17 +558,17 @@ const Reports = () => {
         </div>
       </div>
 
-      {/* Enhanced Summary Cards */}
+      {/* Modern Minimal Summary Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-orange-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
-                <BarChart3 className="h-8 w-8 text-orange-600" />
+              <div className="p-3 rounded-2xl bg-orange-50 group-hover:bg-orange-100 transition-colors duration-200">
+                <BarChart3 className="h-7 w-7 text-orange-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{totalReports}</p>
-                <p className="text-sm text-gray-600">Total Reports</p>
+                <p className="text-3xl font-light text-slate-900">{totalReports}</p>
+                <p className="text-sm text-slate-600 font-medium">Total Reports</p>
                 <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
                   <FileText className="h-3 w-3" />
                   Generated reports
@@ -578,15 +578,15 @@ const Reports = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-emerald-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-emerald-100 group-hover:bg-emerald-200 transition-colors duration-300">
-                <CheckCircle className="h-8 w-8 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <CheckCircle className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{completedReports}</p>
-                <p className="text-sm text-gray-600">Completed</p>
+                <p className="text-3xl font-light text-slate-900">{completedReports}</p>
+                <p className="text-sm text-slate-600 font-medium">Completed</p>
                 <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <Download className="h-3 w-3" />
                   Ready for download
@@ -596,16 +596,16 @@ const Reports = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-yellow-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-yellow-100 group-hover:bg-yellow-200 transition-colors duration-300">
-                <Clock className="h-8 w-8 text-yellow-600" />
+              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+                <Clock className="h-7 w-7 text-amber-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{inProgressReports}</p>
-                <p className="text-sm text-gray-600">In Progress</p>
-                <div className="flex items-center gap-1 text-xs text-yellow-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{inProgressReports}</p>
+                <p className="text-sm text-slate-600 font-medium">In Progress</p>
+                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
                   <Activity className="h-3 w-3" />
                   Currently generating
                 </div>
@@ -614,16 +614,16 @@ const Reports = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-purple-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
-                <Zap className="h-8 w-8 text-purple-600" />
+              <div className="p-3 rounded-2xl bg-slate-50 group-hover:bg-slate-100 transition-colors duration-200">
+                <Zap className="h-7 w-7 text-slate-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{automatedReports}</p>
-                <p className="text-sm text-gray-600">Automated</p>
-                <div className="flex items-center gap-1 text-xs text-purple-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{automatedReports}</p>
+                <p className="text-sm text-slate-600 font-medium">Automated</p>
+                <div className="flex items-center gap-1 text-xs text-slate-600 mt-1">
                   <Calendar className="h-3 w-3" />
                   Scheduled reports
                 </div>
@@ -633,30 +633,30 @@ const Reports = () => {
         </Card>
       </div>
 
-      {/* Additional Report Metrics */}
+      {/* Modern Minimal Additional Report Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-100">
-          <div className="text-2xl font-bold text-blue-600 mb-1">{avgFileSize.toFixed(1)} MB</div>
-          <div className="text-sm text-gray-600 mb-1">Avg File Size</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-blue-600 mb-1">{avgFileSize.toFixed(1)} MB</div>
+          <div className="text-sm text-slate-600 mb-1">Avg File Size</div>
           <div className="text-xs text-blue-600">Per report</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-teal-50 to-white border border-teal-100">
-          <div className="text-2xl font-bold text-teal-600 mb-1">{scheduledReports}</div>
-          <div className="text-sm text-gray-600 mb-1">Scheduled Reports</div>
-          <div className="text-xs text-teal-600">Auto-generated</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-slate-600 mb-1">{scheduledReports}</div>
+          <div className="text-sm text-slate-600 mb-1">Scheduled Reports</div>
+          <div className="text-xs text-slate-600">Auto-generated</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-white border border-indigo-100">
-          <div className="text-2xl font-bold text-indigo-600 mb-1">{recentReports}</div>
-          <div className="text-sm text-gray-600 mb-1">Recent Reports</div>
-          <div className="text-xs text-indigo-600">This week</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-blue-600 mb-1">{recentReports}</div>
+          <div className="text-sm text-slate-600 mb-1">Recent Reports</div>
+          <div className="text-xs text-blue-600">This week</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-rose-50 to-white border border-rose-100">
-          <div className="text-2xl font-bold text-rose-600 mb-1">{totalFileSize.toFixed(1)} MB</div>
-          <div className="text-sm text-gray-600 mb-1">Total Storage</div>
-          <div className="text-xs text-rose-600">All reports</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-red-600 mb-1">{totalFileSize.toFixed(1)} MB</div>
+          <div className="text-sm text-slate-600 mb-1">Total Storage</div>
+          <div className="text-xs text-red-600">All reports</div>
         </div>
       </div>
 
@@ -669,30 +669,30 @@ const Reports = () => {
 
         {/* My Reports Tab */}
         <TabsContent value="reports" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Generated Reports</CardTitle>
+          <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+            <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+              <CardTitle className="text-slate-800">Generated Reports</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col md:flex-row gap-4 mb-6">
                 <div className="flex-1">
-                  <Label htmlFor="search">Search Reports</Label>
+                  <Label htmlFor="search" className="text-slate-700">Search Reports</Label>
                   <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                     <Input
                       id="search"
                       placeholder="Search by report name or description..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                     />
                   </div>
                 </div>
                 
                 <div className="w-full md:w-40">
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="category" className="text-slate-700">Category</Label>
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger>
+                    <SelectTrigger className="border-slate-200 rounded-xl">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -707,9 +707,9 @@ const Reports = () => {
                 </div>
                 
                 <div className="w-full md:w-40">
-                  <Label htmlFor="property">Property</Label>
+                  <Label htmlFor="property" className="text-slate-700">Property</Label>
                   <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                    <SelectTrigger>
+                    <SelectTrigger className="border-slate-200 rounded-xl">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -724,30 +724,30 @@ const Reports = () => {
                 </div>
               </div>
 
-              {/* Reports Table */}
-              <div className="rounded-md border">
+              {/* Modern Minimal Reports Table */}
+              <div className="rounded-md border border-slate-200 overflow-hidden">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Report Name</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Property</TableHead>
-                      <TableHead>Period</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Size</TableHead>
-                      <TableHead>Actions</TableHead>
+                    <TableRow className="bg-slate-50/50">
+                      <TableHead className="font-semibold text-slate-700">Report Name</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Category</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Property</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Period</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Created</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Status</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Size</TableHead>
+                      <TableHead className="font-semibold text-slate-700">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredReports.map((report) => (
-                      <TableRow key={report.id}>
+                      <TableRow key={report.id} className="hover:bg-slate-50/50">
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <FileText className="h-4 w-4 text-blue-600" />
                             <div>
-                              <div className="font-medium">{report.name}</div>
-                              <div className="text-xs text-muted-foreground">{report.format}</div>
+                              <div className="font-medium text-slate-900">{report.name}</div>
+                              <div className="text-xs text-slate-500">{report.format}</div>
                             </div>
                             {report.automated && <Zap className="h-4 w-4 text-purple-600" />}
                           </div>
@@ -762,13 +762,13 @@ const Reports = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <Building2 className="h-4 w-4 text-muted-foreground" />
-                            <span className="max-w-[150px] truncate">{report.property}</span>
+                            <Building2 className="h-4 w-4 text-slate-500" />
+                            <span className="max-w-[150px] truncate text-slate-900">{report.property}</span>
                           </div>
                         </TableCell>
-                        <TableCell>{report.period}</TableCell>
+                        <TableCell className="text-slate-900">{report.period}</TableCell>
                         <TableCell>
-                          <div className="text-sm">
+                          <div className="text-sm text-slate-900">
                             {new Date(report.createdDate).toLocaleDateString()}
                           </div>
                         </TableCell>
@@ -781,11 +781,11 @@ const Reports = () => {
                             </div>
                           </Badge>
                         </TableCell>
-                        <TableCell>{formatFileSize(report.size)}</TableCell>
+                        <TableCell className="text-slate-900">{formatFileSize(report.size)}</TableCell>
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
+                              <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-50">
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>

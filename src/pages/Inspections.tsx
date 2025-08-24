@@ -550,39 +550,39 @@ const Inspections = () => {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 via-white to-blue-50 p-8 border border-emerald-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/20 to-blue-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-blue-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-                Property Inspections 🔍
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Property Inspections
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 Schedule, track, and manage comprehensive property inspections and maintenance checks. Ensure compliance, safety, and quality standards across your portfolio.
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                  <span>{totalInspections} total inspections this month</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <span className="font-medium">{totalInspections} total inspections this month</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Calendar className="h-4 w-4" />
                   <span>Avg score: {averageScore.toFixed(1)}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Activity className="h-4 w-4 mr-2" />
-                Inspection Analytics
+                Analytics
               </Button>
-              <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Download className="h-4 w-4 mr-2" />
-                Export Reports
+                Export
               </Button>
-              <Button className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                 <Plus className="h-4 w-4 mr-2" />
                 Schedule Inspection
               </Button>
@@ -591,17 +591,17 @@ const Inspections = () => {
         </div>
       </div>
 
-      {/* Enhanced Summary Cards */}
+      {/* Modern Minimal Summary Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-emerald-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-emerald-100 group-hover:bg-emerald-200 transition-colors duration-300">
-                <CheckCircle className="h-8 w-8 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <CheckCircle className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{completedInspections}</p>
-                <p className="text-sm text-gray-600">Completed</p>
+                <p className="text-3xl font-light text-slate-900">{completedInspections}</p>
+                <p className="text-sm text-slate-600 font-medium">Completed</p>
                 <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <CheckCircle2 className="h-3 w-3" />
                   Inspections finished
@@ -611,15 +611,15 @@ const Inspections = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <Calendar className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <Calendar className="h-7 w-7 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{scheduledInspections}</p>
-                <p className="text-sm text-gray-600">Scheduled</p>
+                <p className="text-3xl font-light text-slate-900">{scheduledInspections}</p>
+                <p className="text-sm text-slate-600 font-medium">Scheduled</p>
                 <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <Clock className="h-3 w-3" />
                   Upcoming inspections
@@ -629,16 +629,16 @@ const Inspections = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-yellow-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-yellow-100 group-hover:bg-yellow-200 transition-colors duration-300">
-                <Star className="h-8 w-8 text-yellow-600" />
+              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+                <Star className="h-7 w-7 text-amber-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{averageScore.toFixed(0)}</p>
-                <p className="text-sm text-gray-600">Average Score</p>
-                <div className="flex items-center gap-1 text-xs text-yellow-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{averageScore.toFixed(0)}</p>
+                <p className="text-sm text-slate-600 font-medium">Average Score</p>
+                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
                   <BarChart3 className="h-3 w-3" />
                   Property condition
                 </div>
@@ -647,15 +647,15 @@ const Inspections = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-red-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-red-100 group-hover:bg-red-200 transition-colors duration-300">
-                <AlertTriangle className="h-8 w-8 text-red-600" />
+              <div className="p-3 rounded-2xl bg-red-50 group-hover:bg-red-100 transition-colors duration-200">
+                <AlertTriangle className="h-7 w-7 text-red-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{highPriorityInspections}</p>
-                <p className="text-sm text-gray-600">High Priority</p>
+                <p className="text-3xl font-light text-slate-900">{highPriorityInspections}</p>
+                <p className="text-sm text-slate-600 font-medium">High Priority</p>
                 <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
                   <AlertCircle className="h-3 w-3" />
                   Require attention
@@ -666,54 +666,54 @@ const Inspections = () => {
         </Card>
       </div>
 
-      {/* Additional Inspection Metrics */}
+      {/* Modern Minimal Additional Inspection Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
-          <div className="text-2xl font-bold text-purple-600 mb-1">{avgInspectorRating.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Inspector Rating</div>
-          <div className="text-xs text-purple-600">Service quality</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-slate-600 mb-1">{avgInspectorRating.toFixed(1)}</div>
+          <div className="text-sm text-slate-600 mb-1">Avg Inspector Rating</div>
+          <div className="text-xs text-slate-600">Service quality</div>
         </div>
         
 
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-orange-50 to-white border border-orange-100">
-          <div className="text-2xl font-bold text-orange-600 mb-1">{avgInspectionDuration.toFixed(1)}h</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Duration</div>
-          <div className="text-xs text-orange-600">Per inspection</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-amber-600 mb-1">{avgInspectionDuration.toFixed(1)}h</div>
+          <div className="text-sm text-slate-600 mb-1">Avg Duration</div>
+          <div className="text-xs text-amber-600">Per inspection</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-cyan-50 to-white border border-cyan-100">
-          <div className="text-2xl font-bold text-cyan-600 mb-1">{totalPhotos}</div>
-          <div className="text-sm text-gray-600 mb-1">Total Photos</div>
-          <div className="text-xs text-cyan-600">Documentation</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-blue-600 mb-1">{totalPhotos}</div>
+          <div className="text-sm text-slate-600 mb-1">Total Photos</div>
+          <div className="text-xs text-blue-600">Documentation</div>
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Inspection Overview</CardTitle>
+      {/* Modern Minimal Filters and Search */}
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+        <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+          <CardTitle className="text-slate-800">Inspection Overview</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1">
-              <Label htmlFor="search">Search Inspections</Label>
+              <Label htmlFor="search" className="text-slate-700">Search Inspections</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                 <Input
                   id="search"
                   placeholder="Search by property, inspector, or inspection ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                 />
               </div>
             </div>
             
             <div className="w-full md:w-40">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status" className="text-slate-700">Status</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -727,9 +727,9 @@ const Inspections = () => {
             </div>
             
             <div className="w-full md:w-40">
-              <Label htmlFor="property">Property</Label>
+              <Label htmlFor="property" className="text-slate-700">Property</Label>
               <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -744,9 +744,9 @@ const Inspections = () => {
             </div>
 
             <div className="w-full md:w-40">
-              <Label htmlFor="type">Type</Label>
+              <Label htmlFor="type" className="text-slate-700">Type</Label>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -761,29 +761,29 @@ const Inspections = () => {
             </div>
           </div>
 
-          {/* Inspections Table */}
-          <div className="rounded-md border">
+          {/* Modern Minimal Inspections Table */}
+          <div className="rounded-md border border-slate-200 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Inspection ID</TableHead>
-                  <TableHead>Property</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Inspector</TableHead>
-                  <TableHead>Scheduled Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Score</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Actions</TableHead>
+                <TableRow className="bg-slate-50/50">
+                  <TableHead className="font-semibold text-slate-700">Inspection ID</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Property</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Type</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Inspector</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Scheduled Date</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Status</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Score</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Priority</TableHead>
+                  <TableHead className="font-semibold text-slate-700">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredInspections.map((inspection) => (
-                  <TableRow key={inspection.id}>
+                  <TableRow key={inspection.id} className="hover:bg-slate-50/50">
                     <TableCell className="font-medium">{inspection.id}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                        <Building2 className="h-4 w-4 text-slate-500" />
                         <span className="max-w-[200px] truncate">{inspection.property}</span>
                       </div>
                     </TableCell>
@@ -795,10 +795,10 @@ const Inspections = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
+                        <User className="h-4 w-4 text-slate-500" />
                         <div>
                           <div className="font-medium">{inspection.inspector}</div>
-                          <div className="text-xs text-muted-foreground">{inspection.inspectorEmail}</div>
+                          <div className="text-xs text-slate-500">{inspection.inspectorEmail}</div>
                         </div>
                       </div>
                     </TableCell>
@@ -822,7 +822,7 @@ const Inspections = () => {
                           {inspection.score}/100
                         </div>
                       ) : (
-                        <span className="text-muted-foreground">N/A</span>
+                        <span className="text-slate-500">N/A</span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -870,9 +870,9 @@ const Inspections = () => {
 
           {filteredInspections.length === 0 && (
             <div className="text-center py-8">
-              <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-semibold text-gray-600">No inspections found</p>
-              <p className="text-sm text-gray-500">
+              <Search className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+              <p className="text-lg font-semibold text-slate-700">No inspections found</p>
+              <p className="text-sm text-slate-500">
                 Try adjusting your search criteria or schedule a new inspection
               </p>
             </div>
@@ -880,11 +880,11 @@ const Inspections = () => {
         </CardContent>
       </Card>
 
-      {/* Quick Actions and Analytics */}
+      {/* Modern Minimal Quick Actions and Analytics */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
               <Calendar className="h-5 w-5" />
               Upcoming Inspections
             </CardTitle>
@@ -894,24 +894,24 @@ const Inspections = () => {
               {inspections
                 .filter(inspection => inspection.status === 'scheduled')
                 .map((inspection) => (
-                  <div key={inspection.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div key={inspection.id} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50/50">
                     <div>
-                      <div className="font-medium">{inspection.property}</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="font-medium text-slate-900">{inspection.property}</div>
+                      <div className="text-sm text-slate-600">
                         {new Date(inspection.scheduledDate).toLocaleDateString()} - {inspection.type.replace('_', ' ')}
                       </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-slate-500">
                         Inspector: {inspection.inspector}
                       </div>
                     </div>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50">
                       <Calendar className="h-4 w-4 mr-1" />
                       Reschedule
                     </Button>
                   </div>
                 ))}
               {inspections.filter(inspection => inspection.status === 'scheduled').length === 0 && (
-                <p className="text-center text-muted-foreground py-4">
+                <p className="text-center text-slate-500 py-4">
                   No upcoming inspections
                 </p>
               )}
@@ -919,9 +919,9 @@ const Inspections = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
               <AlertTriangle className="h-5 w-5" />
               High Priority Findings
             </CardTitle>
@@ -931,10 +931,10 @@ const Inspections = () => {
               {inspections
                 .filter(inspection => inspection.priority === 'high' && inspection.status === 'completed')
                 .map((inspection) => (
-                  <div key={inspection.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div key={inspection.id} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50/50">
                     <div>
-                      <div className="font-medium">{inspection.property}</div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="font-medium text-slate-900">{inspection.property}</div>
+                      <div className="text-sm text-slate-600">
                         Score: {inspection.score}/100
                       </div>
                       <div className="text-xs text-red-600">
@@ -948,7 +948,7 @@ const Inspections = () => {
                   </div>
                 ))}
               {inspections.filter(inspection => inspection.priority === 'high' && inspection.status === 'completed').length === 0 && (
-                <p className="text-center text-muted-foreground py-4">
+                <p className="text-center text-slate-500 py-4">
                   No high priority findings
                 </p>
               )}

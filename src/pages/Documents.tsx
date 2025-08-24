@@ -526,43 +526,43 @@ const Documents = () => {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-8 border border-violet-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-50/20 to-cyan-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 to-cyan-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-cyan-600 bg-clip-text text-transparent">
-                Document Management 📄
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Document Management
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 Organize, store, and securely manage all your property documents and files. Access control, version tracking, and compliance management in one place.
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse"></div>
-                  <span>{totalDocuments} documents stored</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-violet-500 rounded-full"></div>
+                  <span className="font-medium">{totalDocuments} documents stored</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <HardDrive className="h-4 w-4" />
                   <span>{totalSize.toFixed(1)} MB total</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Shield className="h-4 w-4" />
                   <span>{encryptedDocuments} encrypted</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-violet-200 text-violet-700 hover:bg-violet-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Activity className="h-4 w-4 mr-2" />
-                Document Analytics
+                Analytics
               </Button>
-              <Button variant="outline" onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')} className="border-cyan-200 text-cyan-700 hover:bg-cyan-50">
+              <Button variant="outline" onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')} className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 {viewMode === 'grid' ? <List className="h-4 w-4 mr-2" /> : <Grid className="h-4 w-4 mr-2" />}
                 {viewMode === 'grid' ? 'List View' : 'Grid View'}
               </Button>
-              <Button className="bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-700 hover:to-cyan-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                 <Upload className="h-4 w-4 mr-2" />
                 Upload Document
               </Button>
@@ -571,17 +571,17 @@ const Documents = () => {
         </div>
       </div>
 
-      {/* Enhanced Summary Cards */}
+      {/* Modern Minimal Summary Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-violet-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-violet-100 group-hover:bg-violet-200 transition-colors duration-300">
-                <FileText className="h-8 w-8 text-violet-600" />
+              <div className="p-3 rounded-2xl bg-violet-50 group-hover:bg-violet-100 transition-colors duration-200">
+                <FileText className="h-7 w-7 text-violet-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{totalDocuments}</p>
-                <p className="text-sm text-gray-600">Total Documents</p>
+                <p className="text-3xl font-light text-slate-900">{totalDocuments}</p>
+                <p className="text-sm text-slate-600 font-medium">Total Documents</p>
                 <div className="flex items-center gap-1 text-xs text-violet-600 mt-1">
                   <Database className="h-3 w-3" />
                   Files stored
@@ -591,16 +591,16 @@ const Documents = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-cyan-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-cyan-100 group-hover:bg-cyan-200 transition-colors duration-300">
-                <HardDrive className="h-8 w-8 text-cyan-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <HardDrive className="h-7 w-7 text-blue-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{totalSize.toFixed(1)} MB</p>
-                <p className="text-sm text-gray-600">Storage Used</p>
-                <div className="flex items-center gap-1 text-xs text-cyan-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{totalSize.toFixed(1)} MB</p>
+                <p className="text-sm text-slate-600 font-medium">Storage Used</p>
+                <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <Archive className="h-3 w-3" />
                   Total file size
                 </div>
@@ -609,16 +609,16 @@ const Documents = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-yellow-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-yellow-100 group-hover:bg-yellow-200 transition-colors duration-300">
-                <Star className="h-8 w-8 text-yellow-600" />
+              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+                <Star className="h-7 w-7 text-amber-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{favoriteDocuments}</p>
-                <p className="text-sm text-gray-600">Favorites</p>
-                <div className="flex items-center gap-1 text-xs text-yellow-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{favoriteDocuments}</p>
+                <p className="text-sm text-slate-600 font-medium">Favorites</p>
+                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
                   <Award className="h-3 w-3" />
                   Starred documents
                 </div>
@@ -627,16 +627,16 @@ const Documents = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <Share className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <Share className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                <p className="text-3xl font-bold text-gray-900">{sharedDocuments}</p>
-                <p className="text-sm text-gray-600">Shared</p>
-                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{sharedDocuments}</p>
+                <p className="text-sm text-slate-600 font-medium">Shared</p>
+                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <Users className="h-3 w-3" />
                   Shared files
                 </div>
@@ -646,58 +646,58 @@ const Documents = () => {
         </Card>
       </div>
 
-      {/* Additional Document Metrics */}
+      {/* Modern Minimal Additional Document Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
-          <div className="text-2xl font-bold text-emerald-600 mb-1">{avgDocumentScore.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Document Score</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-emerald-600 mb-1">{avgDocumentScore.toFixed(1)}</div>
+          <div className="text-sm text-slate-600 mb-1">Avg Document Score</div>
           <div className="text-xs text-emerald-600">Quality rating</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
-          <div className="text-2xl font-bold text-purple-600 mb-1">{totalViews}</div>
-          <div className="text-sm text-gray-600 mb-1">Total Views</div>
-          <div className="text-xs text-purple-600">Document access</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-slate-600 mb-1">{totalViews}</div>
+          <div className="text-sm text-slate-600 mb-1">Total Views</div>
+          <div className="text-xs text-slate-600">Document access</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-white border border-indigo-100">
-          <div className="text-2xl font-bold text-indigo-600 mb-1">{criticalDocuments}</div>
-          <div className="text-sm text-gray-600 mb-1">Critical Documents</div>
-          <div className="text-xs text-indigo-600">High importance</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-blue-600 mb-1">{criticalDocuments}</div>
+          <div className="text-sm text-slate-600 mb-1">Critical Documents</div>
+          <div className="text-xs text-blue-600">High importance</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-red-50 to-white border border-red-100">
-          <div className="text-2xl font-bold text-red-600 mb-1">{compliantDocuments}</div>
-          <div className="text-sm text-gray-600 mb-1">Compliant Files</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-red-600 mb-1">{compliantDocuments}</div>
+          <div className="text-sm text-slate-600 mb-1">Compliant Files</div>
           <div className="text-xs text-red-600">Compliance status</div>
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Document Library</CardTitle>
+      {/* Modern Minimal Filters and Search */}
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+        <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+          <CardTitle className="text-slate-800">Document Library</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1">
-              <Label htmlFor="search">Search Documents</Label>
+              <Label htmlFor="search" className="text-slate-700">Search Documents</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                 <Input
                   id="search"
                   placeholder="Search by name, tags, or description..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                 />
               </div>
             </div>
             
             <div className="w-full md:w-40">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category" className="text-slate-700">Category</Label>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -715,9 +715,9 @@ const Documents = () => {
             </div>
             
             <div className="w-full md:w-40">
-              <Label htmlFor="property">Property</Label>
+              <Label htmlFor="property" className="text-slate-700">Property</Label>
               <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -732,9 +732,9 @@ const Documents = () => {
             </div>
 
             <div className="w-full md:w-40">
-              <Label htmlFor="type">File Type</Label>
+              <Label htmlFor="type" className="text-slate-700">File Type</Label>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -748,28 +748,29 @@ const Documents = () => {
             </div>
           </div>
 
-          {/* Documents Display */}
+          {/* Modern Minimal Documents Display */}
           {viewMode === 'grid' ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredDocuments.map((document) => (
-                <Card key={document.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                <Card key={document.id} className="hover:shadow-md transition-all duration-200 cursor-pointer border-0 bg-white shadow-sm">
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-3">
                         {getFileIcon(document.type)}
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-sm truncate">{document.name}</h3>
-                          <p className="text-xs text-muted-foreground">{formatFileSize(document.size)}</p>
+                          <h3 className="font-medium text-sm truncate text-slate-900">{document.name}</h3>
+                          <p className="text-xs text-slate-500">{formatFileSize(document.size)}</p>
                         </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleToggleFavorite(document.id)}
+                        className="hover:bg-slate-50"
                       >
                         {document.favorite ? 
                           <Star className="h-4 w-4 text-yellow-500 fill-current" /> : 
-                          <StarOff className="h-4 w-4 text-gray-400" />
+                          <StarOff className="h-4 w-4 text-slate-400" />
                         }
                       </Button>
                     </div>
@@ -778,21 +779,21 @@ const Documents = () => {
                       <Badge className={getCategoryColor(document.category)}>
                         {document.category}
                       </Badge>
-                      <p className="text-xs text-muted-foreground line-clamp-2">
+                      <p className="text-xs text-slate-500 line-clamp-2">
                         {document.description}
                       </p>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
                         <Clock className="h-3 w-3" />
                         {new Date(document.uploadDate).toLocaleDateString()}
                       </div>
                     </div>
                     
                     <div className="flex items-center gap-2 mt-3">
-                      <Button size="sm" variant="outline" onClick={() => handleViewDocument(document)}>
+                      <Button size="sm" variant="outline" onClick={() => handleViewDocument(document)} className="border-slate-200 text-slate-700 hover:bg-slate-50">
                         <Eye className="h-3 w-3 mr-1" />
                         View
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleDownloadDocument(document.id)}>
+                      <Button size="sm" variant="outline" onClick={() => handleDownloadDocument(document.id)} className="border-slate-200 text-slate-700 hover:bg-slate-50">
                         <Download className="h-3 w-3 mr-1" />
                         Download
                       </Button>
@@ -802,28 +803,28 @@ const Documents = () => {
               ))}
             </div>
           ) : (
-            <div className="rounded-md border">
+            <div className="rounded-md border border-slate-200 overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Property</TableHead>
-                    <TableHead>Size</TableHead>
-                    <TableHead>Upload Date</TableHead>
-                    <TableHead>Uploaded By</TableHead>
-                    <TableHead>Actions</TableHead>
+                  <TableRow className="bg-slate-50/50">
+                    <TableHead className="font-semibold text-slate-700">Name</TableHead>
+                    <TableHead className="font-semibold text-slate-700">Category</TableHead>
+                    <TableHead className="font-semibold text-slate-700">Property</TableHead>
+                    <TableHead className="font-semibold text-slate-700">Size</TableHead>
+                    <TableHead className="font-semibold text-slate-700">Upload Date</TableHead>
+                    <TableHead className="font-semibold text-slate-700">Uploaded By</TableHead>
+                    <TableHead className="font-semibold text-slate-700">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredDocuments.map((document) => (
-                    <TableRow key={document.id}>
+                    <TableRow key={document.id} className="hover:bg-slate-50/50">
                       <TableCell>
                         <div className="flex items-center gap-3">
                           {getSmallFileIcon(document.type)}
                           <div>
-                            <div className="font-medium">{document.name}</div>
-                            <div className="text-xs text-muted-foreground">{document.type.toUpperCase()}</div>
+                            <div className="font-medium text-slate-900">{document.name}</div>
+                            <div className="text-xs text-slate-500">{document.type.toUpperCase()}</div>
                           </div>
                           {document.favorite && <Star className="h-4 w-4 text-yellow-500 fill-current" />}
                           {document.shared && <Share className="h-4 w-4 text-blue-500" />}
@@ -836,26 +837,26 @@ const Documents = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Building2 className="h-4 w-4 text-muted-foreground" />
-                          <span className="max-w-[150px] truncate">{document.property}</span>
+                          <Building2 className="h-4 w-4 text-slate-500" />
+                          <span className="max-w-[150px] truncate text-slate-900">{document.property}</span>
                         </div>
                       </TableCell>
-                      <TableCell>{formatFileSize(document.size)}</TableCell>
+                      <TableCell className="text-slate-900">{formatFileSize(document.size)}</TableCell>
                       <TableCell>
-                        <div className="text-sm">
+                        <div className="text-sm text-slate-900">
                           {new Date(document.uploadDate).toLocaleDateString()}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          <span>{document.uploadedBy}</span>
+                          <User className="h-4 w-4 text-slate-500" />
+                          <span className="text-slate-900">{document.uploadedBy}</span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-50">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -907,11 +908,11 @@ const Documents = () => {
 
           {filteredDocuments.length === 0 && (
             <div className="text-center py-8">
-              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-semibold text-gray-600">No documents found</p>
-              <p className="text-sm text-gray-500">
-                Try adjusting your search criteria or upload a new document
-              </p>
+              <FileText className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                              <p className="text-lg font-semibold text-slate-700">No documents found</p>
+                <p className="text-sm text-slate-500">
+                  Try adjusting your search criteria or upload a new document
+                </p>
             </div>
           )}
         </CardContent>

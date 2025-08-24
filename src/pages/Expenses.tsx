@@ -599,39 +599,39 @@ const Expenses = () => {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-50 via-white to-red-50 p-8 border border-orange-100/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-50/20 to-red-50/20 opacity-30"></div>
+      {/* Modern Minimal Header */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                Expense Management 💸
+            <div className="space-y-3">
+              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+                Expense Management
               </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 Track and manage property expenses, budgets, and spending. Monitor vendor performance, optimize costs, and maintain financial control across your property portfolio.
               </p>
-              <div className="flex items-center gap-4 pt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                  <span>{formatCurrency(totalExpenses)} total expenses this month</span>
+              <div className="flex items-center gap-6 pt-3">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                  <span className="font-medium">{formatCurrency(totalExpenses)} total expenses this month</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Calendar className="h-4 w-4" />
                   <span>Avg score: {avgExpenseScore.toFixed(1)}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-orange-200 text-orange-700 hover:bg-orange-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Expense Analytics
+                Analytics
               </Button>
-              <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-50">
+              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
                 <Download className="h-4 w-4 mr-2" />
-                Export Report
+                Export
               </Button>
-              <Button className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Expense
               </Button>
@@ -640,17 +640,17 @@ const Expenses = () => {
         </div>
       </div>
 
-      {/* Enhanced Summary Cards */}
+      {/* Modern Minimal Summary Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-red-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-red-100 group-hover:bg-red-200 transition-colors duration-300">
-                <DollarSign className="h-8 w-8 text-red-600" />
+              <div className="p-3 rounded-2xl bg-red-50 group-hover:bg-red-100 transition-colors duration-200">
+                <DollarSign className="h-7 w-7 text-red-600" />
               </div>
               <div>
-                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalExpenses)}</p>
-                <p className="text-sm text-gray-600">Total Expenses</p>
+                <p className="text-3xl font-light text-slate-900">{formatCurrency(totalExpenses)}</p>
+                <p className="text-sm text-slate-600 font-medium">Total Expenses</p>
                 <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   All time expenses
@@ -660,16 +660,16 @@ const Expenses = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-green-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
+                <CheckCircle className="h-7 w-7 text-emerald-600" />
               </div>
               <div>
-                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(paidExpenses)}</p>
-                <p className="text-sm text-gray-600">Paid Expenses</p>
-                <div className="flex items-center gap-1 text-xs text-green-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{formatCurrency(paidExpenses)}</p>
+                <p className="text-sm text-slate-600 font-medium">Paid Expenses</p>
+                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
                   <CheckCircle className="h-3 w-3" />
                   Successfully paid
                 </div>
@@ -678,16 +678,16 @@ const Expenses = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-yellow-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-yellow-100 group-hover:bg-yellow-200 transition-colors duration-300">
-                <Clock className="h-8 w-8 text-yellow-600" />
+              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
+                <Clock className="h-7 w-7 text-amber-600" />
               </div>
               <div>
-                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(pendingExpenses)}</p>
-                <p className="text-sm text-gray-600">Pending Expenses</p>
-                <div className="flex items-center gap-1 text-xs text-yellow-600 mt-1">
+                <p className="text-3xl font-light text-slate-900">{formatCurrency(pendingExpenses)}</p>
+                <p className="text-sm text-slate-600 font-medium">Pending Expenses</p>
+                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
                   <Clock className="h-3 w-3" />
                   Awaiting payment
                 </div>
@@ -696,15 +696,15 @@ const Expenses = () => {
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-blue-50/50 shadow-lg hover:shadow-2xl">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <TrendingUp className="h-8 w-8 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
+                <TrendingUp className="h-7 w-7 text-blue-600" />
               </div>
               <div>
-                                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(recurringExpenses)}</p>
-                <p className="text-sm text-gray-600">Recurring Expenses</p>
+                <p className="text-3xl font-light text-slate-900">{formatCurrency(recurringExpenses)}</p>
+                <p className="text-sm text-slate-600 font-medium">Recurring Expenses</p>
                 <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   Monthly/annual costs
@@ -715,58 +715,58 @@ const Expenses = () => {
         </Card>
       </div>
 
-      {/* Additional Expense Metrics */}
+      {/* Modern Minimal Additional Expense Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-white border border-emerald-100">
-          <div className="text-2xl font-bold text-emerald-600 mb-1">{avgExpenseScore.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Expense Score</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-emerald-600 mb-1">{avgExpenseScore.toFixed(1)}</div>
+          <div className="text-sm text-slate-600 mb-1">Avg Expense Score</div>
           <div className="text-xs text-emerald-600">Quality rating</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
-          <div className="text-2xl font-bold text-purple-600 mb-1">{avgVendorRating.toFixed(1)}</div>
-          <div className="text-sm text-gray-600 mb-1">Avg Vendor Rating</div>
-          <div className="text-xs text-purple-600">Service quality</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-slate-600 mb-1">{avgVendorRating.toFixed(1)}</div>
+          <div className="text-sm text-slate-600 mb-1">Avg Vendor Rating</div>
+          <div className="text-xs text-slate-600">Service quality</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-orange-50 to-white border border-orange-100">
-          <div className="text-2xl font-bold text-orange-600 mb-1">{highPriorityExpenses}</div>
-          <div className="text-sm text-gray-600 mb-1">High Priority</div>
-          <div className="text-xs text-orange-600">Urgent expenses</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-amber-600 mb-1">{highPriorityExpenses}</div>
+          <div className="text-sm text-slate-600 mb-1">High Priority</div>
+          <div className="text-xs text-amber-600">Urgent expenses</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-red-50 to-white border border-red-100">
-          <div className="text-2xl font-bold text-red-600 mb-1">{overdueExpenses}</div>
-          <div className="text-sm text-gray-600 mb-1">Overdue</div>
+        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-light text-red-600 mb-1">{overdueExpenses}</div>
+          <div className="text-sm text-slate-600 mb-1">Overdue</div>
           <div className="text-xs text-red-600">Past due date</div>
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Expense Overview</CardTitle>
+      {/* Modern Minimal Filters and Search */}
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+        <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+          <CardTitle className="text-slate-800">Expense Overview</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1">
-              <Label htmlFor="search">Search Expenses</Label>
+              <Label htmlFor="search" className="text-slate-700">Search Expenses</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                 <Input
                   id="search"
                   placeholder="Search by description, vendor, or expense ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
                 />
               </div>
             </div>
             
             <div className="w-full md:w-40">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category" className="text-slate-700">Category</Label>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -782,9 +782,9 @@ const Expenses = () => {
             </div>
             
             <div className="w-full md:w-40">
-              <Label htmlFor="property">Property</Label>
+              <Label htmlFor="property" className="text-slate-700">Property</Label>
               <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -799,9 +799,9 @@ const Expenses = () => {
             </div>
 
             <div className="w-full md:w-40">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status" className="text-slate-700">Status</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -814,25 +814,25 @@ const Expenses = () => {
             </div>
           </div>
 
-          {/* Expenses Table */}
-          <div className="rounded-md border">
+          {/* Modern Minimal Expenses Table */}
+          <div className="rounded-md border border-slate-200">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Expense ID</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Property</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Vendor</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                <TableRow className="bg-slate-50/50">
+                  <TableHead className="text-slate-700">Expense ID</TableHead>
+                  <TableHead className="text-slate-700">Description</TableHead>
+                  <TableHead className="text-slate-700">Category</TableHead>
+                  <TableHead className="text-slate-700">Property</TableHead>
+                  <TableHead className="text-slate-700">Amount</TableHead>
+                  <TableHead className="text-slate-700">Date</TableHead>
+                  <TableHead className="text-slate-700">Vendor</TableHead>
+                  <TableHead className="text-slate-700">Status</TableHead>
+                  <TableHead className="text-slate-700">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredExpenses.map((expense) => (
-                  <TableRow key={expense.id}>
+                  <TableRow key={expense.id} className="hover:bg-slate-50/50">
                     <TableCell className="font-medium">{expense.id}</TableCell>
                     <TableCell>
                       <div className="max-w-[200px]">
@@ -926,9 +926,9 @@ const Expenses = () => {
 
           {filteredExpenses.length === 0 && (
             <div className="text-center py-8">
-              <DollarSign className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-lg font-semibold text-gray-600">No expenses found</p>
-              <p className="text-sm text-gray-500">
+              <DollarSign className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+              <p className="text-lg font-semibold text-slate-600">No expenses found</p>
+              <p className="text-sm text-slate-500">
                 Try adjusting your search criteria or add a new expense
               </p>
             </div>
@@ -936,11 +936,11 @@ const Expenses = () => {
         </CardContent>
       </Card>
 
-      {/* Analytics and Quick Actions */}
+      {/* Modern Minimal Analytics and Quick Actions */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
               <PieChart className="h-5 w-5" />
               Expense by Category
             </CardTitle>
@@ -957,7 +957,7 @@ const Expenses = () => {
                     </div>
                     <div className="text-right">
                       <div className="font-semibold">{formatCurrency(amount)}</div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-slate-500">
                         {((amount / totalExpenses) * 100).toFixed(1)}%
                       </div>
                     </div>
@@ -967,9 +967,9 @@ const Expenses = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
               <AlertTriangle className="h-5 w-5" />
               Pending Approvals
             </CardTitle>
