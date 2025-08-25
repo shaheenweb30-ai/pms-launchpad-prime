@@ -158,7 +158,7 @@ const Expenses = () => {
       id: 'EXP001',
       description: 'HVAC System Repair',
       category: 'maintenance',
-      property: 'Oak Street Apartments - Unit 101',
+      property: '',
       amount: 450,
       date: '2024-12-15',
       status: 'paid',
@@ -212,7 +212,7 @@ const Expenses = () => {
       id: 'EXP003',
       description: 'Property Tax Payment',
       category: 'taxes',
-      property: 'Downtown Lofts',
+      property: '',
       amount: 2800,
       date: '2024-11-30',
       status: 'paid',
@@ -266,7 +266,7 @@ const Expenses = () => {
       id: 'EXP005',
       description: 'Utility Bill - Electricity',
       category: 'utilities',
-      property: 'Riverside Complex',
+      property: '',
       amount: 320,
       date: '2024-12-05',
       status: 'paid',
@@ -320,7 +320,7 @@ const Expenses = () => {
       id: 'EXP007',
       description: 'Roof Inspection',
       category: 'maintenance',
-      property: 'Commercial Plaza',
+      property: '',
       amount: 150,
       date: '2024-12-12',
       status: 'pending',
@@ -374,7 +374,7 @@ const Expenses = () => {
       id: 'EXP009',
       description: 'Security System Upgrade',
       category: 'maintenance',
-      property: 'Harbor View Condos',
+      property: '',
       amount: 1200,
       date: '2024-12-18',
       status: 'pending',
@@ -401,7 +401,7 @@ const Expenses = () => {
       id: 'EXP010',
       description: 'Pool Maintenance Contract',
       category: 'maintenance',
-      property: 'Mountain Ridge Estates',
+      property: '',
       amount: 650,
       date: '2024-12-20',
       status: 'paid',
@@ -426,16 +426,7 @@ const Expenses = () => {
     }
   ];
 
-  const properties = [
-    'All Properties',
-    'Oak Street Apartments - Unit 101',
-    'Downtown Lofts',
-    'Riverside Complex',
-    'Suburban Homes - 123 Main St',
-    'Commercial Plaza',
-    'Harbor View Condos',
-    'Mountain Ridge Estates'
-  ];
+  const properties: string[] = [];
 
   const months = [
     'December 2024',

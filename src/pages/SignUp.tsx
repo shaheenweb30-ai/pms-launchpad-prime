@@ -64,16 +64,16 @@ const SignUp = () => {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between p-6 border-b border-gray-100">
-        <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
+        <Link to="/" className="flex items-center space-x-2 text-gray-500 hover:text-black transition-colors font-light">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Back to PropertyFlow</span>
+          <span className="text-sm font-light">Back to PropertyFlow</span>
         </Link>
         
         <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-500">Already have an account?</span>
+          <span className="text-sm text-gray-500 font-light">Already have an account?</span>
           <Link 
             to="/signin" 
-            className="text-sm font-medium text-[#ed1c24] hover:text-[#d41920] transition-colors"
+            className="text-sm font-light text-black hover:text-gray-600 transition-colors"
           >
             Sign in
           </Link>
@@ -84,23 +84,21 @@ const SignUp = () => {
       <main className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           {/* Logo and Title */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-xl mb-6">
-              <Building2 className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+          <div className="text-center mb-12">
+
+            <h1 className="text-4xl md:text-5xl font-extralight text-black mb-4 tracking-tight font-google-sans">
               Create your account
             </h1>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-500 text-lg font-light leading-relaxed">
               Start your free trial of PropertyFlow
             </p>
           </div>
 
           {/* Sign Up Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Field */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-light text-gray-600 mb-3">
                 Full Name
               </label>
               <Input
@@ -109,7 +107,7 @@ const SignUp = () => {
                 placeholder="Enter your full name"
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                className="h-11 border-gray-300 focus:border-[#ed1c24] focus:ring-[#ed1c24] rounded-lg text-sm"
+                className="h-14 border-gray-200 focus:border-black focus:ring-black rounded-2xl text-base font-light px-6"
                 required
                 disabled={isLoading}
               />
@@ -117,11 +115,11 @@ const SignUp = () => {
 
             {/* User Type Field */}
             <div>
-              <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="userType" className="block text-sm font-light text-gray-600 mb-3">
                 User Role
               </label>
               <Select value={formData.userType} onValueChange={(value) => handleInputChange('userType', value)}>
-                <SelectTrigger className="h-11 border-gray-300 focus:border-[#ed1c24] focus:ring-[#ed1c24] rounded-lg text-sm" disabled={isLoading}>
+                <SelectTrigger className="h-14 border-gray-200 focus:border-black focus:ring-black rounded-2xl text-base font-light px-6" disabled={isLoading}>
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -135,7 +133,7 @@ const SignUp = () => {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-light text-gray-600 mb-3">
                 Email address
               </label>
               <Input
@@ -144,7 +142,7 @@ const SignUp = () => {
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
-                className="h-11 border-gray-300 focus:border-[#ed1c24] focus:ring-[#ed1c24] rounded-lg text-sm"
+                className="h-14 border-gray-200 focus:border-black focus:ring-black rounded-2xl text-base font-light px-6"
                 required
                 disabled={isLoading}
               />
@@ -152,7 +150,7 @@ const SignUp = () => {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-light text-gray-600 mb-3">
                 Password
               </label>
               <Input
@@ -161,7 +159,7 @@ const SignUp = () => {
                 placeholder="Create a password"
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
-                className="h-11 border-gray-300 focus:border-[#ed1c24] focus:ring-[#ed1c24] rounded-lg text-sm"
+                className="h-14 border-gray-200 focus:border-black focus:ring-black rounded-2xl text-base font-light px-6"
                 required
                 disabled={isLoading}
               />
@@ -171,7 +169,7 @@ const SignUp = () => {
             <Button
               type="submit"
               disabled={isLoading || !formData.name || !formData.userType}
-              className="w-full h-11 bg-[#ed1c24] hover:bg-[#d41920] text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+              className="w-full h-14 bg-black hover:bg-gray-800 text-white font-light rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-8"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
@@ -188,21 +186,21 @@ const SignUp = () => {
           </form>
 
           {/* Divider */}
-          <div className="relative my-6">
+          <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">or</span>
+              <span className="px-4 bg-white text-gray-400 font-light">or</span>
             </div>
           </div>
 
           {/* Social Sign Up Buttons */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <Button
               onClick={() => console.log('Google sign up')}
               variant="outline"
-              className="w-full h-11 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 rounded-lg transition-colors"
+              className="w-full h-14 border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 rounded-2xl transition-colors font-light"
               disabled={isLoading}
             >
               <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -217,7 +215,7 @@ const SignUp = () => {
             <Button
               onClick={() => console.log('Twitter sign up')}
               variant="outline"
-              className="w-full h-11 border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-700 rounded-lg transition-colors"
+              className="w-full h-14 border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 rounded-2xl transition-colors font-light"
               disabled={isLoading}
             >
               <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -228,13 +226,13 @@ const SignUp = () => {
           </div>
 
           {/* Terms */}
-          <p className="text-xs text-gray-500 text-center mt-6 leading-relaxed">
+          <p className="text-sm text-gray-400 text-center mt-8 leading-relaxed font-light">
             By continuing, you agree to our{' '}
-            <Link to="/terms" className="text-[#ed1c24] hover:text-[#d41920] underline">
+            <Link to="/terms" className="text-black hover:text-gray-600 underline font-light">
               Terms of Service
             </Link>{' '}
             and{' '}
-            <Link to="/privacy" className="text-[#ed1c24] hover:text-[#d41920] underline">
+            <Link to="/privacy" className="text-black hover:text-gray-600 underline font-light">
               Privacy Policy
             </Link>
           </p>
@@ -242,11 +240,11 @@ const SignUp = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 py-6 px-6">
+      <footer className="border-t border-gray-100 py-8 px-6">
         <div className="text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-400 font-light">
             Need help?{' '}
-            <Link to="/help" className="text-[#ed1c24] hover:text-[#d41920] font-medium">
+            <Link to="/help" className="text-black hover:text-gray-600 font-light">
               Contact support
             </Link>
           </p>

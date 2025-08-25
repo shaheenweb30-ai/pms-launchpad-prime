@@ -163,211 +163,7 @@ const Maintenance = () => {
   }, [recentlyCreatedId]);
 
   // Enhanced maintenance requests data with more details
-  const maintenanceRequests = [
-        {
-          id: 1,
-      title: 'Kitchen Faucet Leak',
-      description: 'Water is dripping from the kitchen faucet constantly',
-      property: 'Oak Street Apartments',
-      unit: '4B',
-      tenant: 'Sarah Johnson',
-      priority: 'high',
-      status: 'pending',
-      category: 'plumbing',
-      dateReported: '2024-12-10',
-      estimatedCost: 150,
-      assignedVendor: null,
-      dueDate: '2024-12-18',
-      urgencyScore: 85,
-      completionTime: null,
-      vendorRating: null,
-
-      photosCount: 2,
-      updatesCount: 0,
-      estimatedDuration: '2-4 hours',
-      warranty: '1 year',
-      lastUpdate: '2024-12-10',
-      contactMethod: 'phone',
-      tenantAvailability: 'weekdays 9-5',
-      specialInstructions: 'Tenant has small children, please be careful with tools',
-      emergencyLevel: false,
-      followUpRequired: true
-        },
-        {
-          id: 2,
-      title: 'Broken Window',
-      description: 'Living room window has a crack and needs replacement',
-      property: 'Downtown Lofts',
-      unit: '12',
-      tenant: 'Mike Davis',
-      priority: 'medium',
-      status: 'in_progress',
-      category: 'structural',
-      dateReported: '2024-12-08',
-      estimatedCost: 450,
-      assignedVendor: 'Glass Pro Services',
-      dueDate: '2024-12-15',
-      urgencyScore: 65,
-      completionTime: null,
-      vendorRating: 4.2,
-
-      photosCount: 3,
-      updatesCount: 2,
-      estimatedDuration: '3-5 hours',
-      warranty: '2 years',
-      lastUpdate: '2024-12-12',
-      contactMethod: 'email',
-      tenantAvailability: 'weekends only',
-      specialInstructions: 'Need to coordinate with building management for exterior access',
-      emergencyLevel: false,
-      followUpRequired: false
-    },
-    {
-      id: 3,
-      title: 'HVAC Not Working',
-      description: 'Heating system is not working properly, very cold in apartment',
-      property: 'Riverside Complex',
-      unit: '8A',
-      tenant: 'Emma Wilson',
-      priority: 'urgent',
-      status: 'assigned',
-      category: 'hvac',
-      dateReported: '2024-12-09',
-      estimatedCost: 800,
-      assignedVendor: 'Climate Solutions',
-      dueDate: '2024-12-11',
-      urgencyScore: 95,
-      completionTime: null,
-      vendorRating: 4.8,
-
-      photosCount: 1,
-      updatesCount: 3,
-      estimatedDuration: '4-6 hours',
-      warranty: '5 years',
-      lastUpdate: '2024-12-11',
-      contactMethod: 'phone',
-      tenantAvailability: 'anytime',
-      specialInstructions: 'Emergency repair - tenant has elderly residents',
-      emergencyLevel: true,
-      followUpRequired: true
-    },
-    {
-      id: 4,
-      title: 'Dishwasher Repair',
-      description: 'Dishwasher is making loud noises and not cleaning properly',
-      property: 'Suburban Homes',
-      unit: '15',
-      tenant: 'David Chen',
-      priority: 'low',
-      status: 'completed',
-      category: 'appliance',
-      dateReported: '2024-12-05',
-      estimatedCost: 200,
-      assignedVendor: 'Appliance Fix Pro',
-      dueDate: '2024-12-05',
-      urgencyScore: 40,
-      completionTime: '3 hours',
-      vendorRating: 4.5,
-
-      photosCount: 0,
-      updatesCount: 1,
-      estimatedDuration: '2-3 hours',
-      warranty: '6 months',
-      lastUpdate: '2024-12-06',
-      contactMethod: 'email',
-      tenantAvailability: 'evenings after 6pm',
-      specialInstructions: 'Appliance is still under manufacturer warranty',
-      emergencyLevel: false,
-      followUpRequired: false
-    },
-    {
-      id: 5,
-      title: 'Electrical Outlet Issue',
-      description: 'Bedroom outlet is not working, possible electrical issue',
-      property: 'Oak Street Apartments',
-      unit: '2C',
-      tenant: 'Lisa Rodriguez',
-      priority: 'high',
-      status: 'cancelled',
-      category: 'electrical',
-      dateReported: '2024-12-07',
-      estimatedCost: 300,
-      assignedVendor: null,
-      dueDate: '2024-12-07',
-      urgencyScore: 75,
-      completionTime: null,
-      vendorRating: null,
-
-      photosCount: 1,
-      updatesCount: 0,
-      estimatedDuration: '1-2 hours',
-      warranty: '1 year',
-      lastUpdate: '2024-12-07',
-      contactMethod: 'phone',
-      tenantAvailability: 'flexible',
-      specialInstructions: 'Safety concern - tenant reported sparking',
-      emergencyLevel: true,
-      followUpRequired: true
-    },
-    {
-      id: 6,
-      title: 'Garbage Disposal Stuck',
-      description: 'Kitchen garbage disposal is jammed and making grinding noise',
-      property: 'Harbor View Condos',
-      unit: '3A',
-      tenant: 'Alex Johnson',
-      priority: 'medium',
-      status: 'assigned',
-      category: 'appliance',
-      dateReported: '2024-12-11',
-      estimatedCost: 120,
-      assignedVendor: 'Kitchen Pro Repairs',
-      dueDate: '2024-12-16',
-      urgencyScore: 55,
-      completionTime: null,
-      vendorRating: 4.1,
-
-      photosCount: 2,
-      updatesCount: 1,
-      estimatedDuration: '1-2 hours',
-      warranty: '6 months',
-      lastUpdate: '2024-12-13',
-      contactMethod: 'text',
-      tenantAvailability: 'weekdays 8-6',
-      specialInstructions: 'Tenant works from home, please call before arriving',
-      emergencyLevel: false,
-      followUpRequired: false
-    },
-    {
-      id: 7,
-      title: 'Balcony Door Lock Broken',
-      description: 'Cannot lock balcony sliding door, security concern',
-      property: 'Mountain Ridge Estates',
-      unit: '5',
-      tenant: 'Rachel Green',
-      priority: 'high',
-      status: 'in_progress',
-      category: 'security',
-      dateReported: '2024-12-12',
-      estimatedCost: 180,
-      assignedVendor: 'Secure Lock Services',
-      dueDate: '2024-12-14',
-      urgencyScore: 80,
-      completionTime: null,
-      vendorRating: 4.6,
-
-      photosCount: 3,
-      updatesCount: 2,
-      estimatedDuration: '2-3 hours',
-      warranty: '2 years',
-      lastUpdate: '2024-12-13',
-      contactMethod: 'email',
-      tenantAvailability: 'weekends preferred',
-      specialInstructions: 'Ground floor unit, easy access',
-      emergencyLevel: false,
-      followUpRequired: true
-    }
-  ];
+  const maintenanceRequests: any[] = [];
 
   const filteredRequests = maintenanceRequests.filter(request => {
     const matchesSearch = request.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -619,9 +415,11 @@ const Maintenance = () => {
 
   return (
     <div className="space-y-6">
+
+      
             {/* Modern Minimal Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-gray-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 to-gray-500/5 opacity-60"></div>
         <div className="relative z-10">
         <div className="flex items-center justify-between">
             <div className="space-y-3">
@@ -633,7 +431,7 @@ const Maintenance = () => {
               </p>
               <div className="flex items-center gap-6 pt-3">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                   <span className="font-medium">{totalRequests} total requests this month</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -643,16 +441,16 @@ const Maintenance = () => {
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+              <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light">
                 <Activity className="h-4 w-4 mr-2" />
                 Analytics
               </Button>
-              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+              <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light">
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
               <Button 
-                className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3"
+                className="bg-black hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3 font-light"
                 onClick={handleOpenCreateModal}
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -665,12 +463,12 @@ const Maintenance = () => {
 
       {/* Create Maintenance Request Modal */}
       <Dialog open={isCreateModalOpen} onOpenChange={handleCloseCreateModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-semibold text-slate-800">
+            <DialogTitle className="text-2xl font-light text-black">
               Create New Maintenance Request
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="font-light text-gray-600">
               Fill out the form below to create a new maintenance request. All fields marked with * are required.
             </DialogDescription>
           </DialogHeader>
@@ -678,7 +476,7 @@ const Maintenance = () => {
           <div className="grid gap-6 py-4">
             {/* Basic Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Basic Information</h3>
+              <h3 className="text-lg font-light text-black border-b pb-2">Basic Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="title">Request Title *</Label>
@@ -733,7 +531,7 @@ const Maintenance = () => {
 
             {/* Property & Tenant Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Property & Tenant</h3>
+              <h3 className="text-lg font-light text-black border-b pb-2">Property & Tenant</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="property">Property *</Label>
@@ -773,7 +571,7 @@ const Maintenance = () => {
 
             {/* Priority & Scheduling */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Priority & Scheduling</h3>
+              <h3 className="text-lg font-light text-black border-b pb-2">Priority & Scheduling</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="priority">Priority Level *</Label>
@@ -852,7 +650,7 @@ const Maintenance = () => {
 
             {/* Cost & Contact */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Cost & Contact</h3>
+              <h3 className="text-lg font-light text-black border-b pb-2">Cost & Contact</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="estimatedCost">Estimated Cost ($)</Label>
@@ -883,7 +681,7 @@ const Maintenance = () => {
 
             {/* Additional Details */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Additional Details</h3>
+              <h3 className="text-lg font-light text-black border-b pb-2">Additional Details</h3>
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="tenantAvailability">Tenant Availability</Label>
@@ -939,7 +737,7 @@ const Maintenance = () => {
             {/* Request Preview */}
             {(newRequest.title || newRequest.description || newRequest.property || newRequest.unit || newRequest.tenant) && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">Request Preview</h3>
+                <h3 className="text-lg font-light text-black border-b pb-2">Request Preview</h3>
                                   <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -1000,13 +798,14 @@ const Maintenance = () => {
             <Button
               variant="outline"
               onClick={handleCloseCreateModal}
+              className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
             >
               Cancel
             </Button>
             <Button
               onClick={handleCreateRequest}
               disabled={!newRequest.title || !newRequest.description || !newRequest.property || !newRequest.unit || !newRequest.tenant || isCreating}
-              className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3"
+              className="bg-black hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3 font-light"
             >
               {isCreating ? (
                 <>
@@ -1029,13 +828,13 @@ const Maintenance = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
             <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
-                <Wrench className="h-7 w-7 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <Wrench className="h-7 w-7 text-gray-600" />
               </div>
                 <div>
-                <p className="text-3xl font-light text-slate-900">{totalRequests}</p>
-                <p className="text-sm text-slate-600 font-medium">Total Requests</p>
-                <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{totalRequests}</p>
+                <p className="text-sm text-gray-600 font-light">Total Requests</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <Activity className="h-3 w-3" />
                   Active portfolio
                 </div>
@@ -1047,13 +846,13 @@ const Maintenance = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
             <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
-                <Clock className="h-7 w-7 text-amber-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <Clock className="h-7 w-7 text-gray-600" />
               </div>
                 <div>
-                <p className="text-3xl font-light text-slate-900">{pendingRequests}</p>
-                <p className="text-sm text-slate-600 font-medium">Pending</p>
-                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{pendingRequests}</p>
+                <p className="text-sm text-gray-600 font-light">Pending</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <Timer className="h-3 w-3" />
                   Awaiting assignment
                 </div>
@@ -1065,13 +864,13 @@ const Maintenance = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
             <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-orange-50 group-hover:bg-orange-100 transition-colors duration-200">
-                <AlertCircle className="h-7 w-7 text-orange-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <AlertCircle className="h-7 w-7 text-gray-600" />
               </div>
                 <div>
-                <p className="text-3xl font-light text-slate-900">{inProgressRequests}</p>
-                <p className="text-sm text-slate-600 font-medium">In Progress</p>
-                <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{inProgressRequests}</p>
+                <p className="text-sm text-gray-600 font-light">In Progress</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <Settings className="h-3 w-3" />
                   Active work
                 </div>
@@ -1083,13 +882,13 @@ const Maintenance = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
             <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
-                <CheckCircle className="h-7 w-7 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <CheckCircle className="h-7 w-7 text-gray-600" />
               </div>
                 <div>
-                <p className="text-3xl font-light text-slate-900">{completedRequests}</p>
-                <p className="text-sm text-slate-600 font-medium">Completed</p>
-                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{completedRequests}</p>
+                <p className="text-sm text-gray-600 font-light">Completed</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <Award className="h-3 w-3" />
                   Successfully finished
                 </div>
@@ -1101,28 +900,28 @@ const Maintenance = () => {
 
       {/* Modern Minimal Additional Maintenance Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-2xl font-light text-emerald-600 mb-1">{avgUrgencyScore.toFixed(1)}</div>
-          <div className="text-sm text-slate-600 mb-1">Avg Urgency Score</div>
-          <div className="text-xs text-emerald-600">Request priority</div>
+        <div className="text-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-extralight text-black mb-1">{avgUrgencyScore.toFixed(1)}</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Avg Urgency Score</div>
+          <div className="text-xs text-gray-600">Request priority</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-2xl font-light text-slate-600 mb-1">{emergencyRequests}</div>
-          <div className="text-sm text-slate-600 mb-1">Emergency Requests</div>
-          <div className="text-xs text-slate-600">Urgent repairs</div>
+        <div className="text-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-extralight text-black mb-1">{emergencyRequests}</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Emergency Requests</div>
+          <div className="text-xs text-gray-600">Urgent repairs</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-2xl font-light text-blue-600 mb-1">{avgVendorRating.toFixed(1)}</div>
-          <div className="text-sm text-slate-600 mb-1">Avg Vendor Rating</div>
-          <div className="text-xs text-blue-600">Service quality</div>
+        <div className="text-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-extralight text-black mb-1">{avgVendorRating.toFixed(1)}</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Avg Vendor Rating</div>
+          <div className="text-xs text-gray-600">Service quality</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-2xl font-light text-red-600 mb-1">{followUpRequired}</div>
-          <div className="text-sm text-slate-600 mb-1">Follow-up Required</div>
-          <div className="text-xs text-red-600">Needs attention</div>
+        <div className="text-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-extralight text-black mb-1">{followUpRequired}</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Follow-up Required</div>
+          <div className="text-xs text-gray-600">Needs attention</div>
         </div>
         </div>
 
@@ -1130,16 +929,16 @@ const Maintenance = () => {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2 flex-1">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     placeholder="Search maintenance requests..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
+              className="pl-10 border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
                   />
                 </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40 border-slate-200 rounded-xl">
+            <SelectTrigger className="w-40 border-gray-200 rounded-xl">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -1151,7 +950,7 @@ const Maintenance = () => {
               <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="sm" className="border-slate-200 text-slate-700 hover:bg-slate-50">
+          <Button variant="outline" size="sm" className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light">
             <Filter className="h-4 w-4 mr-2" />
             More Filters
               </Button>
@@ -1168,13 +967,13 @@ const Maintenance = () => {
               ref={recentlyCreatedId === request.id ? newRequestRef : null}
               className={`hover:shadow-md transition-all duration-200 relative border-0 bg-white shadow-sm ${
                 recentlyCreatedId === request.id 
-                  ? 'ring-2 ring-emerald-500 ring-opacity-50 bg-emerald-50/50 shadow-md' 
+                  ? 'ring-2 ring-gray-500 ring-opacity-50 bg-gray-50/50 shadow-md' 
                   : ''
               }`}
             >
               {recentlyCreatedId === request.id && (
                 <div className="absolute top-3 right-3 z-10">
-                  <Badge className="bg-emerald-500 text-white animate-pulse">
+                  <Badge className="bg-gray-500 text-white animate-pulse">
                     <Plus className="h-3 w-3 mr-1" />
                     New
                   </Badge>
@@ -1183,15 +982,15 @@ const Maintenance = () => {
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
-                    <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center">
-                      <Wrench className="h-6 w-6 text-slate-600" />
+                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <Wrench className="h-6 w-6 text-gray-600" />
                     </div>
                     
                     <div className="space-y-2 flex-1">
                       <div className="flex items-start justify-between">
                       <div>
-                          <h3 className="font-semibold text-lg text-slate-900">{request.title}</h3>
-                          <p className="text-sm text-slate-600">{request.description}</p>
+                          <h3 className="font-light text-lg text-black">{request.title}</h3>
+                          <p className="text-sm text-gray-600">{request.description}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge variant={getPriorityColor(request.priority)}>
@@ -1206,44 +1005,44 @@ const Maintenance = () => {
                       
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3 text-slate-500" />
-                          <span className="text-slate-500">Property:</span>
-                          <span className="font-medium text-slate-900">{request.property}</span>
+                          <MapPin className="h-3 w-3 text-gray-500" />
+                          <span className="text-gray-500">Property:</span>
+                          <span className="font-light text-black">{request.property}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-slate-500">Unit:</span>
-                          <span className="font-medium text-slate-900">{request.unit}</span>
+                          <span className="text-gray-500">Unit:</span>
+                          <span className="font-light text-black">{request.unit}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <User className="h-3 w-3 text-slate-500" />
-                          <span className="text-slate-500">Tenant:</span>
-                          <span className="font-medium text-slate-900">{request.tenant}</span>
+                          <User className="h-3 w-3 text-gray-500" />
+                          <span className="text-gray-500">Tenant:</span>
+                          <span className="font-light text-black">{request.tenant}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3 text-slate-500" />
-                          <span className="text-slate-500">Reported:</span>
-                          <span className="font-medium text-slate-900">{new Date(request.dateReported).toLocaleDateString()}</span>
+                          <Calendar className="h-3 w-3 text-gray-500" />
+                          <span className="text-gray-500">Reported:</span>
+                          <span className="font-light text-black">{new Date(request.dateReported).toLocaleDateString()}</span>
                         </div>
                       </div>
                       
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4 text-sm">
                           <div className="flex items-center gap-1">
-                            <DollarSign className="h-3 w-3 text-slate-500" />
-                            <span className="text-slate-500">Est. Cost:</span>
-                            <span className="font-semibold text-slate-900">${request.estimatedCost}</span>
+                            <DollarSign className="h-3 w-3 text-gray-500" />
+                            <span className="text-gray-500">Est. Cost:</span>
+                            <span className="font-light text-black">${request.estimatedCost}</span>
                           </div>
                           {request.assignedVendor && (
                             <div className="flex items-center gap-1">
-                              <span className="text-slate-500">Vendor:</span>
-                              <span className="font-medium text-slate-900">{request.assignedVendor}</span>
+                              <span className="text-gray-500">Vendor:</span>
+                              <span className="font-light text-black">{request.assignedVendor}</span>
                             </div>
                           )}
                         </div>
                         
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="hover:bg-slate-50">
+                            <Button variant="ghost" size="sm" className="hover:bg-gray-50">
                               <MoreHorizontal className="h-4 w-4" />
                         </Button>
                           </DropdownMenuTrigger>

@@ -41,9 +41,9 @@
     --muted: 220 13% 91%;
     --muted-foreground: 215 16% 47%;
 
-    /* Vibrant accent */
-    --accent: 142 76% 36%;
-    --accent-foreground: 0 0% 100%;
+    /* Professional accent - updated to match branding */
+    --accent: 220 15% 96%;
+    --accent-foreground: 222 25% 12%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -54,7 +54,7 @@
 
     /* Modern gradients */
     --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(217 91% 55%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(217 91% 70%) 50%, hsl(142 76% 36%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(217 91% 70%) 50%, hsl(220 15% 96%) 100%);
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(220 15% 98%) 100%);
 
     /* Shadows */
@@ -64,24 +64,50 @@
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 0 0% 100%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-foreground: 0 0% 0%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary: 0 0% 0%;
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 100%;
 
-    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent: 0 0% 96%;
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-accent-foreground: 0 0% 0%;
 
-    --sidebar-border: 220 13% 91%;
+    --sidebar-border: 0 0% 88%;
 
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 0 0% 0%;
 
     /* Animations & transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Custom dropdown/select styling to match branding */
+  [data-radix-select-content] [data-radix-select-item][data-highlighted] {
+    background-color: hsl(220 15% 96%) !important;
+    color: hsl(222 25% 12%) !important;
+  }
+
+  [data-radix-dropdown-menu-content] [data-radix-dropdown-menu-item][data-highlighted] {
+    background-color: hsl(220 15% 96%) !important;
+    color: hsl(222 25% 12%) !important;
+  }
+
+  [data-radix-command-item][data-selected="true"] {
+    background-color: hsl(220 15% 96%) !important;
+    color: hsl(222 25% 12%) !important;
+  }
+
+  /* Focus states for better accessibility */
+  [data-radix-select-item]:focus,
+  [data-radix-dropdown-menu-item]:focus,
+  [data-radix-command-item]:focus {
+    background-color: hsl(220 15% 96%) !important;
+    color: hsl(222 25% 12%) !important;
+    outline: 2px solid hsl(217 91% 60%) !important;
+    outline-offset: 2px !important;
   }
   
   /* RTL Layout Support */
@@ -93,6 +119,194 @@
     direction: ltr;
   }
   
+  /* Enhanced Sidebar Styling */
+  .sidebar,
+  [data-sidebar="sidebar"] {
+    background: hsl(var(--sidebar-background)) !important;
+    border-color: hsl(var(--sidebar-border)) !important;
+    box-shadow: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1) !important;
+  }
+
+  /* Override shadcn/ui sidebar CSS variables */
+  :root {
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 88%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-ring: 0 0% 0%;
+  }
+
+  /* Sidebar Header Styling */
+  [data-sidebar="header"] {
+    background: linear-gradient(135deg, hsl(0 0% 98%) 0%, hsl(0 0% 96%) 100%);
+    border-bottom: 1px solid hsl(var(--sidebar-border));
+  }
+
+  /* Sidebar Footer Styling */
+  [data-sidebar="footer"] {
+    background: linear-gradient(135deg, hsl(0 0% 98%) 0%, hsl(0 0% 96%) 100%);
+    border-top: 1px solid hsl(var(--sidebar-border));
+  }
+
+  /* Sidebar Menu Button Styling */
+  [data-sidebar="menu-button"] {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0.75rem;
+  }
+
+  [data-sidebar="menu-button"]:hover {
+    background: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px 0 hsl(0 0% 0% / 0.1);
+  }
+
+  [data-sidebar="menu-button"][data-active="true"] {
+    background: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+    font-weight: 500;
+    box-shadow: 0 1px 3px 0 hsl(0 0% 0% / 0.1);
+  }
+
+  /* Sidebar Menu Item Styling */
+  [data-sidebar="menu-item"] {
+    margin: 0.125rem 0;
+  }
+
+  /* Sidebar Content Styling */
+  [data-sidebar="content"] {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--sidebar-border)) transparent;
+  }
+
+  [data-sidebar="content"]::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  [data-sidebar="content"]::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  [data-sidebar="content"]::-webkit-scrollbar-thumb {
+    background: hsl(var(--sidebar-border));
+    border-radius: 2px;
+  }
+
+  [data-sidebar="content"]::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--sidebar-accent-foreground));
+  }
+
+  /* Sidebar Trigger Styling */
+  [data-sidebar="trigger"] {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0.75rem;
+  }
+
+  [data-sidebar="trigger"]:hover {
+    background: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+    transform: scale(1.05);
+  }
+
+  /* Sidebar Group Styling */
+  [data-sidebar="group"] {
+    padding: 0.5rem;
+  }
+
+  /* Sidebar Group Label Styling */
+  [data-sidebar="group-label"] {
+    color: hsl(var(--sidebar-foreground) / 0.7);
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  [data-sidebar="group-label"]:hover {
+    color: hsl(var(--sidebar-foreground));
+  }
+
+  /* Sidebar Menu Action Styling */
+  [data-sidebar="menu-action"] {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0.5rem;
+  }
+
+  [data-sidebar="menu-action"]:hover {
+    background: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+    transform: scale(1.1);
+  }
+
+  /* Sidebar Menu Badge Styling */
+  [data-sidebar="menu-badge"] {
+    background: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+    font-weight: 500;
+    border: 1px solid hsl(var(--sidebar-border));
+  }
+
+  /* Sidebar Menu Sub Styling */
+  [data-sidebar="menu-sub"] {
+    border-left: 2px solid hsl(var(--sidebar-border));
+    margin-left: 1rem;
+    padding-left: 1rem;
+  }
+
+  /* Sidebar Menu Sub Button Styling */
+  [data-sidebar="menu-sub-button"] {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0.5rem;
+  }
+
+  [data-sidebar="menu-sub-button"]:hover {
+    background: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+    transform: translateX(2px);
+  }
+
+  [data-sidebar="menu-sub-button"][data-active="true"] {
+    background: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+    font-weight: 500;
+  }
+
+  /* Sidebar Separator Styling */
+  [data-sidebar="separator"] {
+    background: hsl(var(--sidebar-border));
+    opacity: 0.5;
+  }
+
+  /* Sidebar Input Styling */
+  [data-sidebar="input"] {
+    background: hsl(var(--sidebar-background));
+    border: 1px solid hsl(var(--sidebar-border));
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+  }
+
+  [data-sidebar="input"]:focus {
+    border-color: hsl(var(--sidebar-ring));
+    box-shadow: 0 0 0 2px hsl(var(--sidebar-ring) / 0.2);
+  }
+
+  /* Sidebar Inset Styling */
+  [data-sidebar="inset"] {
+    background: hsl(var(--sidebar-accent));
+    border-radius: 0.5rem;
+    border: 1px solid hsl(var(--sidebar-border));
+  }
+
+  /* Sidebar Rail Styling */
+  [data-sidebar="rail"] {
+    transition: all 0.2s ease;
+    border-radius: 0.5rem;
+  }
+
+  [data-sidebar="rail"]:hover {
+    background: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+  }
+
   /* RTL Sidebar Adjustments */
   .rtl .sidebar {
     border-left: 1px solid hsl(var(--sidebar-border));

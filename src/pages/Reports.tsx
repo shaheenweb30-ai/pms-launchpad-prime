@@ -182,7 +182,7 @@ const Reports = () => {
       name: 'Property Performance Analysis',
       category: 'performance',
       type: 'analysis',
-      property: 'Oak Street Apartments',
+      property: '',
       period: 'Q4 2024',
       createdDate: '2024-12-30',
       status: 'completed',
@@ -228,7 +228,7 @@ const Reports = () => {
       name: 'Maintenance Cost Analysis',
       category: 'maintenance',
       type: 'analysis',
-      property: 'Downtown Lofts',
+      property: '',
       period: 'November 2024',
       createdDate: '2024-12-01',
       status: 'completed',
@@ -251,7 +251,7 @@ const Reports = () => {
       name: 'Rental Income Statement',
       category: 'financial',
       type: 'statement',
-      property: 'Riverside Complex',
+      property: '',
       period: 'December 2024',
       createdDate: '2024-12-28',
       status: 'in_progress',
@@ -294,14 +294,7 @@ const Reports = () => {
     }
   ];
 
-  const properties = [
-    'All Properties',
-    'Oak Street Apartments',
-    'Downtown Lofts',
-    'Riverside Complex',
-    'Suburban Homes',
-    'Commercial Plaza'
-  ];
+  const properties: string[] = [];
 
   const reportTemplates = [
     {
@@ -513,9 +506,11 @@ const Reports = () => {
 
   return (
     <div className="space-y-6">
+
+      
       {/* Modern Minimal Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-orange-50/30 p-8 border border-slate-200/50 shadow-sm">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-pink-500/5 opacity-60"></div>
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-gray-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 to-gray-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
             <div className="space-y-3">
@@ -527,7 +522,7 @@ const Reports = () => {
               </p>
               <div className="flex items-center gap-6 pt-3">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                   <span className="font-medium">{totalReports} reports generated</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -541,15 +536,15 @@ const Reports = () => {
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+              <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light">
                 <Activity className="h-4 w-4 mr-2" />
                 Analytics
               </Button>
-              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+              <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light">
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Button>
-              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
+              <Button className="bg-black hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3 font-light">
                 <Plus className="h-4 w-4 mr-2" />
                 Generate Report
               </Button>
@@ -563,13 +558,13 @@ const Reports = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-orange-50 group-hover:bg-orange-100 transition-colors duration-200">
-                <BarChart3 className="h-7 w-7 text-orange-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <BarChart3 className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">{totalReports}</p>
-                <p className="text-sm text-slate-600 font-medium">Total Reports</p>
-                <div className="flex items-center gap-1 text-xs text-orange-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{totalReports}</p>
+                <p className="text-sm text-gray-600 font-light">Total Reports</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <FileText className="h-3 w-3" />
                   Generated reports
                 </div>
@@ -581,13 +576,13 @@ const Reports = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
-                <CheckCircle className="h-7 w-7 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <CheckCircle className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">{completedReports}</p>
-                <p className="text-sm text-slate-600 font-medium">Completed</p>
-                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{completedReports}</p>
+                <p className="text-sm text-gray-600 font-light">Completed</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <Download className="h-3 w-3" />
                   Ready for download
                 </div>
@@ -599,13 +594,13 @@ const Reports = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
-                <Clock className="h-7 w-7 text-amber-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <Clock className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">{inProgressReports}</p>
-                <p className="text-sm text-slate-600 font-medium">In Progress</p>
-                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{inProgressReports}</p>
+                <p className="text-sm text-gray-600 font-light">In Progress</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <Activity className="h-3 w-3" />
                   Currently generating
                 </div>
@@ -617,13 +612,13 @@ const Reports = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-slate-50 group-hover:bg-slate-100 transition-colors duration-200">
-                <Zap className="h-7 w-7 text-slate-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <Zap className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">{automatedReports}</p>
-                <p className="text-sm text-slate-600 font-medium">Automated</p>
-                <div className="flex items-center gap-1 text-xs text-slate-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{automatedReports}</p>
+                <p className="text-sm text-gray-600 font-light">Automated</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <Calendar className="h-3 w-3" />
                   Scheduled reports
                 </div>
@@ -635,64 +630,64 @@ const Reports = () => {
 
       {/* Modern Minimal Additional Report Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-2xl font-light text-blue-600 mb-1">{avgFileSize.toFixed(1)} MB</div>
-          <div className="text-sm text-slate-600 mb-1">Avg File Size</div>
-          <div className="text-xs text-blue-600">Per report</div>
+        <div className="text-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-extralight text-black mb-1">{avgFileSize.toFixed(1)} MB</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Avg File Size</div>
+          <div className="text-xs text-gray-600">Per report</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-2xl font-light text-slate-600 mb-1">{scheduledReports}</div>
-          <div className="text-sm text-slate-600 mb-1">Scheduled Reports</div>
-          <div className="text-xs text-slate-600">Auto-generated</div>
+        <div className="text-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-extralight text-black mb-1">{scheduledReports}</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Scheduled Reports</div>
+          <div className="text-xs text-gray-600">Auto-generated</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-2xl font-light text-blue-600 mb-1">{recentReports}</div>
-          <div className="text-sm text-slate-600 mb-1">Recent Reports</div>
-          <div className="text-xs text-blue-600">This week</div>
+        <div className="text-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-extralight text-black mb-1">{recentReports}</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Recent Reports</div>
+          <div className="text-xs text-gray-600">This week</div>
         </div>
         
-        <div className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-2xl font-light text-red-600 mb-1">{totalFileSize.toFixed(1)} MB</div>
-          <div className="text-sm text-slate-600 mb-1">Total Storage</div>
-          <div className="text-xs text-red-600">All reports</div>
+        <div className="text-center p-4 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-2xl font-extralight text-black mb-1">{totalFileSize.toFixed(1)} MB</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Total Storage</div>
+          <div className="text-xs text-gray-600">All reports</div>
         </div>
       </div>
 
       <Tabs defaultValue="reports" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="reports">My Reports</TabsTrigger>
-          <TabsTrigger value="templates">Report Templates</TabsTrigger>
-          <TabsTrigger value="scheduled">Scheduled Reports</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 bg-gray-50 border border-gray-200 rounded-2xl">
+          <TabsTrigger value="reports" className="font-light">My Reports</TabsTrigger>
+          <TabsTrigger value="templates" className="font-light">Report Templates</TabsTrigger>
+          <TabsTrigger value="scheduled" className="font-light">Scheduled Reports</TabsTrigger>
         </TabsList>
 
         {/* My Reports Tab */}
         <TabsContent value="reports" className="space-y-6">
           <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
-            <CardHeader className="border-b border-slate-100 bg-slate-50/50">
-              <CardTitle className="text-slate-800">Generated Reports</CardTitle>
+            <CardHeader className="border-b border-gray-100 bg-gray-50/50">
+              <CardTitle className="text-black font-light">Generated Reports</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col md:flex-row gap-4 mb-6">
                 <div className="flex-1">
-                  <Label htmlFor="search" className="text-slate-700">Search Reports</Label>
+                  <Label htmlFor="search" className="text-gray-600 font-light">Search Reports</Label>
                   <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
                       id="search"
                       placeholder="Search by report name or description..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
+                      className="pl-10 border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
                     />
                   </div>
                 </div>
                 
                 <div className="w-full md:w-40">
-                  <Label htmlFor="category" className="text-slate-700">Category</Label>
+                  <Label htmlFor="category" className="text-gray-600 font-light">Category</Label>
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="border-slate-200 rounded-xl">
+                    <SelectTrigger className="border-gray-200 rounded-xl">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

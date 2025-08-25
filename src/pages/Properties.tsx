@@ -98,6 +98,8 @@ const Properties = () => {
   // Tenant management state
   const [tenants, setTenants] = useState<any[]>([]);
   const [showAddTenantModal, setShowAddTenantModal] = useState(false);
+  const [showTenantOptionsModal, setShowTenantOptionsModal] = useState(false);
+  const [showInviteTenantModal, setShowInviteTenantModal] = useState(false);
   const [editingTenant, setEditingTenant] = useState<any>(null);
   const [newTenant, setNewTenant] = useState({
     name: '',
@@ -111,6 +113,14 @@ const Properties = () => {
     status: 'active',
     emergencyContact: '',
     notes: ''
+  });
+
+  const [tenantInvitation, setTenantInvitation] = useState({
+    email: '',
+    unitNumber: '',
+    monthlyRent: '',
+    securityDeposit: '',
+    message: ''
   });
   
   // Load properties from localStorage on component mount
@@ -126,55 +136,8 @@ const Properties = () => {
           setProperties([]);
         }
       } else {
-        // Add some sample properties if none exist
-        const sampleProperties = [
-          {
-            id: 1,
-            name: 'Oak Street Apartments',
-            address: '123 Oak Street, Downtown',
-            city: 'Downtown',
-            type: 'Apartment',
-            units: 24,
-            occupiedUnits: 20,
-            monthlyRent: 28800,
-            image: '/placeholder.svg',
-            status: 'active',
-            occupancyRate: 83,
-            lastInspection: '2024-01-15',
-            maintenanceScore: 95,
-            yearBuilt: 2020,
-            propertyValue: 2800000,
-            monthlyExpenses: 8500,
-            netIncome: 20300,
-            roi: 8.7,
-            trend: 'up',
-            change: '+2.3%'
-          },
-          {
-            id: 2,
-            name: 'Riverside Complex',
-            address: '456 River Road, Midtown',
-            city: 'Midtown',
-            type: 'Complex',
-            units: 48,
-            occupiedUnits: 42,
-            monthlyRent: 52000,
-            image: '/placeholder.svg',
-            status: 'active',
-            occupancyRate: 88,
-            lastInspection: '2024-01-10',
-            maintenanceScore: 92,
-            yearBuilt: 2018,
-            propertyValue: 4500000,
-            monthlyExpenses: 12000,
-            netIncome: 40000,
-            roi: 10.7,
-            trend: 'up',
-            change: '+1.8%'
-          }
-        ];
-        setProperties(sampleProperties);
-        await savePropertiesToStorage(sampleProperties);
+        // No properties exist yet - start with empty array
+        setProperties([]);
       }
     };
     
@@ -189,6 +152,59 @@ const Properties = () => {
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = error => reject(error);
     });
+  };
+
+  // Helper function to save tenant to global storage
+  const saveTenantToGlobalStorage = (tenant: any) => {
+    try {
+      const existingTenants = localStorage.getItem('pms-tenants');
+      let allTenants = [];
+      
+      if (existingTenants) {
+        allTenants = JSON.parse(existingTenants);
+      }
+      
+      // Check if tenant already exists (by email or ID)
+      const existingIndex = allTenants.findIndex((t: any) => 
+        t.id === tenant.id || t.email === tenant.email
+      );
+      
+      if (existingIndex >= 0) {
+        // Update existing tenant
+        allTenants[existingIndex] = { ...allTenants[existingIndex], ...tenant };
+      } else {
+        // Add new tenant
+        allTenants.push(tenant);
+      }
+      
+      localStorage.setItem('pms-tenants', JSON.stringify(allTenants));
+      
+    } catch (error) {
+      console.error('Error saving tenant to global storage:', error);
+    }
+  };
+
+  // Helper function to remove tenant from global storage
+  const removeTenantFromGlobalStorage = (tenantId: number) => {
+    try {
+      const existingTenants = localStorage.getItem('pms-tenants');
+      if (!existingTenants) return;
+      
+      let allTenants = JSON.parse(existingTenants);
+      
+      // Check if tenant is assigned to any other properties
+      const isAssignedElsewhere = allTenants.some((t: any) => 
+        t.id === tenantId && t.property && t.property !== selectedProperty?.name
+      );
+      
+      if (!isAssignedElsewhere) {
+        // Remove tenant completely if not assigned elsewhere
+        allTenants = allTenants.filter((t: any) => t.id !== tenantId);
+        localStorage.setItem('pms-tenants', JSON.stringify(allTenants));
+      }
+    } catch (error) {
+      console.error('Error removing tenant from global storage:', error);
+    }
   };
 
   // Helper function to save properties to localStorage
@@ -270,8 +286,8 @@ const Properties = () => {
         ['Total Properties:', totalProperties.toString()],
         ['Total Units:', `${totalOccupied}/${totalUnits}`],
         ['Occupancy Rate:', totalUnits === 0 ? 'N/A' : `${Math.round((totalOccupied / totalUnits) * 100)}%`],
-        ['Monthly Revenue:', `$${totalRevenue.toLocaleString()}`],
-        ['Portfolio Value:', `$${totalValue.toLocaleString()}`],
+        ['Monthly Revenue:', `$${(totalRevenue || 0).toLocaleString()}`],
+        ['Portfolio Value:', `$${(totalValue || 0).toLocaleString()}`],
         ['Average ROI:', `${avgROI.toFixed(1)}%`]
       ];
       
@@ -312,12 +328,12 @@ const Properties = () => {
             ['Type:', property.type],
             ['Units:', `${property.occupiedUnits}/${property.units} occupied`],
             ['Status:', property.status.charAt(0).toUpperCase() + property.status.slice(1)],
-            ['Monthly Rent:', `$${property.monthlyRent.toLocaleString()}`],
+            ['Monthly Rent:', `$${(property.monthlyRent || 0).toLocaleString()}`],
             ['Monthly Expenses:', `$${(property.monthlyExpenses || 0).toLocaleString()}`],
-            ['Net Income:', `$${property.netIncome.toLocaleString()}`],
+            ['Net Income:', `$${(property.netIncome || 0).toLocaleString()}`],
             ['ROI:', `${property.roi}%`],
             ['Occupancy Rate:', `${property.occupancyRate}%`],
-            ['Maintenance Score:', `${property.maintenanceScore}%`],
+    
             ['Year Built:', property.yearBuilt ? property.yearBuilt.toString() : 'N/A'],
             ['Property Value:', property.propertyValue ? `$${property.propertyValue.toLocaleString()}` : 'N/A'],
             ['Last Inspection:', new Date(property.lastInspection).toLocaleDateString()]
@@ -441,7 +457,7 @@ const Properties = () => {
     
     // Performance Metrics
     avgOccupancyRate: properties.length > 0 ? properties.reduce((sum, property) => sum + (property.occupancyRate || 0), 0) / properties.length : 0,
-    avgMaintenanceScore: properties.length > 0 ? properties.reduce((sum, property) => sum + (property.maintenanceScore || 0), 0) / properties.length : 0,
+    
     
     // Property Type Distribution
     propertyTypeDistribution: properties.reduce((acc, property) => {
@@ -462,7 +478,7 @@ const Properties = () => {
     
     // Properties Needing Attention
     needsAttention: properties.filter(property => 
-      property.occupancyRate < 80 || property.maintenanceScore < 70
+              property.occupancyRate < 80
     ),
     
     // Monthly Cash Flow Projection
@@ -484,9 +500,9 @@ const Properties = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
       case 'maintenance':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
       case 'vacant':
         return 'bg-gray-100 text-gray-800 border-gray-200';
       default:
@@ -516,9 +532,9 @@ const Properties = () => {
   const getTrendIcon = (trend: string) => {
     switch (trend) {
       case 'up':
-        return <TrendingUp className="h-4 w-4 text-green-600" />;
+        return <TrendingUp className="h-4 w-4 text-gray-600" />;
       case 'down':
-        return <TrendingDown className="h-4 w-4 text-red-600" />;
+        return <TrendingDown className="h-4 w-4 text-gray-600" />;
       case 'stable':
         return <Minus className="h-4 w-4 text-gray-600" />;
       default:
@@ -529,9 +545,9 @@ const Properties = () => {
   const getTrendColor = (trend: string) => {
     switch (trend) {
       case 'up':
-        return 'text-green-600';
+        return 'text-gray-600';
       case 'down':
-        return 'text-red-600';
+        return 'text-gray-600';
       case 'stable':
         return 'text-gray-600';
       default:
@@ -765,53 +781,42 @@ const Properties = () => {
   };
 
   // Tenant management functions
+  const loadPropertyTenants = (propertyId: string) => {
+    try {
+      const savedPropertyTenants = localStorage.getItem(`pms-property-tenants-${propertyId}`);
+      if (savedPropertyTenants) {
+        const propertyTenants = JSON.parse(savedPropertyTenants);
+        setTenants(propertyTenants);
+      } else {
+        setTenants([]);
+      }
+    } catch (error) {
+      console.error('Error loading property tenants:', error);
+      setTenants([]);
+    }
+  };
+
+  const savePropertyTenants = (propertyId: string, tenantsList: any[]) => {
+    try {
+      localStorage.setItem(`pms-property-tenants-${propertyId}`, JSON.stringify(tenantsList));
+    } catch (error) {
+      console.error('Error saving property tenants:', error);
+    }
+  };
+
   const handleTenantsClick = (property: any) => {
     setSelectedProperty(property);
-    // Load sample tenants for the property (in a real app, this would come from API)
-    const sampleTenants = [
-      {
-        id: 1,
-        name: 'John Smith',
-        email: 'john.smith@email.com',
-        phone: '+1 (555) 123-4567',
-        unitNumber: 'A101',
-        leaseStart: '2024-01-01',
-        leaseEnd: '2024-12-31',
-        monthlyRent: 1200,
-        securityDeposit: 1200,
-        status: 'active',
-        emergencyContact: 'Jane Smith +1 (555) 987-6543',
-        notes: 'Excellent tenant, always pays on time',
-        rentHistory: [
-          { month: 'Jan 2024', amount: 1200, status: 'paid', date: '2024-01-01' },
-          { month: 'Feb 2024', amount: 1200, status: 'paid', date: '2024-02-01' },
-          { month: 'Mar 2024', amount: 1200, status: 'paid', date: '2024-03-01' }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Sarah Johnson',
-        email: 'sarah.j@email.com',
-        phone: '+1 (555) 234-5678',
-        unitNumber: 'B205',
-        leaseStart: '2024-02-01',
-        leaseEnd: '2025-01-31',
-        monthlyRent: 1350,
-        securityDeposit: 1350,
-        status: 'active',
-        emergencyContact: 'Mike Johnson +1 (555) 876-5432',
-        notes: 'New tenant, first month completed',
-        rentHistory: [
-          { month: 'Feb 2024', amount: 1350, status: 'paid', date: '2024-02-01' },
-          { month: 'Mar 2024', amount: 1350, status: 'paid', date: '2024-03-01' }
-        ]
-      }
-    ];
-    setTenants(sampleTenants);
+    // Load tenants for this specific property from localStorage
+    loadPropertyTenants(property.id);
     setShowTenantsModal(true);
   };
 
   const handleAddTenant = () => {
+    setShowTenantOptionsModal(true);
+  };
+
+  const handleAddExistingTenant = () => {
+    setShowTenantOptionsModal(false);
     setEditingTenant(null);
     setNewTenant({
       name: '',
@@ -827,6 +832,80 @@ const Properties = () => {
       notes: ''
     });
     setShowAddTenantModal(true);
+  };
+
+  const handleInviteTenant = () => {
+    setShowTenantOptionsModal(false);
+    setTenantInvitation({
+      email: '',
+      unitNumber: '',
+      monthlyRent: '',
+      securityDeposit: '',
+      message: ''
+    });
+    setShowInviteTenantModal(true);
+  };
+
+  const handleSendInvitation = () => {
+    // In a real app, this would send an email invitation
+    // For now, we'll just show a success message
+    toast.success(`Invitation sent to ${tenantInvitation.email} for unit ${tenantInvitation.unitNumber}`);
+    setShowInviteTenantModal(false);
+    setTenantInvitation({
+      email: '',
+      unitNumber: '',
+      monthlyRent: '',
+      securityDeposit: '',
+      message: ''
+    });
+  };
+
+  const loadExistingTenants = () => {
+    try {
+      const savedTenants = localStorage.getItem('pms-tenants');
+      if (savedTenants) {
+        const allTenants = JSON.parse(savedTenants);
+        // Filter out tenants that are already assigned to this property
+        const availableTenants = allTenants.filter((tenant: any) => 
+          !tenants.some(existingTenant => existingTenant.id === tenant.id)
+        );
+        return availableTenants;
+      }
+    } catch (error) {
+      console.error('Error loading existing tenants:', error);
+    }
+    return [];
+  };
+
+  const handleAssignExistingTenant = (tenant: any) => {
+    // Add the existing tenant to this property
+    const assignedTenant = {
+      ...tenant,
+      property: selectedProperty?.name,
+      unitNumber: tenant.unitNumber || 'TBD',
+      assignedDate: new Date().toISOString()
+    };
+    
+    const updatedTenants = [...tenants, assignedTenant];
+    setTenants(updatedTenants);
+    
+    // Save to localStorage
+    if (selectedProperty?.id) {
+      savePropertyTenants(selectedProperty.id, updatedTenants);
+    }
+    
+    // Also update the tenant in global storage with property assignment
+    saveTenantToGlobalStorage(assignedTenant);
+    
+    // Force a storage event to notify other pages
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'pms-tenants',
+      newValue: localStorage.getItem('pms-tenants'),
+      oldValue: null
+    }));
+    
+    toast.success(`Tenant "${tenant.name}" assigned to ${selectedProperty?.name}`);
+    setShowTenantOptionsModal(false);
   };
 
   const handleEditTenant = (tenant: any) => {
@@ -848,9 +927,11 @@ const Properties = () => {
   };
 
   const handleSaveTenant = () => {
+    let updatedTenants;
+    
     if (editingTenant) {
       // Update existing tenant
-      const updatedTenants = tenants.map(t => 
+      updatedTenants = tenants.map(t => 
         t.id === editingTenant.id 
           ? {
               ...t,
@@ -869,10 +950,55 @@ const Properties = () => {
         ...newTenant,
         monthlyRent: parseFloat(newTenant.monthlyRent) || 0,
         securityDeposit: parseFloat(newTenant.securityDeposit) || 0,
-        rentHistory: []
+        rentHistory: [],
+        property: selectedProperty?.name || '',
+        assignedDate: new Date().toISOString(),
+        // Add additional fields that the Tenants page expects
+        rent: parseFloat(newTenant.monthlyRent) || 0,
+        unit: newTenant.unitNumber || '',
+        leaseStart: newTenant.leaseStart || '',
+        leaseEnd: newTenant.leaseEnd || '',
+        paymentDue: newTenant.leaseStart || '',
+        emergencyContact: newTenant.emergencyContact || '',
+        emergencyPhone: newTenant.phone || '',
+        pets: 'no',
+        vehicleInfo: '',
+        employmentStatus: 'employed',
+        employer: '',
+        annualIncome: '',
+        references: '',
+        notes: newTenant.notes || '',
+        tenantRating: 5.0,
+        paymentStatus: 'current',
+        latePayments: 0,
+        totalPaid: 0,
+        leaseDaysRemaining: 365
       };
-      setTenants(prev => [...prev, newTenantObj]);
+      updatedTenants = [...tenants, newTenantObj];
+      setTenants(updatedTenants);
       toast.success(`Tenant "${newTenant.name}" added successfully!`);
+      
+      // Also save to global tenants storage so they appear on the Tenants page
+      saveTenantToGlobalStorage(newTenantObj);
+      
+      // Force a storage event to notify other pages
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'pms-tenants',
+        newValue: localStorage.getItem('pms-tenants'),
+        oldValue: null
+      }));
+      
+      // Also try to directly notify the Tenants page if it's open
+      if (window.location.pathname !== '/tenants') {
+        window.dispatchEvent(new CustomEvent('tenantAdded', {
+          detail: { tenant: newTenantObj }
+        }));
+      }
+    }
+    
+    // Save to localStorage
+    if (selectedProperty?.id) {
+      savePropertyTenants(selectedProperty.id, updatedTenants);
     }
     
     setShowAddTenantModal(false);
@@ -895,6 +1021,15 @@ const Properties = () => {
   const handleDeleteTenant = (tenant: any) => {
     const updatedTenants = tenants.filter(t => t.id !== tenant.id);
     setTenants(updatedTenants);
+    
+    // Save to localStorage
+    if (selectedProperty?.id) {
+      savePropertyTenants(selectedProperty.id, updatedTenants);
+    }
+    
+    // Also remove tenant from global storage if they're not assigned to any other property
+    removeTenantFromGlobalStorage(tenant.id);
+    
     toast.success(`Tenant "${tenant.name}" removed successfully!`);
   };
 
@@ -987,7 +1122,7 @@ const Properties = () => {
         status: 'active',
         occupancyRate: 0, // New properties start with 0% occupancy
         lastInspection: new Date().toISOString().split('T')[0],
-        maintenanceScore: 100, // New properties start with perfect maintenance score
+
 
         yearBuilt: newProperty.yearBuilt ? parseInt(newProperty.yearBuilt) : undefined,
         propertyValue: newProperty.purchasePrice ? parseFloat(newProperty.purchasePrice) : 0,
@@ -1039,9 +1174,9 @@ const Properties = () => {
             />
           ) : (
             // Fallback to placeholder with icon
-            <div className="w-full h-full bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
-              <Building2 className="h-16 w-16 text-blue-600 relative z-10" />
+            <div className="w-full h-full bg-gradient-to-br from-gray-100 via-gray-100 to-gray-200 flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-500/10 to-gray-500/10"></div>
+              <Building2 className="h-16 w-16 text-gray-600 relative z-10" />
             </div>
           )}
           
@@ -1063,14 +1198,14 @@ const Properties = () => {
           <div className="flex-1">
             <h3 className="font-bold text-xl text-gray-900 mb-2">{property.name}</h3>
             <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-              <MapPin className="h-4 w-4 text-blue-500" />
+              <MapPin className="h-4 w-4 text-gray-500" />
               <span>{property.address}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="p-1 rounded bg-blue-50">
+              <div className="p-1 rounded bg-gray-50">
                 {getTypeIcon(property.type)}
               </div>
-              <Badge variant="outline" className="border-blue-200 text-blue-700">
+              <Badge variant="outline" className="border-gray-200 text-gray-700">
                 {property.type}
               </Badge>
             </div>
@@ -1111,7 +1246,7 @@ const Properties = () => {
               <div className="text-xs text-gray-600">Units</div>
             </div>
             <div className="text-center p-3 bg-gray-50 rounded-lg">
-              <div className="text-lg font-bold text-green-600">{property.occupancyRate}%</div>
+              <div className="text-lg font-bold text-gray-600">{property.occupancyRate}%</div>
               <div className="text-xs text-gray-600">Occupancy</div>
             </div>
           </div>
@@ -1119,11 +1254,11 @@ const Properties = () => {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Monthly Revenue:</span>
-              <span className="font-semibold text-lg text-green-600">{formatCurrency(property.monthlyRent)}</span>
+              <span className="font-semibold text-lg text-gray-600">{formatCurrency(property.monthlyRent)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Net Income:</span>
-              <span className="font-semibold text-blue-600">${property.netIncome.toLocaleString()}</span>
+              <span className="font-semibold text-gray-600">${(property.netIncome || 0).toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">ROI:</span>
@@ -1136,16 +1271,7 @@ const Properties = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Maintenance Score:</span>
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{property.maintenanceScore}%</span>
-                <Progress value={property.maintenanceScore} className="w-16 h-2" />
-              </div>
-            </div>
 
-          </div>
         </div>
 
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
@@ -1156,7 +1282,7 @@ const Properties = () => {
             <Button 
               size="sm" 
               variant="outline" 
-              className="border-blue-200 text-blue-700 hover:bg-blue-50"
+              className="border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
               onClick={() => handleTenantsClick(property)}
             >
               <Users className="h-4 w-4 mr-1" />
@@ -1164,7 +1290,7 @@ const Properties = () => {
             </Button>
             <Button 
               size="sm" 
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-black hover:bg-gray-800 text-white font-light"
               onClick={() => handleViewDetails(property)}
             >
               <Eye className="h-4 w-4 mr-1" />
@@ -1178,13 +1304,15 @@ const Properties = () => {
 
   return (
     <div className="space-y-8 p-1">
+
+      
       {/* Modern Minimal Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-gray-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 to-gray-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
             <div className="space-y-3">
-              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+              <h1 className="text-5xl font-extralight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight font-google-sans">
                 {t('properties.title')}
               </h1>
               <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
@@ -1192,7 +1320,7 @@ const Properties = () => {
               </p>
               <div className="flex items-center gap-6 pt-3">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                   <span className="font-medium">{totalProperties === 0 ? 'No properties yet' : `${totalProperties} ${t('properties.totalProperties')}`}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -1204,25 +1332,25 @@ const Properties = () => {
             <div className="hidden lg:flex items-center gap-3">
               <Button 
                 variant="outline" 
-                className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light"
                 onClick={exportPortfolioPDF}
                 disabled={isExporting}
               >
                 {isExporting ? (
                   <div className="flex items-center gap-2">
-                                    <div className="w-4 h-4 border-2 border-slate-600 border-t-transparent rounded-full animate-spin"></div>
-                {t('properties.exporting')}
-              </div>
-            ) : (
-              <>
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </>
-            )}
+                    <div className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>
+                    {t('properties.exporting')}
+                  </div>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4 mr-2" />
+                    Export
+                  </>
+                )}
               </Button>
               <Button 
                 variant="outline" 
-                className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light"
                 onClick={() => setShowPortfolioAnalyticsModal(true)}
               >
                 <BarChart3 className="h-4 w-4 mr-2" />
@@ -1230,18 +1358,18 @@ const Properties = () => {
               </Button>
               <Dialog open={showAddPropertyModal} onOpenChange={setShowAddPropertyModal}>
                 <DialogTrigger asChild>
-                  <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
+                  <Button className="bg-black hover:bg-gray-800 text-white font-light shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                     <Plus className="h-4 w-4 mr-2" />
                     {t('properties.addProperty')}
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl">
                   <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-xl">
-                      <Building2 className="h-6 w-6 text-blue-600" />
+                    <DialogTitle className="flex items-center gap-2 text-xl font-light">
+                      <Building2 className="h-6 w-6 text-gray-600" />
                       {t('properties.addNewProperty')}
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="font-light text-gray-600">
                       {t('properties.addPropertyDescription')}
                     </DialogDescription>
                     
@@ -1250,12 +1378,12 @@ const Properties = () => {
                       <div className="flex items-center space-x-2">
                         {[1, 2, 3, 4].map((step) => (
                           <div key={step} className="flex items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-light ${
                               step === currentStep
-                                ? 'bg-blue-600 text-white'
+                                ? 'bg-black text-white'
                                 : step < currentStep
-                                ? 'bg-green-500 text-white'
-                                : 'bg-gray-200 text-gray-600'
+                                ? 'bg-gray-600 text-white'
+                                : 'bg-gray-200 text-gray-500'
                             }`}>
                               {step < currentStep ? (
                                 <CheckCircle className="h-4 w-4" />
@@ -1265,7 +1393,7 @@ const Properties = () => {
                             </div>
                             {step < 4 && (
                               <div className={`w-12 h-0.5 mx-2 ${
-                                step < currentStep ? 'bg-green-500' : 'bg-gray-200'
+                                step < currentStep ? 'bg-gray-600' : 'bg-gray-200'
                               }`} />
                             )}
                           </div>
@@ -1276,10 +1404,10 @@ const Properties = () => {
                     {/* Step Labels */}
                     <div className="flex items-center justify-center mt-2 text-xs text-gray-600">
                       <div className="flex items-center space-x-12">
-                        <span className={currentStep === 1 ? 'text-blue-600 font-medium' : ''}>{t('properties.step.basic')}</span>
-                        <span className={currentStep === 2 ? 'text-blue-600 font-medium' : ''}>{t('properties.step.financials')}</span>
-                        <span className={currentStep === 3 ? 'text-blue-600 font-medium' : ''}>{t('properties.step.images')}</span>
-                        <span className={currentStep === 4 ? 'text-blue-600 font-medium' : ''}>{t('properties.step.review')}</span>
+                        <span className={currentStep === 1 ? 'text-black font-medium' : ''}>{t('properties.step.basic')}</span>
+                        <span className={currentStep === 2 ? 'text-black font-medium' : ''}>{t('properties.step.financials')}</span>
+                        <span className={currentStep === 3 ? 'text-black font-medium' : ''}>{t('properties.step.images')}</span>
+                        <span className={currentStep === 4 ? 'text-black font-medium' : ''}>{t('properties.step.review')}</span>
                       </div>
                     </div>
                   </DialogHeader>
@@ -1289,8 +1417,8 @@ const Properties = () => {
                     {currentStep === 1 && (
                       <div className="space-y-6">
                         <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">{t('properties.step.basic')}</h3>
-                          <p className="text-gray-600">{t('properties.allFieldsOptional')}</p>
+                          <h3 className="text-xl font-light text-black">{t('properties.step.basic')}</h3>
+                          <p className="text-gray-500 font-light">{t('properties.allFieldsOptional')}</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1306,7 +1434,7 @@ const Properties = () => {
                           <div className="space-y-2">
                             <Label htmlFor="type">{t('properties.form.type')}</Label>
                             <Select value={newProperty.type} onValueChange={(value) => handleInputChange('type', value)}>
-                              <SelectTrigger>
+                              <SelectTrigger className="border-gray-200 focus:border-black focus:ring-black rounded-2xl font-light">
                                 <SelectValue placeholder="Select property type" />
                               </SelectTrigger>
                               <SelectContent>
@@ -1377,8 +1505,8 @@ const Properties = () => {
                     {currentStep === 2 && (
                       <div className="space-y-6">
                         <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Location Details</h3>
-                          <p className="text-gray-600">Where is your property located? (all fields are optional)</p>
+                          <h3 className="text-xl font-light text-black">Location Details</h3>
+                          <p className="text-gray-500 font-light">Where is your property located? (all fields are optional)</p>
                         </div>
                         
                         <div className="space-y-4">
@@ -1428,8 +1556,8 @@ const Properties = () => {
                     {currentStep === 3 && (
                       <div className="space-y-6">
                         <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Financial Details</h3>
-                          <p className="text-gray-600">Let's talk about the financial aspects of your property (all fields are optional)</p>
+                          <h3 className="text-xl font-light text-black">Financial Details</h3>
+                          <p className="text-gray-500 font-light">Let's talk about the financial aspects of your property (all fields are optional)</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1540,7 +1668,7 @@ const Properties = () => {
                             <div className="space-y-2">
                               <Label htmlFor="petPolicy">Pet Policy</Label>
                               <Select value={newProperty.petPolicy} onValueChange={(value) => handleInputChange('petPolicy', value)}>
-                                <SelectTrigger>
+                                <SelectTrigger className="border-gray-200 focus:border-black focus:ring-black rounded-2xl font-light">
                                   <SelectValue placeholder="Select pet policy" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -1585,7 +1713,7 @@ const Properties = () => {
                             <div className="space-y-2">
                               <Label htmlFor="petPolicy">Pet Policy</Label>
                               <Select value={newProperty.petPolicy} onValueChange={(value) => handleInputChange('petPolicy', value)}>
-                                <SelectTrigger>
+                                <SelectTrigger className="border-gray-200 focus:border-black focus:ring-black rounded-2xl font-light">
                                   <SelectValue placeholder="Select pet policy" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -1631,12 +1759,12 @@ const Properties = () => {
                     {currentStep === 4 && (
                       <div className="space-y-6">
                         <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Property Images</h3>
-                          <p className="text-gray-600">Upload photos to showcase your property (optional)</p>
+                          <h3 className="text-xl font-light text-black">Property Images</h3>
+                          <p className="text-gray-500 font-light">Upload photos to showcase your property (optional)</p>
                         </div>
                         
                         {/* Image Upload Area */}
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                        <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-gray-400 transition-colors">
                           <input
                             type="file"
                             multiple
@@ -1694,6 +1822,7 @@ const Properties = () => {
                           setShowAddPropertyModal(false);
                         }}
                         disabled={isSubmitting}
+                        className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
                       >
                         Cancel
                       </Button>
@@ -1705,6 +1834,7 @@ const Properties = () => {
                             variant="outline" 
                             onClick={prevStep}
                             disabled={isSubmitting}
+                            className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
                           >
                             Previous
                           </Button>
@@ -1715,7 +1845,7 @@ const Properties = () => {
                             type="button"
                             onClick={nextStep}
                             disabled={isSubmitting}
-                            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                            className="bg-black hover:bg-gray-800 text-white font-light"
                           >
                             {t('properties.form.next')}
                           </Button>
@@ -1724,7 +1854,7 @@ const Properties = () => {
                             type="button"
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+                            className="bg-black hover:bg-gray-800 text-white font-light"
                           >
                             {isSubmitting ? (
                               <div className="flex items-center gap-2">
@@ -1751,13 +1881,13 @@ const Properties = () => {
 
       {/* View Property Details Modal */}
       <Dialog open={showViewDetailsModal} onOpenChange={setShowViewDetailsModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <Building2 className="h-6 w-6 text-blue-600" />
+            <DialogTitle className="flex items-center gap-2 text-2xl font-light">
+              <Building2 className="h-6 w-6 text-gray-600" />
               {t('properties.details.title')}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="font-light text-gray-600">
               Complete information about {selectedProperty?.name}
             </DialogDescription>
           </DialogHeader>
@@ -1765,29 +1895,29 @@ const Properties = () => {
           {selectedProperty && (
             <div className="space-y-6 py-4">
               {/* Property Header */}
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg border border-blue-100">
+              <div className="bg-gradient-to-r from-gray-50 to-gray-50 p-6 rounded-2xl border border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedProperty.name}</h3>
+                    <h3 className="text-2xl font-light text-black mb-2">{selectedProperty.name}</h3>
                     <div className="flex items-center gap-2 text-gray-600 mb-3">
-                      <MapPin className="h-4 w-4 text-blue-500" />
+                      <MapPin className="h-4 w-4 text-gray-500" />
                       <span>{selectedProperty.address}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <Badge className={getStatusColor(selectedProperty.status)}>
                         {selectedProperty.status === 'active' ? 'Active' : 'Maintenance'}
                       </Badge>
-                      <Badge variant="outline" className="border-blue-200 text-blue-700">
+                      <Badge variant="outline" className="border-gray-200 text-gray-700">
                         {selectedProperty.type}
                       </Badge>
-                      <Badge variant="outline" className="border-green-200 text-green-700">
+                      <Badge variant="outline" className="border-gray-200 text-gray-700">
                         {selectedProperty.units} units
                       </Badge>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-3xl font-bold text-green-600">
-                      ${selectedProperty.monthlyRent.toLocaleString()}
+                    <div className="text-3xl font-bold text-gray-600">
+                      ${(selectedProperty.monthlyRent || 0).toLocaleString()}
                     </div>
                     <div className="text-sm text-gray-600">Monthly Revenue</div>
                   </div>
@@ -1797,11 +1927,11 @@ const Properties = () => {
               {/* Property Images Gallery */}
               {selectedProperty.images && selectedProperty.images.length > 0 && (
                 <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-900 border-b pb-2">{t('properties.images.title')}</h4>
+                  <h4 className="text-lg font-light text-black border-b pb-2">{t('properties.images.title')}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {selectedProperty.images.map((img: any, index: number) => (
                       <div key={img.id || index} className="relative group">
-                        <div className="aspect-square rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="aspect-square rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                           {img.url && img.url !== '/placeholder.svg' ? (
                             <img
                               src={img.url}
@@ -1809,9 +1939,9 @@ const Properties = () => {
                               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                             />
                           ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                            <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                               <div className="text-center">
-                                <Camera className="h-12 w-12 text-blue-400 mx-auto mb-2" />
+                                <Camera className="h-12 w-12 text-gray-400 mx-auto mb-2" />
                                 <p className="text-sm text-gray-500">Image {index + 1}</p>
                                 <p className="text-xs text-gray-400">{img.name || 'Property Image'}</p>
                               </div>
@@ -1834,19 +1964,19 @@ const Properties = () => {
 
               {/* Key Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">{selectedProperty.occupancyRate}%</div>
-                  <div className="text-sm text-gray-600">Occupancy Rate</div>
+                <div className="text-center p-4 bg-gray-50 rounded-2xl">
+                  <div className="text-2xl font-extralight text-black mb-1">{selectedProperty.occupancyRate}%</div>
+                  <div className="text-sm text-gray-600 font-light">Occupancy Rate</div>
                   <div className="text-xs text-gray-500">{selectedProperty.occupiedUnits}/{selectedProperty.units} units</div>
                 </div>
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-emerald-600 mb-1">${selectedProperty.netIncome.toLocaleString()}</div>
-                  <div className="text-sm text-gray-600">Net Monthly Income</div>
+                <div className="text-center p-4 bg-gray-50 rounded-2xl">
+                  <div className="text-2xl font-extralight text-black mb-1">${(selectedProperty.netIncome || 0).toLocaleString()}</div>
+                  <div className="text-sm text-gray-600 font-light">Net Monthly Income</div>
                   <div className="text-xs text-gray-500">After expenses</div>
                 </div>
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">{selectedProperty.roi}%</div>
-                  <div className="text-sm text-gray-600">ROI</div>
+                <div className="text-center p-4 bg-gray-50 rounded-2xl">
+                  <div className="text-2xl font-extralight text-black mb-1">{selectedProperty.roi}%</div>
+                  <div className="text-sm text-gray-600 font-light">ROI</div>
                   <div className="text-xs text-gray-500">Return on Investment</div>
                 </div>
               </div>
@@ -1854,7 +1984,7 @@ const Properties = () => {
               {/* Detailed Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-900 border-b pb-2">Property Information</h4>
+                  <h4 className="text-lg font-light text-black border-b pb-2">Property Information</h4>
                   <div className="space-y-3">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Year Built:</span>
@@ -1878,18 +2008,12 @@ const Properties = () => {
                 <div className="space-y-4">
                   <h4 className="text-lg font-semibold text-gray-900 border-b pb-2">Performance Metrics</h4>
                   <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Maintenance Score:</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{selectedProperty.maintenanceScore}%</span>
-                        <Progress value={selectedProperty.maintenanceScore} className="w-16 h-2" />
-                      </div>
-                    </div>
+
 
                     <div className="flex justify-between">
                       <span className="text-gray-600">Trend:</span>
                       <div className="flex items-center gap-2">
-                        <span className={`font-medium ${getTrendColor(selectedProperty.trend)}`}>
+                        <span className={`font-light ${getTrendColor(selectedProperty.trend)}`}>
                           {selectedProperty.change}
                         </span>
                         {getTrendIcon(selectedProperty.trend)}
@@ -1902,7 +2026,7 @@ const Properties = () => {
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowViewDetailsModal(false)}>
+            <Button variant="outline" onClick={() => setShowViewDetailsModal(false)} className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light">
               Close
             </Button>
             <Button 
@@ -1910,7 +2034,7 @@ const Properties = () => {
                 setShowViewDetailsModal(false);
                 handleEditProperty(selectedProperty);
               }}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-black hover:bg-gray-800 text-white font-light"
             >
               <Edit className="h-4 w-4 mr-2" />
               Edit Property
@@ -1921,13 +2045,13 @@ const Properties = () => {
 
       {/* Edit Property Modal */}
       <Dialog open={showEditPropertyModal} onOpenChange={setShowEditPropertyModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Edit className="h-6 w-6 text-blue-600" />
+            <DialogTitle className="flex items-center gap-2 text-xl font-light">
+              <Edit className="h-6 w-6 text-gray-600" />
               Edit Property
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="font-light text-gray-600">
               Update the details for {selectedProperty?.name}
             </DialogDescription>
           </DialogHeader>
@@ -1936,8 +2060,8 @@ const Properties = () => {
             {/* Step 1: Basic Information */}
             <div className="space-y-6">
               <div className="text-center mb-6">
-                <h3 className="text-xl font-semibold text-gray-900">Basic Property Information</h3>
-                <p className="text-gray-600">Update the essential details about your property</p>
+                <h3 className="text-xl font-light text-black">Basic Property Information</h3>
+                <p className="text-gray-500 font-light">Update the essential details about your property</p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1953,7 +2077,7 @@ const Properties = () => {
                 <div className="space-y-2">
                   <Label htmlFor="edit-type">Property Type</Label>
                   <Select value={newProperty.type} onValueChange={(value) => handleInputChange('type', value)}>
-                    <SelectTrigger>
+                    <SelectTrigger className="border-gray-200 focus:border-black focus:ring-black rounded-2xl font-light">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -2059,7 +2183,7 @@ const Properties = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {selectedProperty.images.map((img: any, index: number) => (
                         <div key={img.id || index} className="relative group">
-                          <div className="w-full h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                          <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
                             <div className="text-center">
                               <Camera className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                               <p className="text-xs text-gray-500">Image {index + 1}</p>
@@ -2126,7 +2250,7 @@ const Properties = () => {
                               <X className="h-3 w-3" />
                             </button>
                             <div className="absolute top-2 left-2">
-                              <Badge variant="secondary" className="bg-white/80 text-blue-700">
+                              <Badge variant="secondary" className="bg-white/80 text-gray-700">
                                 New
                               </Badge>
                             </div>
@@ -2139,12 +2263,12 @@ const Properties = () => {
                   
                   {/* Image Limit Warning */}
                   {editPropertyImages.length >= 3 && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div className="bg-blue-50 border border-gray-200 rounded-lg p-3">
                       <div className="flex items-center gap-2 text-blue-800">
                         <Info className="h-4 w-4" />
                         <span className="text-sm font-medium">Maximum images reached</span>
                       </div>
-                      <p className="text-xs text-blue-700 mt-1">
+                      <p className="text-xs text-gray-700 mt-1">
                         You've reached the maximum of 3 images. Remove some images to upload new ones.
                       </p>
                     </div>
@@ -2167,7 +2291,7 @@ const Properties = () => {
             <Button
               onClick={handleUpdateProperty}
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-black hover:bg-gray-800 text-white font-light"
             >
               {isSubmitting ? (
                 <>
@@ -2187,13 +2311,13 @@ const Properties = () => {
 
       {/* Property Analytics Modal */}
       <Dialog open={showAnalyticsModal} onOpenChange={setShowAnalyticsModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <BarChart3 className="h-6 w-6 text-blue-600" />
+            <DialogTitle className="flex items-center gap-2 text-2xl font-light">
+              <BarChart3 className="h-6 w-6 text-gray-600" />
               Property Analytics
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="font-light text-gray-600">
               Performance metrics and analytics for {selectedProperty?.name}
             </DialogDescription>
           </DialogHeader>
@@ -2201,53 +2325,49 @@ const Properties = () => {
           {selectedProperty && (
             <div className="space-y-6 py-4">
               {/* Analytics Header */}
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg border border-blue-100">
+              <div className="bg-gradient-to-r from-gray-50 to-gray-50 p-6 rounded-2xl border border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{selectedProperty.name}</h3>
-                    <p className="text-gray-600">Comprehensive performance analysis</p>
+                    <h3 className="text-2xl font-light text-black mb-2">{selectedProperty.name}</h3>
+                    <p className="text-gray-500 font-light">Comprehensive performance analysis</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-3xl font-bold text-green-600">
-                      ${selectedProperty.monthlyRent.toLocaleString()}
+                    <div className="text-3xl font-extralight text-black">
+                      ${(selectedProperty.monthlyRent || 0).toLocaleString()}
                     </div>
-                    <div className="text-sm text-gray-600">Monthly Revenue</div>
+                    <div className="text-sm text-gray-600 font-light">Monthly Revenue</div>
                   </div>
                 </div>
               </div>
 
               {/* Key Performance Indicators */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">{selectedProperty.occupancyRate}%</div>
-                  <div className="text-sm text-gray-600">Occupancy Rate</div>
+                <div className="text-center p-4 bg-white rounded-2xl border border-gray-200 shadow-sm">
+                  <div className="text-2xl font-extralight text-black mb-1">{selectedProperty.occupancyRate}%</div>
+                  <div className="text-sm text-gray-600 font-light">Occupancy Rate</div>
                   <div className="text-xs text-gray-500 mt-1">Industry avg: 95%</div>
                 </div>
-                <div className="text-center p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                  <div className="text-2xl font-bold text-emerald-600 mb-1">${selectedProperty.netIncome.toLocaleString()}</div>
-                  <div className="text-sm text-gray-600">Net Income</div>
+                <div className="text-center p-4 bg-white rounded-2xl border border-gray-200 shadow-sm">
+                  <div className="text-2xl font-extralight text-black mb-1">${(selectedProperty.netIncome || 0).toLocaleString()}</div>
+                  <div className="text-sm text-gray-600 font-light">Net Income</div>
                   <div className="text-xs text-gray-500 mt-1">Monthly</div>
                 </div>
-                <div className="text-center p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">{selectedProperty.roi}%</div>
-                  <div className="text-sm text-gray-600">ROI</div>
+                <div className="text-center p-4 bg-white rounded-2xl border border-gray-200 shadow-sm">
+                  <div className="text-2xl font-extralight text-black mb-1">{selectedProperty.roi}%</div>
+                  <div className="text-sm text-gray-600 font-light">ROI</div>
                   <div className="text-xs text-gray-500 mt-1">Annual return</div>
                 </div>
-                <div className="text-center p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                  <div className="text-2xl font-bold text-orange-600 mb-1">{selectedProperty.maintenanceScore}%</div>
-                  <div className="text-sm text-gray-600">Maintenance</div>
-                  <div className="text-xs text-gray-500 mt-1">Health score</div>
-                </div>
+
               </div>
 
               {/* Financial Analysis */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-900 border-b pb-2">Revenue Analysis</h4>
+                  <h4 className="text-lg font-light text-black border-b pb-2">Revenue Analysis</h4>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Gross Revenue:</span>
-                      <span className="font-semibold text-green-600">${selectedProperty.monthlyRent.toLocaleString()}/mo</span>
+                      <span className="font-semibold text-gray-600">${(selectedProperty.monthlyRent || 0).toLocaleString()}/mo</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Operating Expenses:</span>
@@ -2255,7 +2375,7 @@ const Properties = () => {
                     </div>
                     <div className="flex justify-between items-center pt-2 border-t">
                       <span className="text-gray-800 font-semibold">Net Operating Income:</span>
-                      <span className="font-bold text-blue-600">${selectedProperty.netIncome.toLocaleString()}/mo</span>
+                      <span className="font-bold text-gray-600">${(selectedProperty.netIncome || 0).toLocaleString()}/mo</span>
                     </div>
                   </div>
                 </div>
@@ -2265,13 +2385,13 @@ const Properties = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Cash Flow:</span>
-                      <span className={`font-semibold ${selectedProperty.netIncome > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        ${selectedProperty.netIncome.toLocaleString()}/mo
+                      <span className={`font-semibold ${selectedProperty.netIncome > 0 ? 'text-gray-600' : 'text-red-600'}`}>
+                        ${(selectedProperty.netIncome || 0).toLocaleString()}/mo
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Cap Rate:</span>
-                      <span className="font-semibold text-blue-600">
+                      <span className="font-semibold text-gray-600">
                         {selectedProperty.propertyValue ? ((selectedProperty.netIncome * 12 / selectedProperty.propertyValue) * 100).toFixed(2) : 'N/A'}%
                       </span>
                     </div>
@@ -2289,22 +2409,20 @@ const Properties = () => {
               </div>
 
               {/* Recommendations */}
-              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg border border-yellow-200">
-                <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-yellow-600" />
+              <div className="bg-gradient-to-r from-gray-50 to-gray-50 p-4 rounded-2xl border border-gray-200">
+                <h4 className="text-lg font-light text-black mb-3 flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-gray-600" />
                   Recommendations
                 </h4>
                 <div className="space-y-2 text-sm text-gray-700">
                   {selectedProperty.occupancyRate < 90 && (
                     <p>• Consider marketing strategies to improve occupancy rate from {selectedProperty.occupancyRate}% to target 95%</p>
                   )}
-                  {selectedProperty.maintenanceScore < 80 && (
-                    <p>• Schedule maintenance to improve property health score from {selectedProperty.maintenanceScore}%</p>
-                  )}
-                  {selectedProperty.netIncome < selectedProperty.monthlyRent * 0.7 && (
+
+                  {selectedProperty.netIncome < (selectedProperty.monthlyRent || 0) * 0.7 && (
                     <p>• Review operating expenses to improve net operating income</p>
                   )}
-                  {selectedProperty.occupancyRate >= 90 && selectedProperty.maintenanceScore >= 80 && (
+                  {selectedProperty.occupancyRate >= 90 && (
                     <p>• Property is performing well! Consider value-add improvements to increase rent</p>
                   )}
                 </div>
@@ -2313,7 +2431,7 @@ const Properties = () => {
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAnalyticsModal(false)}>
+            <Button variant="outline" onClick={() => setShowAnalyticsModal(false)} className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light">
               Close
             </Button>
             <Button 
@@ -2321,7 +2439,7 @@ const Properties = () => {
                 setShowAnalyticsModal(false);
                 handleEditProperty(selectedProperty);
               }}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-black hover:bg-gray-800 text-white font-light"
             >
               <Edit className="h-4 w-4 mr-2" />
               Edit Property
@@ -2344,7 +2462,7 @@ const Properties = () => {
           </DialogHeader>
           
           <div className="py-4">
-            <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+            <div className="bg-red-50 p-4 rounded-lg border border-gray-200">
               <div className="flex items-center gap-2 text-red-800">
                 <AlertCircle className="h-5 w-5" />
                 <span className="font-medium">Warning</span>
@@ -2381,16 +2499,16 @@ const Properties = () => {
 
       {/* Modern Minimal Stats Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md rounded-3xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
-                <Building2 className="h-7 w-7 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <Building2 className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">{totalProperties}</p>
-                <p className="text-sm text-slate-600 font-medium">Total Properties</p>
-                <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
+                <p className="text-3xl font-extralight text-black">{totalProperties}</p>
+                <p className="text-sm text-gray-600 font-light">Total Properties</p>
+                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
                   <span>No properties yet</span>
                 </div>
               </div>
@@ -2398,16 +2516,16 @@ const Properties = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md rounded-3xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
-                <Users className="h-7 w-7 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <Users className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">{totalOccupied}/{totalUnits}</p>
-                <p className="text-sm text-slate-600 font-medium">Occupied Units</p>
-                <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
+                <p className="text-3xl font-extralight text-black">{totalOccupied}/{totalUnits}</p>
+                <p className="text-sm text-gray-600 font-light">Occupied Units</p>
+                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
                   <span>{totalUnits === 0 ? 'No units available' : `${Math.round((totalOccupied / totalUnits) * 100)}% occupancy`}</span>
                 </div>
               </div>
@@ -2415,33 +2533,33 @@ const Properties = () => {
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md rounded-3xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
-                <DollarSign className="h-7 w-7 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <DollarSign className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">${totalRevenue === 0 ? '0' : (totalRevenue / 1000).toFixed(1) + 'K'}</p>
-                <p className="text-sm text-slate-600 font-medium">Monthly Revenue</p>
-                <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
-                  <span>{totalRevenue === 0 ? 'No revenue yet' : `$${totalRevenue.toLocaleString()}/month`}</span>
+                <p className="text-3xl font-extralight text-black">${totalRevenue === 0 ? '0' : (totalRevenue / 1000).toFixed(1) + 'K'}</p>
+                <p className="text-sm text-gray-600 font-light">Monthly Revenue</p>
+                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                  <span>{totalRevenue === 0 ? 'No revenue yet' : `$${(totalRevenue || 0).toLocaleString()}/month`}</span>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md rounded-3xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-slate-50 group-hover:bg-slate-100 transition-colors duration-200">
-                <Target className="h-7 w-7 text-slate-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <Target className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">{avgROI.toFixed(1)}%</p>
-                <p className="text-sm text-slate-600 font-medium">Avg. ROI</p>
-                <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
+                <p className="text-3xl font-extralight text-black">{avgROI.toFixed(1)}%</p>
+                <p className="text-sm text-gray-600 font-light">Avg. ROI</p>
+                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
                   <span>No ROI data</span>
                 </div>
               </div>
@@ -2451,21 +2569,21 @@ const Properties = () => {
       </div>
 
       {/* Modern Minimal Search and Filters */}
-      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200 rounded-3xl">
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search properties by name, address, or city..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
+                className="pl-10 border-gray-200 focus:border-black focus:ring-black rounded-2xl font-light"
               />
             </div>
             
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-40 border-slate-200 rounded-xl">
+              <SelectTrigger className="w-40 border-gray-200 rounded-2xl font-light">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -2477,7 +2595,7 @@ const Properties = () => {
             </Select>
             
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-40 border-slate-200 rounded-xl">
+              <SelectTrigger className="w-40 border-gray-200 rounded-2xl font-light">
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
@@ -2492,12 +2610,12 @@ const Properties = () => {
             </Select>
             
             <div className="flex items-center gap-2">
-              <div className="border border-slate-200 rounded-lg p-1 bg-slate-50">
+              <div className="border border-gray-200 rounded-lg p-1 bg-gray-50">
                 <Button
                   variant={viewMode === 'grid' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('grid')}
-                  className={viewMode === 'grid' ? 'bg-white shadow-sm' : ''}
+                  className={viewMode === 'grid' ? 'bg-white shadow-sm font-light' : 'font-light'}
                 >
                   <Grid3X3 className="h-4 w-4" />
                 </Button>
@@ -2505,7 +2623,7 @@ const Properties = () => {
                   variant={viewMode === 'list' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('list')}
-                  className={viewMode === 'list' ? 'bg-white shadow-sm' : ''}
+                  className={viewMode === 'list' ? 'bg-white shadow-sm font-light' : 'font-light'}
                 >
                   <List className="h-4 w-4" />
                 </Button>
@@ -2545,7 +2663,7 @@ const Properties = () => {
                       <div className="space-y-2">
                         <h3 className="text-lg font-semibold text-slate-900">{property.name}</h3>
                         <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <MapPin className="h-4 w-4 text-blue-500" />
+                          <MapPin className="h-4 w-4 text-gray-500" />
                           <span>{property.address}</span>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -2557,9 +2675,9 @@ const Properties = () => {
                             <Target className="h-3 w-3" />
                             {property.occupancyRate}% occupied
                           </span>
-                          <span className="flex items-center gap-1 font-semibold text-green-600">
+                          <span className="flex items-center gap-1 font-semibold text-gray-600">
                             <DollarSign className="h-3 w-3" />
-                            ${property.monthlyRent.toLocaleString()}/mo
+                            ${(property.monthlyRent || 0).toLocaleString()}/mo
                           </span>
                         </div>
                       </div>
@@ -2573,7 +2691,7 @@ const Properties = () => {
                           </Badge>
                         </div>
                         <div className="text-sm text-gray-600">
-                          Net: ${property.netIncome.toLocaleString()}/mo
+                          Net: ${(property.netIncome || 0).toLocaleString()}/mo
                         </div>
                       </div>
                       <Badge className={getStatusColor(property.status)}>
@@ -2643,7 +2761,7 @@ const Properties = () => {
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
-              <BarChart3 className="h-6 w-6 text-blue-600" />
+              <BarChart3 className="h-6 w-6 text-gray-600" />
               Portfolio Analytics Dashboard
             </DialogTitle>
             <DialogDescription>
@@ -2653,22 +2771,22 @@ const Properties = () => {
           
           <div className="space-y-8 py-4">
             {/* Portfolio Overview Header */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg border border-blue-100">
+            <div className="bg-gradient-to-r from-gray-50 to-gray-50 p-6 rounded-lg border border-gray-100">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600 mb-1">{portfolioAnalytics.totalProperties}</div>
+                  <div className="text-3xl font-bold text-gray-600 mb-1">{portfolioAnalytics.totalProperties}</div>
                   <div className="text-sm text-gray-600">Total Properties</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600 mb-1">{portfolioAnalytics.totalUnits}</div>
+                  <div className="text-3xl font-bold text-gray-600 mb-1">{portfolioAnalytics.totalUnits}</div>
                   <div className="text-sm text-gray-600">Total Units</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-emerald-600 mb-1">{portfolioAnalytics.occupancyRate}%</div>
+                  <div className="text-3xl font-bold text-gray-600 mb-1">{portfolioAnalytics.occupancyRate}%</div>
                   <div className="text-sm text-gray-600">Portfolio Occupancy</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-600 mb-1">${portfolioAnalytics.totalValue.toLocaleString()}</div>
+                  <div className="text-3xl font-bold text-purple-600 mb-1">${(portfolioAnalytics.totalValue || 0).toLocaleString()}</div>
                   <div className="text-sm text-gray-600">Total Portfolio Value</div>
                 </div>
               </div>
@@ -2679,26 +2797,26 @@ const Properties = () => {
               <Card className="border-0 shadow-lg">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-green-600" />
+                    <DollarSign className="h-5 w-5 text-gray-600" />
                     Financial Performance
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Monthly Revenue:</span>
-                    <span className="font-semibold text-green-600">${portfolioAnalytics.totalRevenue.toLocaleString()}</span>
+                    <span className="font-semibold text-gray-600">${(portfolioAnalytics.totalRevenue || 0).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Monthly Expenses:</span>
-                    <span className="font-semibold text-red-600">${portfolioAnalytics.totalExpenses.toLocaleString()}</span>
+                    <span className="font-semibold text-red-600">${(portfolioAnalytics.totalExpenses || 0).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t">
                     <span className="text-gray-800 font-semibold">Net Income:</span>
-                    <span className="font-bold text-blue-600">${portfolioAnalytics.totalNetIncome.toLocaleString()}</span>
+                    <span className="font-bold text-gray-600">${(portfolioAnalytics.totalNetIncome || 0).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Annual Cash Flow:</span>
-                    <span className="font-semibold text-purple-600">${portfolioAnalytics.monthlyCashFlow.annual.toLocaleString()}</span>
+                    <span className="font-semibold text-purple-600">${(portfolioAnalytics.monthlyCashFlow?.annual || 0).toLocaleString()}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -2706,23 +2824,20 @@ const Properties = () => {
               <Card className="border-0 shadow-lg">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Target className="h-5 w-5 text-blue-600" />
+                    <Target className="h-5 w-5 text-gray-600" />
                     Performance Metrics
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Avg. ROI:</span>
-                    <span className="font-semibold text-blue-600">{portfolioAnalytics.avgROI.toFixed(1)}%</span>
+                    <span className="font-semibold text-gray-600">{portfolioAnalytics.avgROI.toFixed(1)}%</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Avg. Occupancy:</span>
-                    <span className="font-semibold text-green-600">{portfolioAnalytics.avgOccupancyRate.toFixed(1)}%</span>
+                    <span className="font-semibold text-gray-600">{portfolioAnalytics.avgOccupancyRate.toFixed(1)}%</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Avg. Maintenance:</span>
-                    <span className="font-semibold text-orange-600">{portfolioAnalytics.avgMaintenanceScore.toFixed(1)}%</span>
-                  </div>
+
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Vacant Units:</span>
                     <span className="font-semibold text-red-600">{portfolioAnalytics.totalVacant}</span>
@@ -2740,11 +2855,11 @@ const Properties = () => {
                 <CardContent className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">High ROI (&gt;10%):</span>
-                    <span className="font-semibold text-green-600">{portfolioAnalytics.roiAnalysis.high}</span>
+                    <span className="font-semibold text-gray-600">{portfolioAnalytics.roiAnalysis.high}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Medium ROI (5-10%):</span>
-                    <span className="font-semibold text-blue-600">{portfolioAnalytics.roiAnalysis.medium}</span>
+                    <span className="font-semibold text-gray-600">{portfolioAnalytics.roiAnalysis.medium}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Low ROI (&lt;5%):</span>
@@ -2763,7 +2878,7 @@ const Properties = () => {
               <Card className="border-0 shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-blue-600" />
+                    <Building2 className="h-5 w-5 text-gray-600" />
                     Property Type Distribution
                   </CardTitle>
                 </CardHeader>
@@ -2790,7 +2905,7 @@ const Properties = () => {
               <Card className="border-0 shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Activity className="h-5 w-5 text-green-600" />
+                    <Activity className="h-5 w-5 text-gray-600" />
                     Status Distribution
                   </CardTitle>
                 </CardHeader>
@@ -2820,16 +2935,16 @@ const Properties = () => {
               <Card className="border-0 shadow-lg">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <Star className="h-5 w-5 text-yellow-600" />
+                    <Star className="h-5 w-5 text-gray-600" />
                     Top Performing Properties
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     {portfolioAnalytics.topPerformers.map((property, index) => (
-                      <div key={property.id} className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg">
+                      <div key={property.id} className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-50 rounded-lg">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center text-sm font-bold text-yellow-700">
+                          <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-bold text-gray-700">
                             #{index + 1}
                           </div>
                           <div>
@@ -2838,8 +2953,8 @@ const Properties = () => {
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="font-bold text-green-600">{property.roi}% ROI</div>
-                          <div className="text-sm text-gray-600">${property.monthlyRent.toLocaleString()}/mo</div>
+                          <div className="font-bold text-gray-600">{property.roi}% ROI</div>
+                          <div className="text-sm text-gray-600">${(property.monthlyRent || 0).toLocaleString()}/mo</div>
                         </div>
                       </div>
                     ))}
@@ -2858,7 +2973,7 @@ const Properties = () => {
                   <div className="space-y-3">
                     {portfolioAnalytics.needsAttention.length > 0 ? (
                       portfolioAnalytics.needsAttention.map((property) => (
-                        <div key={property.id} className="p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg border border-red-200">
+                        <div key={property.id} className="p-3 bg-gradient-to-r from-gray-50 to-gray-50 rounded-lg border border-gray-200">
                           <div className="font-semibold text-gray-900 mb-1">{property.name}</div>
                           <div className="text-sm text-gray-600 space-y-1">
                             {property.occupancyRate < 80 && (
@@ -2867,12 +2982,7 @@ const Properties = () => {
                                 <span>Low occupancy: {property.occupancyRate}%</span>
                               </div>
                             )}
-                            {property.maintenanceScore < 70 && (
-                              <div className="flex items-center gap-2">
-                                <span className="text-orange-600">🔧</span>
-                                <span>Maintenance needed: {property.maintenanceScore}%</span>
-                              </div>
-                            )}
+
                           </div>
                         </div>
                       ))
@@ -2888,10 +2998,10 @@ const Properties = () => {
             </div>
 
             {/* Recommendations Section */}
-            <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-50 to-indigo-50">
+            <Card className="border-0 shadow-lg bg-gradient-to-r from-gray-50 to-gray-50">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-blue-600" />
+                  <Zap className="h-5 w-5 text-gray-600" />
                   Portfolio Recommendations
                 </CardTitle>
               </CardHeader>
@@ -2900,9 +3010,7 @@ const Properties = () => {
                   {portfolioAnalytics.occupancyRate < 85 && (
                     <p>• <strong>Improve Occupancy:</strong> Focus on marketing strategies to increase portfolio occupancy from {portfolioAnalytics.occupancyRate}% to target 90%+</p>
                   )}
-                  {portfolioAnalytics.avgMaintenanceScore < 80 && (
-                    <p>• <strong>Maintenance Priority:</strong> Schedule maintenance for properties with scores below 80% to improve overall portfolio health</p>
-                  )}
+
                   {portfolioAnalytics.roiAnalysis.low > portfolioAnalytics.roiAnalysis.high && (
                     <p>• <strong>ROI Optimization:</strong> Review underperforming properties and consider value-add improvements or rent increases</p>
                   )}
@@ -2912,7 +3020,7 @@ const Properties = () => {
                   {portfolioAnalytics.avgROI < 8 && (
                     <p>• <strong>Performance Review:</strong> Portfolio ROI of {portfolioAnalytics.avgROI.toFixed(1)}% is below market average. Consider strategic improvements</p>
                   )}
-                  {portfolioAnalytics.occupancyRate >= 85 && portfolioAnalytics.avgMaintenanceScore >= 80 && portfolioAnalytics.avgROI >= 8 && (
+                  {portfolioAnalytics.occupancyRate >= 85 && portfolioAnalytics.avgROI >= 8 && (
                     <p>• <strong>Excellent Performance:</strong> Your portfolio is performing exceptionally well! Consider expansion opportunities or value-add investments</p>
                   )}
                 </div>
@@ -2929,7 +3037,7 @@ const Properties = () => {
                 setShowPortfolioAnalyticsModal(false);
                 exportPortfolioPDF();
               }}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-black hover:bg-gray-800 text-white font-light"
             >
               <Download className="h-4 w-4 mr-2" />
               Export Analytics Report
@@ -2943,7 +3051,7 @@ const Properties = () => {
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
-              <Users className="h-6 w-6 text-blue-600" />
+              <Users className="h-6 w-6 text-gray-600" />
               Tenant Management - {selectedProperty?.name}
             </DialogTitle>
             <DialogDescription>
@@ -2956,18 +3064,18 @@ const Properties = () => {
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-100">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
                 <div>
-                  <div className="text-2xl font-bold text-blue-600">{tenants.length}</div>
+                  <div className="text-2xl font-bold text-gray-600">{tenants.length}</div>
                   <div className="text-sm text-gray-600">Total Tenants</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-2xl font-bold text-gray-600">
                     {tenants.filter(t => t.status === 'active').length}
                   </div>
                   <div className="text-sm text-gray-600">Active Tenants</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-emerald-600">
-                    ${tenants.reduce((sum, t) => sum + t.monthlyRent, 0).toLocaleString()}
+                  <div className="text-2xl font-bold text-gray-600">
+                    ${tenants.reduce((sum, t) => sum + (t.monthlyRent || 0), 0).toLocaleString()}
                   </div>
                   <div className="text-sm text-gray-600">Monthly Rent Income</div>
                 </div>
@@ -2984,7 +3092,7 @@ const Properties = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">Tenants</h3>
-                <Button onClick={handleAddTenant} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Button onClick={handleAddTenant} className="bg-black hover:bg-gray-800 text-white font-light">
                   <Plus className="h-4 w-4 mr-2" />
                   Add Tenant
                 </Button>
@@ -2998,8 +3106,8 @@ const Properties = () => {
                         <div className="flex items-start justify-between">
                           <div className="flex-1 space-y-3">
                             <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
-                                <Users className="h-6 w-6 text-blue-600" />
+                              <div className="w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
+                                <Users className="h-6 w-6 text-gray-600" />
                               </div>
                               <div>
                                 <h4 className="text-lg font-semibold text-gray-900">{tenant.name}</h4>
@@ -3029,21 +3137,21 @@ const Properties = () => {
                                 </div>
                                 <div className="flex justify-between">
                                   <span className="text-gray-600">Monthly Rent:</span>
-                                  <span className="font-semibold text-green-600">${tenant.monthlyRent.toLocaleString()}</span>
+                                  <span className="font-semibold text-gray-600">${(tenant.monthlyRent || 0).toLocaleString()}</span>
                                 </div>
                               </div>
                               <div className="space-y-2">
                                 <div className="flex justify-between">
                                   <span className="text-gray-600">Lease Start:</span>
-                                  <span className="font-medium">{new Date(tenant.leaseStart).toLocaleDateString()}</span>
+                                  <span className="font-medium">{tenant.leaseStart ? new Date(tenant.leaseStart).toLocaleDateString() : 'Not set'}</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span className="text-gray-600">Lease End:</span>
-                                  <span className="font-medium">{new Date(tenant.leaseEnd).toLocaleDateString()}</span>
+                                  <span className="font-medium">{tenant.leaseEnd ? new Date(tenant.leaseEnd).toLocaleDateString() : 'Not set'}</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span className="text-gray-600">Security Deposit:</span>
-                                  <span className="font-medium">${tenant.securityDeposit.toLocaleString()}</span>
+                                  <span className="font-medium">${(tenant.securityDeposit || 0).toLocaleString()}</span>
                                 </div>
                               </div>
                             </div>
@@ -3068,7 +3176,7 @@ const Properties = () => {
                               size="sm"
                               variant="outline"
                               onClick={() => handleDeleteTenant(tenant)}
-                              className="text-red-600 border-red-200 hover:bg-red-50"
+                              className="text-red-600 border-gray-200 hover:bg-red-50"
                             >
                               <Trash2 className="h-4 w-4 mr-1" />
                               Remove
@@ -3087,7 +3195,7 @@ const Properties = () => {
                     <p className="text-gray-500 mb-4">
                       Start managing your property by adding your first tenant. Track lease information, rent payments, and tenant details.
                     </p>
-                    <Button onClick={handleAddTenant} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                    <Button onClick={handleAddTenant} className="bg-black hover:bg-gray-800 text-white font-light">
                       <Plus className="h-4 w-4 mr-2" />
                       Add First Tenant
                     </Button>
@@ -3105,12 +3213,107 @@ const Properties = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Tenant Options Modal */}
+      <Dialog open={showTenantOptionsModal} onOpenChange={setShowTenantOptionsModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl font-light">
+              <Users className="h-6 w-6 text-gray-600" />
+              Add Tenant to {selectedProperty?.name}
+            </DialogTitle>
+            <DialogDescription className="font-light text-gray-600">
+              Choose how you'd like to add a tenant to this property
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Option 1: Add Existing Tenant */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-900">Add Existing Tenant</h3>
+              <p className="text-sm text-gray-600">
+                Assign a tenant from your existing tenant database to this property
+              </p>
+              
+              {loadExistingTenants().length > 0 ? (
+                <div className="space-y-3 max-h-60 overflow-y-auto">
+                  {loadExistingTenants().map((tenant: any) => (
+                    <Card key={tenant.id} className="border border-gray-200 hover:border-gray-300 transition-colors">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-900">{tenant.name}</h4>
+                            <p className="text-sm text-gray-600">{tenant.email}</p>
+                            <p className="text-sm text-gray-500">Current Property: {tenant.property || 'Unassigned'}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            onClick={() => handleAssignExistingTenant(tenant)}
+                            className="bg-black hover:bg-gray-800 text-white font-light"
+                          >
+                            Assign
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 bg-gray-50 rounded-lg">
+                  <Users className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600">No available tenants found</p>
+                  <p className="text-xs text-gray-500">All tenants are already assigned to properties</p>
+                </div>
+              )}
+            </div>
+
+            {/* Option 2: Invite New Tenant */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-900">Invite New Tenant</h3>
+              <p className="text-sm text-gray-600">
+                Send an email invitation to a new tenant with property details
+              </p>
+              
+              <Button
+                onClick={handleInviteTenant}
+                className="w-full bg-black hover:bg-gray-800 text-white font-light"
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Send Invitation
+              </Button>
+            </div>
+
+            {/* Option 3: Manual Entry */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-900">Manual Entry</h3>
+              <p className="text-sm text-gray-600">
+                Manually enter tenant information for immediate use
+              </p>
+              
+              <Button
+                onClick={handleAddExistingTenant}
+                variant="outline"
+                className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Enter Manually
+              </Button>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowTenantOptionsModal(false)} className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light">
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Add/Edit Tenant Modal */}
       <Dialog open={showAddTenantModal} onOpenChange={setShowAddTenantModal}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl">
-              {editingTenant ? <Edit className="h-6 w-6 text-blue-600" /> : <Plus className="h-6 w-6 text-green-600" />}
+              {editingTenant ? <Edit className="h-6 w-6 text-gray-600" /> : <Plus className="h-6 w-6 text-gray-600" />}
               {editingTenant ? 'Edit Tenant' : 'Add New Tenant'}
             </DialogTitle>
             <DialogDescription>
@@ -3209,7 +3412,7 @@ const Properties = () => {
             <div className="space-y-2">
               <Label htmlFor="tenant-status">Status</Label>
               <Select value={newTenant.status} onValueChange={(value) => setNewTenant(prev => ({ ...prev, status: value }))}>
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-200 focus:border-black focus:ring-black rounded-2xl font-light">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -3254,7 +3457,7 @@ const Properties = () => {
             </Button>
             <Button
               onClick={handleSaveTenant}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="bg-black hover:bg-gray-800 text-white font-light"
             >
               {editingTenant ? (
                 <>
@@ -3267,6 +3470,107 @@ const Properties = () => {
                   Add Tenant
                 </>
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Tenant Invitation Modal */}
+      <Dialog open={showInviteTenantModal} onOpenChange={setShowInviteTenantModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl font-light">
+              <Mail className="h-6 w-6 text-gray-600" />
+              Invite New Tenant
+            </DialogTitle>
+            <DialogDescription className="font-light text-gray-600">
+              Send an email invitation to a new tenant for {selectedProperty?.name}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="invite-email">Email Address *</Label>
+                <Input
+                  id="invite-email"
+                  type="email"
+                  value={tenantInvitation.email}
+                  onChange={(e) => setTenantInvitation(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="e.g., tenant@email.com"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="invite-unit">Unit Number *</Label>
+                <Input
+                  id="invite-unit"
+                  value={tenantInvitation.unitNumber}
+                  onChange={(e) => setTenantInvitation(prev => ({ ...prev, unitNumber: e.target.value }))}
+                  placeholder="e.g., A101"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="invite-rent">Monthly Rent *</Label>
+                <Input
+                  id="invite-rent"
+                  type="number"
+                  value={tenantInvitation.monthlyRent}
+                  onChange={(e) => setTenantInvitation(prev => ({ ...prev, monthlyRent: e.target.value }))}
+                  placeholder="e.g., 1200"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="invite-deposit">Security Deposit *</Label>
+                <Input
+                  id="invite-deposit"
+                  type="number"
+                  value={tenantInvitation.securityDeposit}
+                  onChange={(e) => setTenantInvitation(prev => ({ ...prev, securityDeposit: e.target.value }))}
+                  placeholder="e.g., 1200"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="invite-message">Personal Message (Optional)</Label>
+              <Textarea
+                id="invite-message"
+                value={tenantInvitation.message}
+                onChange={(e) => setTenantInvitation(prev => ({ ...prev, message: e.target.value }))}
+                placeholder="Add a personal message to your invitation..."
+                rows={3}
+              />
+            </div>
+
+            {/* Preview of the invitation */}
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <h4 className="font-medium text-gray-900 mb-2">Invitation Preview</h4>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p><strong>Property:</strong> {selectedProperty?.name}</p>
+                <p><strong>Unit:</strong> {tenantInvitation.unitNumber || 'TBD'}</p>
+                <p><strong>Monthly Rent:</strong> ${tenantInvitation.monthlyRent || 'TBD'}</p>
+                <p><strong>Security Deposit:</strong> ${tenantInvitation.securityDeposit || 'TBD'}</p>
+                {tenantInvitation.message && (
+                  <p><strong>Message:</strong> {tenantInvitation.message}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowInviteTenantModal(false)} className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light">
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSendInvitation}
+              disabled={!tenantInvitation.email || !tenantInvitation.unitNumber || !tenantInvitation.monthlyRent || !tenantInvitation.securityDeposit}
+              className="bg-black hover:bg-gray-800 text-white font-light"
+            >
+              <Mail className="h-4 w-4 mr-2" />
+              Send Invitation
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -63,7 +63,8 @@ import {
   Trash2,
   Settings,
   Bell,
-  HelpCircle
+  HelpCircle,
+  Mail
 } from 'lucide-react';
 import {
   Select,
@@ -122,226 +123,25 @@ const Lease = () => {
     smokingPolicy: 'not allowed',
     securityDeposit: '',
     lateFees: '',
-    notes: ''
+    notes: '',
+    pdfDocument: null as File | null
   });
 
-  // Enhanced lease data with more details
-  const leases = [
-    {
-      id: 'L001',
-      property: 'Oak Street Apartments - Unit 101',
-      tenant: 'John Smith',
-      startDate: '2024-01-01',
-      endDate: '2024-12-31',
-      monthlyRent: 1800,
-      deposit: 1800,
-      status: 'active',
-      nextPayment: '2024-12-01',
-      latePayments: 0,
-      leaseType: 'residential',
-      autoRenew: true,
-      daysRemaining: 31,
-      totalCollected: 19800,
-      lastPayment: '2024-11-01',
-      paymentHistory: 'excellent',
-      tenantRating: 4.8,
-      maintenanceRequests: 1,
-      communicationScore: 95,
-      propertyValue: 2800000,
-      monthlyExpenses: 8500,
-      lateFees: 0,
-      securityDeposit: 1800,
-      utilities: 'included',
-      parking: 'included',
-      petPolicy: 'allowed',
-      smokingPolicy: 'not allowed'
-    },
-    {
-      id: 'L002',
-      property: 'Downtown Lofts - Unit 205',
-      tenant: 'Sarah Johnson',
-      startDate: '2024-03-01',
-      endDate: '2025-02-28',
-      monthlyRent: 2200,
-      deposit: 2200,
-      status: 'active',
-      nextPayment: '2024-12-01',
-      latePayments: 1,
-      leaseType: 'residential',
-      autoRenew: false,
-      daysRemaining: 89,
-      totalCollected: 19800,
-      lastPayment: '2024-11-01',
-      paymentHistory: 'good',
-      tenantRating: 4.6,
-      maintenanceRequests: 2,
-      communicationScore: 88,
-      propertyValue: 1800000,
-      monthlyExpenses: 4500,
-      lateFees: 50,
-      securityDeposit: 2200,
-      utilities: 'tenant pays',
-      parking: 'included',
-      petPolicy: 'not allowed',
-      smokingPolicy: 'not allowed'
-    },
-    {
-      id: 'L003',
-      property: 'Riverside Complex - Unit 312',
-      tenant: 'Mike Davis',
-      startDate: '2024-06-01',
-      endDate: '2025-05-31',
-      monthlyRent: 1600,
-      deposit: 1600,
-      status: 'active',
-      nextPayment: '2024-12-01',
-      latePayments: 0,
-      leaseType: 'residential',
-      autoRenew: true,
-      daysRemaining: 156,
-      totalCollected: 9600,
-      lastPayment: '2024-11-01',
-      paymentHistory: 'excellent',
-      tenantRating: 4.9,
-      maintenanceRequests: 0,
-      communicationScore: 98,
-      propertyValue: 2800000,
-      monthlyExpenses: 7200,
-      lateFees: 0,
-      securityDeposit: 1600,
-      utilities: 'included',
-      parking: 'included',
-      petPolicy: 'allowed',
-      smokingPolicy: 'not allowed'
-    },
-    {
-      id: 'L004',
-      property: 'Suburban Homes - 123 Main St',
-      tenant: 'Lisa Wilson',
-      startDate: '2023-09-01',
-      endDate: '2024-08-31',
-      monthlyRent: 2800,
-      deposit: 2800,
-      status: 'expired',
-      nextPayment: 'N/A',
-      latePayments: 2,
-      leaseType: 'residential',
-      autoRenew: false,
-      daysRemaining: -122,
-      totalCollected: 30800,
-      lastPayment: '2024-07-01',
-      paymentHistory: 'fair',
-      tenantRating: 4.2,
-      maintenanceRequests: 3,
-      communicationScore: 75,
-      propertyValue: 1200000,
-      monthlyExpenses: 3800,
-      lateFees: 200,
-      securityDeposit: 2800,
-      utilities: 'tenant pays',
-      parking: 'included',
-      petPolicy: 'allowed',
-      smokingPolicy: 'not allowed'
-    },
-    {
-      id: 'L005',
-      property: 'Commercial Plaza - Suite 100',
-      tenant: 'Tech Solutions Inc',
-      startDate: '2024-01-01',
-      endDate: '2026-12-31',
-      monthlyRent: 4500,
-      deposit: 9000,
-      status: 'active',
-      nextPayment: '2024-12-01',
-      latePayments: 0,
-      leaseType: 'commercial',
-      autoRenew: false,
-      daysRemaining: 761,
-      totalCollected: 49500,
-      lastPayment: '2024-11-01',
-      paymentHistory: 'excellent',
-      tenantRating: 5.0,
-      maintenanceRequests: 0,
-      communicationScore: 100,
-      propertyValue: 3200000,
-      monthlyExpenses: 6800,
-      lateFees: 0,
-      securityDeposit: 9000,
-      utilities: 'tenant pays',
-      parking: 'included',
-      petPolicy: 'N/A',
-      smokingPolicy: 'N/A'
-    },
-    {
-      id: 'L006',
-      property: 'Harbor View Condos - Unit 7B',
-      tenant: 'James Thompson',
-      startDate: '2024-08-01',
-      endDate: '2025-07-31',
-      monthlyRent: 2200,
-      deposit: 2200,
-      status: 'active',
-      nextPayment: '2024-12-01',
-      latePayments: 0,
-      leaseType: 'residential',
-      autoRenew: true,
-      daysRemaining: 212,
-      totalCollected: 8800,
-      lastPayment: '2024-11-01',
-      paymentHistory: 'excellent',
-      tenantRating: 5.0,
-      maintenanceRequests: 0,
-      communicationScore: 100,
-      propertyValue: 3200000,
-      monthlyExpenses: 6800,
-      lateFees: 0,
-      securityDeposit: 2200,
-      utilities: 'included',
-      parking: 'included',
-      petPolicy: 'not allowed',
-      smokingPolicy: 'not allowed'
-    },
-    {
-      id: 'L007',
-      property: 'Mountain Ridge Estates - Unit 3',
-      tenant: 'Maria Garcia',
-      startDate: '2024-11-01',
-      endDate: '2025-10-31',
-      monthlyRent: 1900,
-      deposit: 1900,
-      status: 'active',
-      nextPayment: '2024-12-01',
-      latePayments: 1,
-      leaseType: 'residential',
-      autoRenew: false,
-      daysRemaining: 304,
-      totalCollected: 1900,
-      lastPayment: '2024-11-01',
-      paymentHistory: 'poor',
-      tenantRating: 3.8,
-      maintenanceRequests: 4,
-      communicationScore: 65,
-      propertyValue: 2800000,
-      monthlyExpenses: 5200,
-      lateFees: 100,
-      securityDeposit: 1900,
-      utilities: 'tenant pays',
-      parking: 'included',
-      petPolicy: 'allowed',
-      smokingPolicy: 'not allowed'
-    }
-  ];
+  // Tenant management states
+  const [showTenantOptionsModal, setShowTenantOptionsModal] = useState(false);
+  const [showInviteTenantModal, setShowInviteTenantModal] = useState(false);
+  const [tenantInvitation, setTenantInvitation] = useState({
+    email: '',
+    name: '',
+    phone: ''
+  });
+  const [existingTenants, setExistingTenants] = useState<any[]>([]);
+  const [selectedTenantOption, setSelectedTenantOption] = useState<'manual' | 'invite' | 'existing' | null>(null);
 
-  const properties = [
-    'All Properties',
-    'Oak Street Apartments - Unit 101',
-    'Downtown Lofts - Unit 205',
-    'Riverside Complex - Unit 312',
-    'Suburban Homes - 123 Main St',
-    'Commercial Plaza - Suite 100',
-    'Harbor View Condos - Unit 7B',
-    'Mountain Ridge Estates - Unit 3'
-  ];
+  // Enhanced lease data with more details
+  const leases: any[] = [];
+
+  const properties: string[] = [];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -472,9 +272,11 @@ const Lease = () => {
       smokingPolicy: 'not allowed',
       securityDeposit: '',
       lateFees: '',
-      notes: ''
+      notes: '',
+      pdfDocument: null
     });
     setCurrentStep(1);
+    setSelectedTenantOption(null);
   };
 
   const nextStep = () => {
@@ -492,7 +294,7 @@ const Lease = () => {
   const canProceedToNext = () => {
     switch (currentStep) {
       case 1:
-        return newLease.property && newLease.tenant && newLease.startDate && newLease.endDate;
+        return newLease.property && newLease.tenant && newLease.startDate && newLease.endDate && selectedTenantOption;
       case 2:
         return newLease.monthlyRent && newLease.deposit;
       case 3:
@@ -523,15 +325,65 @@ const Lease = () => {
     }
   };
 
+  // Tenant management functions
+  const loadExistingTenants = () => {
+    try {
+      const storedTenants = localStorage.getItem('pms-tenants');
+      if (storedTenants) {
+        const tenants = JSON.parse(storedTenants);
+        setExistingTenants(tenants);
+      }
+    } catch (error) {
+      console.error('Error loading existing tenants:', error);
+    }
+  };
+
+  const handleTenantOptionSelect = (option: 'manual' | 'invite' | 'existing') => {
+    setSelectedTenantOption(option);
+    setShowTenantOptionsModal(false);
+    
+    if (option === 'existing') {
+      loadExistingTenants();
+    }
+  };
+
+  const handleInviteTenant = () => {
+    setShowInviteTenantModal(true);
+  };
+
+  const handleSendInvitation = () => {
+    // Simulate sending invitation
+    alert(`Invitation sent to ${tenantInvitation.email}`);
+    setTenantInvitation({ email: '', name: '', phone: '' });
+    setShowInviteTenantModal(false);
+    setSelectedTenantOption('manual');
+  };
+
+  const handleSelectExistingTenant = (tenant: any) => {
+    setNewLease(prev => ({ ...prev, tenant: tenant.name }));
+    setSelectedTenantOption(null);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === 'application/pdf') {
+      setNewLease(prev => ({ ...prev, pdfDocument: file }));
+    } else {
+      alert('Please select a valid PDF file');
+    }
+  };
+
   return (
     <div className="space-y-8 p-1">
+
+      
       {/* Modern Minimal Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-gray-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 to-gray-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
             <div className="space-y-3">
-              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+              <h1 className="text-5xl font-extralight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight font-google-sans">
                 Lease Management
               </h1>
               <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
@@ -543,34 +395,34 @@ const Lease = () => {
                   <span className="font-medium">{activeLeases} active leases</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <Clock className="h-4 w-4" />
+                  <Clock className="h-4 w-4 text-slate-500" />
                   <span>Updated {new Date().toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+              <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light rounded-xl">
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
-              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+              <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light rounded-xl">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Analytics
               </Button>
               <Dialog open={showAddLeaseModal} onOpenChange={setShowAddLeaseModal}>
                 <DialogTrigger asChild>
-                  <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
+                  <Button className="bg-black hover:bg-gray-800 text-white font-light shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
                     <Plus className="h-4 w-4 mr-2" />
                     New Lease
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-gray-200 shadow-lg">
                   <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-xl">
-                      <FileText className="h-6 w-6 text-blue-600" />
+                    <DialogTitle className="flex items-center gap-2 text-2xl font-light text-black">
+                      <FileText className="h-6 w-6 text-gray-600" />
                       Create New Lease
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="font-light text-gray-600 text-base">
                       Complete the form below to create a new lease agreement for your property.
                     </DialogDescription>
                     
@@ -579,15 +431,15 @@ const Lease = () => {
                       <div className="flex items-center">
                         {[1, 2, 3, 4].map((step) => (
                           <div key={step} className="flex items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                              step < currentStep ? 'bg-green-500 text-white' : 
-                              step === currentStep ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-light transition-all duration-200 ${
+                              step < currentStep ? 'bg-gray-600 text-white shadow-md' : 
+                              step === currentStep ? 'bg-black text-white shadow-lg' : 'bg-gray-100 text-gray-400'
                             }`}>
                               {step < currentStep ? '✓' : step}
                             </div>
                             {step < 4 && (
-                              <div className={`w-12 h-0.5 mx-2 ${
-                                step < currentStep ? 'bg-green-500' : 'bg-gray-200'
+                              <div className={`w-16 h-0.5 mx-3 transition-all duration-200 ${
+                                step < currentStep ? 'bg-gray-600' : 'bg-gray-200'
                               }`} />
                             )}
                           </div>
@@ -596,14 +448,14 @@ const Lease = () => {
                     </div>
                     
                     {/* Step Labels */}
-                    <div className="flex items-center justify-center mt-2 text-xs text-gray-600">
-                      <span className={currentStep === 1 ? 'text-blue-600 font-medium' : ''}>Basic Info</span>
-                      <span className="mx-4">•</span>
-                      <span className={currentStep === 2 ? 'text-blue-600 font-medium' : ''}>Financial Terms</span>
-                      <span className="mx-4">•</span>
-                      <span className={currentStep === 3 ? 'text-blue-600 font-medium' : ''}>Policies & Settings</span>
-                      <span className="mx-4">•</span>
-                      <span className={currentStep === 4 ? 'text-blue-600 font-medium' : ''}>Review & Submit</span>
+                    <div className="flex items-center justify-center mt-3 text-sm text-gray-600">
+                      <span className={`transition-all duration-200 ${currentStep === 1 ? 'text-black font-medium' : ''}`}>Basic Info</span>
+                      <span className="mx-4 text-gray-300">•</span>
+                      <span className={`transition-all duration-200 ${currentStep === 2 ? 'text-black font-medium' : ''}`}>Financial Terms</span>
+                      <span className="mx-4 text-gray-300">•</span>
+                      <span className={`transition-all duration-200 ${currentStep === 3 ? 'text-black font-medium' : ''}`}>Policies & Settings</span>
+                      <span className="mx-4 text-gray-300">•</span>
+                      <span className={`transition-all duration-200 ${currentStep === 4 ? 'text-black font-medium' : ''}`}>Review & Submit</span>
                     </div>
                   </DialogHeader>
                   
@@ -611,43 +463,68 @@ const Lease = () => {
                     {/* Step 1: Basic Information */}
                     {currentStep === 1 && (
                       <div className="space-y-6">
-                        <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Basic Lease Information</h3>
-                          <p className="text-gray-600">Let's start with the essential details about the lease</p>
+                        <div className="text-center mb-8">
+                          <h3 className="text-2xl font-light text-black mb-3">Basic Lease Information</h3>
+                          <p className="text-gray-500 font-light text-base">Let's start with the essential details about the lease</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="property">Property *</Label>
+                            <Label htmlFor="property" className="font-light text-gray-700">Property *</Label>
                             <Select value={newLease.property} onValueChange={(value) => handleInputChange('property', value)}>
-                              <SelectTrigger>
+                              <SelectTrigger className="font-light">
                                 <SelectValue placeholder="Select property" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="Oak Street Apartments - Unit 101">Oak Street Apartments - Unit 101</SelectItem>
-                                <SelectItem value="Downtown Lofts - Unit 205">Downtown Lofts - Unit 205</SelectItem>
-                                <SelectItem value="Riverside Complex - Unit 312">Riverside Complex - Unit 312</SelectItem>
-                                <SelectItem value="Suburban Homes - Unit 15">Suburban Homes - Unit 15</SelectItem>
-                                <SelectItem value="Harbor View Condos - Unit 7B">Harbor View Condos - Unit 7B</SelectItem>
-                                <SelectItem value="Mountain Ridge Estates - Unit 3">Mountain Ridge Estates - Unit 3</SelectItem>
+                                {/* Property options will be populated dynamically */}
                               </SelectContent>
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tenant">Tenant Name *</Label>
-                            <Input
-                              id="tenant"
-                              placeholder="e.g., John Smith"
-                              value={newLease.tenant}
-                              onChange={(e) => handleInputChange('tenant', e.target.value)}
-                              required
-                            />
+                            <Label htmlFor="tenant" className="font-light text-gray-700">Tenant *</Label>
+                            {selectedTenantOption === 'manual' ? (
+                              <Input
+                                id="tenant"
+                                placeholder="e.g., John Smith"
+                                value={newLease.tenant}
+                                onChange={(e) => handleInputChange('tenant', e.target.value)}
+                                required
+                                className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
+                              />
+                            ) : newLease.tenant ? (
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  value={newLease.tenant}
+                                  readOnly
+                                  className="bg-gray-50"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setShowTenantOptionsModal(true)}
+                                  className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                                >
+                                  Change
+                                </Button>
+                              </div>
+                            ) : (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setShowTenantOptionsModal(true)}
+                                className="w-full border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
+                              >
+                                <User className="h-4 w-4 mr-2" />
+                                Select or Add Tenant
+                              </Button>
+                            )}
                           </div>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="startDate">Lease Start Date *</Label>
+                            <Label htmlFor="startDate" className="font-light text-gray-700">Lease Start Date *</Label>
                             <Input
                               id="startDate"
                               type="date"
@@ -657,7 +534,7 @@ const Lease = () => {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="endDate">Lease End Date *</Label>
+                            <Label htmlFor="endDate" className="font-light text-gray-700">Lease End Date *</Label>
                             <Input
                               id="endDate"
                               type="date"
@@ -669,7 +546,7 @@ const Lease = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="leaseType">Lease Type</Label>
+                          <Label htmlFor="leaseType" className="font-light text-gray-700">Lease Type</Label>
                           <Select value={newLease.leaseType} onValueChange={(value) => handleInputChange('leaseType', value)}>
                             <SelectTrigger>
                               <SelectValue placeholder="Select lease type" />
@@ -688,9 +565,9 @@ const Lease = () => {
                     {/* Step 2: Financial Terms */}
                     {currentStep === 2 && (
                       <div className="space-y-6">
-                        <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Financial Terms</h3>
-                          <p className="text-gray-600">Set up the financial aspects of the lease agreement</p>
+                        <div className="text-center mb-8">
+                          <h3 className="text-2xl font-light text-black mb-3">Financial Terms</h3>
+                          <p className="text-gray-500 font-light text-base">Set up the financial aspects of the lease agreement</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -749,7 +626,7 @@ const Lease = () => {
                               id="autoRenew"
                               checked={newLease.autoRenew}
                               onChange={(e) => handleInputChange('autoRenew', e.target.checked)}
-                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                              className="rounded border-gray-300 text-gray-600 focus:ring-gray-500"
                             />
                             <Label htmlFor="autoRenew">Automatically renew lease when it expires</Label>
                           </div>
@@ -760,9 +637,9 @@ const Lease = () => {
                     {/* Step 3: Policies & Settings */}
                     {currentStep === 3 && (
                       <div className="space-y-6">
-                        <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Policies & Settings</h3>
-                          <p className="text-gray-600">Configure lease policies and property rules</p>
+                        <div className="text-center mb-8">
+                          <h3 className="text-2xl font-light text-black mb-3">Policies & Settings</h3>
+                          <p className="text-gray-500 font-light text-base">Configure lease policies and property rules</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -834,57 +711,108 @@ const Lease = () => {
                             rows={4}
                           />
                         </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="pdfDocument">Lease Document (PDF)</Label>
+                          <div className="space-y-2">
+                            {newLease.pdfDocument ? (
+                              <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                <FileText className="h-5 w-5 text-green-600" />
+                                <span className="text-sm font-medium text-green-800">{newLease.pdfDocument.name}</span>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setNewLease(prev => ({ ...prev, pdfDocument: null }))}
+                                  className="ml-auto h-6 px-2 text-red-600 hover:bg-red-50 border-red-200"
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                                <FileText className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                                <p className="text-sm text-gray-600 mb-2">Upload your lease document</p>
+                                <p className="text-xs text-gray-500 mb-4">PDF files only, max 10MB</p>
+                                <Input
+                                  id="pdfDocument"
+                                  type="file"
+                                  accept=".pdf"
+                                  onChange={handleFileUpload}
+                                  className="hidden"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() => document.getElementById('pdfDocument')?.click()}
+                                  className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                                >
+                                  Choose File
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     )}
 
                     {/* Step 4: Review & Submit */}
                     {currentStep === 4 && (
                       <div className="space-y-6">
-                        <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Review & Submit</h3>
-                          <p className="text-gray-600">Please review all the information before creating the lease</p>
+                        <div className="text-center mb-8">
+                          <h3 className="text-2xl font-light text-black mb-3">Review & Submit</h3>
+                          <p className="text-gray-500 font-light text-base">Please review all the information before creating the lease</p>
                         </div>
                         
-                        <div className="bg-gray-50 rounded-lg p-6 space-y-4">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <h4 className="font-semibold text-gray-900 mb-2">Basic Information</h4>
-                              <div className="space-y-1 text-sm text-gray-600">
-                                <p><span className="font-medium">Property:</span> {newLease.property}</p>
-                                <p><span className="font-medium">Tenant:</span> {newLease.tenant}</p>
-                                <p><span className="font-medium">Start Date:</span> {newLease.startDate}</p>
-                                <p><span className="font-medium">End Date:</span> {newLease.endDate}</p>
-                                <p><span className="font-medium">Lease Type:</span> {newLease.leaseType}</p>
+                        <div className="bg-gray-50 rounded-2xl p-6 space-y-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-white p-4 rounded-xl border border-gray-100">
+                              <h4 className="font-medium text-black mb-3 text-lg">Basic Information</h4>
+                              <div className="space-y-2 text-sm text-gray-600">
+                                <p><span className="font-medium text-gray-800">Property:</span> {newLease.property}</p>
+                                <p><span className="font-medium text-gray-800">Tenant:</span> {newLease.tenant}</p>
+                                <p><span className="font-medium text-gray-800">Start Date:</span> {newLease.startDate}</p>
+                                <p><span className="font-medium text-gray-800">End Date:</span> {newLease.endDate}</p>
+                                <p><span className="font-medium text-gray-800">Lease Type:</span> {newLease.leaseType}</p>
                               </div>
                             </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-900 mb-2">Financial Terms</h4>
-                              <div className="space-y-1 text-sm text-gray-600">
-                                                <p><span className="font-medium">Monthly Rent:</span> {formatCurrency(newLease.monthlyRent)}/month</p>
-                <p><span className="font-medium">Security Deposit:</span> {formatCurrency(newLease.deposit)}</p>
-                <p><span className="font-medium">Additional Deposit:</span> {newLease.securityDeposit ? formatCurrency(newLease.securityDeposit) : 'None'}</p>
-                <p><span className="font-medium">Late Fees:</span> {newLease.lateFees ? formatCurrency(newLease.lateFees) : 'None'}</p>
-                                <p><span className="font-medium">Auto-Renewal:</span> {newLease.autoRenew ? 'Yes' : 'No'}</p>
+                            <div className="bg-white p-4 rounded-xl border border-gray-100">
+                              <h4 className="font-medium text-black mb-3 text-lg">Financial Terms</h4>
+                              <div className="space-y-2 text-sm text-gray-600">
+                                <p><span className="font-medium text-gray-800">Monthly Rent:</span> {formatCurrency(Number(newLease.monthlyRent))}/month</p>
+                                <p><span className="font-medium text-gray-800">Security Deposit:</span> {formatCurrency(Number(newLease.deposit))}</p>
+                                <p><span className="font-medium text-gray-800">Additional Deposit:</span> {newLease.securityDeposit ? formatCurrency(Number(newLease.securityDeposit)) : 'None'}</p>
+                                <p><span className="font-medium text-gray-800">Late Fees:</span> {newLease.lateFees ? formatCurrency(Number(newLease.lateFees)) : 'None'}</p>
+                                <p><span className="font-medium text-gray-800">Auto-Renewal:</span> {newLease.autoRenew ? 'Yes' : 'No'}</p>
                               </div>
                             </div>
                           </div>
                           
-                          <div className="border-t pt-4">
-                            <h4 className="font-semibold text-gray-900 mb-2">Policies & Settings</h4>
-                            <div className="space-y-1 text-sm text-gray-600">
-                              <p><span className="font-medium">Utilities:</span> {newLease.utilities}</p>
-                              <p><span className="font-medium">Parking:</span> {newLease.parking}</p>
-                              <p><span className="font-medium">Pet Policy:</span> {newLease.petPolicy}</p>
-                              <p><span className="font-medium">Smoking Policy:</span> {newLease.smokingPolicy}</p>
-                              {newLease.notes && <p><span className="font-medium">Notes:</span> {newLease.notes}</p>}
+                          <div className="bg-white p-4 rounded-xl border border-gray-100">
+                            <h4 className="font-medium text-black mb-3 text-lg">Policies & Settings</h4>
+                            <div className="space-y-2 text-sm text-gray-600">
+                              <p><span className="font-medium text-gray-800">Utilities:</span> {newLease.utilities}</p>
+                              <p><span className="font-medium text-gray-800">Parking:</span> {newLease.parking}</p>
+                              <p><span className="font-medium text-gray-800">Pet Policy:</span> {newLease.petPolicy}</p>
+                              <p><span className="font-medium text-gray-800">Smoking Policy:</span> {newLease.smokingPolicy}</p>
+                              {newLease.notes && <p><span className="font-medium text-gray-800">Notes:</span> {newLease.notes}</p>}
                             </div>
                           </div>
+
+                          {newLease.pdfDocument && (
+                            <div className="bg-white p-4 rounded-xl border border-gray-100">
+                              <h4 className="font-medium text-black mb-3 text-lg">Documents</h4>
+                              <div className="space-y-2 text-sm text-gray-600">
+                                <p><span className="font-medium text-gray-800">Lease Document:</span> {newLease.pdfDocument.name}</p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
 
                     {/* Navigation Buttons */}
-                    <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+                    <div className="flex items-center justify-between pt-8 border-t border-gray-200">
                       <Button 
                         type="button" 
                         variant="outline" 
@@ -893,17 +821,19 @@ const Lease = () => {
                           setShowAddLeaseModal(false);
                         }}
                         disabled={isSubmitting}
+                        className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light rounded-xl px-6"
                       >
                         Cancel
                       </Button>
                       
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         {currentStep > 1 && (
                           <Button 
                             type="button" 
                             variant="outline" 
                             onClick={prevStep}
                             disabled={isSubmitting}
+                            className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light rounded-xl px-6"
                           >
                             Previous
                           </Button>
@@ -914,7 +844,7 @@ const Lease = () => {
                             type="button"
                             onClick={nextStep}
                             disabled={!canProceedToNext() || isSubmitting}
-                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                            className="bg-black hover:bg-gray-800 text-white font-light rounded-xl px-8 py-2"
                           >
                             Next
                           </Button>
@@ -922,7 +852,7 @@ const Lease = () => {
                           <Button 
                             type="submit"
                             disabled={isSubmitting}
-                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                            className="bg-black hover:bg-gray-800 text-white font-light rounded-xl px-8 py-2"
                           >
                             {isSubmitting ? (
                               <div className="flex items-center gap-2">
@@ -947,74 +877,257 @@ const Lease = () => {
         </div>
       </div>
 
+      {/* Tenant Options Modal */}
+      <Dialog open={showTenantOptionsModal} onOpenChange={setShowTenantOptionsModal}>
+        <DialogContent className="max-w-md rounded-3xl border border-gray-200 shadow-lg">
+          <DialogHeader className="pb-6">
+            <DialogTitle className="text-2xl font-light text-black mb-2">Add Tenant</DialogTitle>
+            <DialogDescription className="text-gray-600 text-base">
+              Choose how you'd like to add a tenant to this lease
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Button
+              onClick={() => handleTenantOptionSelect('manual')}
+              variant="outline"
+              className="w-full h-16 border-gray-200 text-gray-600 hover:bg-gray-50 font-light text-left justify-start px-4"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                  <User className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <div className="font-medium">Manual Entry</div>
+                  <div className="text-sm text-gray-500">Type tenant details manually</div>
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              onClick={() => handleTenantOptionSelect('invite')}
+              variant="outline"
+              className="w-full h-16 border-gray-200 text-gray-600 hover:bg-gray-50 font-light text-left justify-start px-4"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                  <Mail className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <div className="font-medium">Invite New Tenant</div>
+                  <div className="text-sm text-gray-500">Send invitation via email</div>
+                </div>
+              </div>
+            </Button>
+
+            <Button
+              onClick={() => handleTenantOptionSelect('existing')}
+              variant="outline"
+              className="w-full h-16 border-gray-200 text-gray-600 hover:bg-gray-50 font-light text-left justify-start px-4"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                  <Users className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <div className="font-medium">Select Existing Tenant</div>
+                  <div className="text-sm text-gray-500">Choose from your tenant list</div>
+                </div>
+              </div>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Invite Tenant Modal */}
+      <Dialog open={showInviteTenantModal} onOpenChange={setShowInviteTenantModal}>
+        <DialogContent className="max-w-md rounded-3xl border border-gray-200 shadow-lg">
+          <DialogHeader className="pb-6">
+            <DialogTitle className="text-2xl font-light text-black mb-2">Invite New Tenant</DialogTitle>
+            <DialogDescription className="text-gray-600 text-base">
+              Send an invitation to a new tenant
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="inviteName">Full Name</Label>
+              <Input
+                id="inviteName"
+                placeholder="e.g., John Smith"
+                value={tenantInvitation.name}
+                onChange={(e) => setTenantInvitation(prev => ({ ...prev, name: e.target.value }))}
+                className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="inviteEmail">Email Address</Label>
+              <Input
+                id="inviteEmail"
+                type="email"
+                placeholder="e.g., john@example.com"
+                value={tenantInvitation.email}
+                onChange={(e) => setTenantInvitation(prev => ({ ...prev, email: e.target.value }))}
+                className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="invitePhone">Phone Number</Label>
+              <Input
+                id="invitePhone"
+                placeholder="e.g., +1 (555) 123-4567"
+                value={tenantInvitation.phone}
+                onChange={(e) => setTenantInvitation(prev => ({ ...prev, phone: e.target.value }))}
+                className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
+              />
+            </div>
+            <div className="flex items-center gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowInviteTenantModal(false)}
+                className="flex-1 border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSendInvitation}
+                disabled={!tenantInvitation.name || !tenantInvitation.email}
+                className="flex-1 bg-black hover:bg-gray-800 text-white font-light"
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Send Invitation
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Existing Tenants Modal */}
+      {selectedTenantOption === 'existing' && (
+        <Dialog open={true} onOpenChange={() => setSelectedTenantOption(null)}>
+          <DialogContent className="max-w-2xl rounded-3xl border border-gray-200 shadow-lg">
+            <DialogHeader className="pb-6">
+              <DialogTitle className="text-2xl font-light text-black mb-2">Select Existing Tenant</DialogTitle>
+              <DialogDescription className="text-gray-600 text-base">
+                Choose a tenant from your existing list
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {existingTenants.length > 0 ? (
+                existingTenants.map((tenant) => (
+                  <div
+                    key={tenant.id}
+                    className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                        <User className="h-5 w-5 text-gray-600" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-black">{tenant.name}</div>
+                        <div className="text-sm text-gray-600">{tenant.email}</div>
+                        {tenant.property && (
+                          <div className="text-xs text-gray-500">Current: {tenant.property}</div>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => handleSelectExistingTenant(tenant)}
+                      variant="outline"
+                      size="sm"
+                      className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                    >
+                      Select
+                    </Button>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Users className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                  <p>No existing tenants found</p>
+                  <p className="text-sm">Try adding a tenant manually or inviting a new one</p>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center justify-center pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setSelectedTenantOption(null)}
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
+              >
+                Close
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
       {/* Modern Minimal Stats Cards */}
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md rounded-3xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
-                <FileCheck className="h-7 w-7 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 group-hover:from-gray-200 group-hover:to-gray-100 transition-colors duration-200 shadow-sm border border-gray-200/50">
+                <FileCheck className="h-7 w-7 text-black" />
               </div>
-              <div>
-                <p className="text-3xl font-light text-slate-900">{activeLeases}</p>
-                <p className="text-sm text-slate-600 font-medium">Active Leases</p>
-                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
-                  <TrendingUp className="h-3 w-3" />
-                  {Math.round((activeLeases / leases.length) * 100)}% of total
+              <div className="flex-1">
+                <p className="text-3xl font-extralight text-black mb-1">{activeLeases}</p>
+                <p className="text-sm text-gray-600 font-light mb-2">Active Leases</p>
+                <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <TrendingUp className="h-3 w-3 text-black" />
+                  <span className="font-light">{Math.round((activeLeases / Math.max(leases.length, 1)) * 100)}% of total</span>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md rounded-3xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
-                <DollarSign className="h-7 w-7 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 group-hover:from-gray-200 group-hover:to-gray-100 transition-colors duration-200 shadow-sm border border-gray-200/50">
+                <DollarSign className="h-7 w-7 text-black" />
               </div>
-              <div>
-                <p className="text-3xl font-light text-slate-900">{formatCurrency(totalMonthlyRent)}</p>
-                <p className="text-sm text-slate-600 font-medium">Monthly Rent</p>
-                <div className="flex items-center gap-1 text-xs text-blue-600 mt-1">
-                  <TrendingUp className="h-3 w-3" />
-                  Total monthly income
+              <div className="flex-1">
+                <p className="text-3xl font-extralight text-black mb-1">{formatCurrency(totalMonthlyRent)}</p>
+                <p className="text-sm text-gray-600 font-light mb-2">Monthly Rent</p>
+                <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <TrendingUp className="h-3 w-3 text-black" />
+                  <span className="font-light">Total monthly income</span>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md rounded-3xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
-                <Clock className="h-7 w-7 text-amber-600" />
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 group-hover:from-gray-200 group-hover:to-gray-100 transition-colors duration-200 shadow-sm border border-gray-200/50">
+                <Clock className="h-7 w-7 text-black" />
               </div>
-              <div>
-                <p className="text-3xl font-light text-slate-900">{expiringSoon}</p>
-                <p className="text-sm text-slate-600 font-medium">Expiring Soon</p>
-                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
-                  <AlertTriangle className="h-3 w-3" />
-                  Within 90 days
+              <div className="flex-1">
+                <p className="text-3xl font-extralight text-black mb-1">{expiringSoon}</p>
+                <p className="text-sm text-gray-600 font-light mb-2">Expiring Soon</p>
+                <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <AlertTriangle className="h-3 w-3 text-black" />
+                  <span className="font-light">Within 90 days</span>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
+        <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md rounded-3xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-red-50 group-hover:bg-red-100 transition-colors duration-200">
-                <FileX className="h-7 w-7 text-red-600" />
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 group-hover:from-gray-200 group-hover:to-gray-100 transition-colors duration-200 shadow-sm border border-gray-200/50">
+                <FileX className="h-7 w-7 text-black" />
               </div>
-              <div>
-                <p className="text-3xl font-light text-slate-900">{expiredLeases}</p>
-                <p className="text-sm text-slate-600 font-medium">Expired Leases</p>
-                <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
-                  <TrendingDown className="h-3 w-3" />
-                  Need attention
+              <div className="flex-1">
+                <p className="text-3xl font-extralight text-black mb-1">{expiredLeases}</p>
+                <p className="text-sm text-gray-600 font-light mb-2">Expired Leases</p>
+                <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <TrendingDown className="h-3 w-3 text-black" />
+                  <span className="font-light">Need attention</span>
                 </div>
               </div>
             </div>
@@ -1024,51 +1137,51 @@ const Lease = () => {
 
             {/* Modern Minimal Additional Stats */}
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <div className="text-center p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-3xl font-light text-slate-900 mb-2">{formatCurrency(totalDeposits)}</div>
-          <div className="text-sm text-slate-600 mb-1 font-medium">Security Deposits</div>
-          <div className="text-xs text-slate-500">Total held</div>
+        <div className="text-center p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group hover:border-gray-200">
+          <div className="text-3xl font-extralight text-black mb-2">{formatCurrency(totalDeposits)}</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Security Deposits</div>
+          <div className="text-xs text-gray-500 font-light">Total held</div>
         </div>
         
-        <div className="text-center p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-3xl font-light text-slate-900 mb-2">{avgTenantRating.toFixed(1)}</div>
-          <div className="text-sm text-slate-600 mb-1 font-medium">Avg. Rating</div>
-          <div className="text-xs text-slate-500">Lease status</div>
+        <div className="text-center p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group hover:border-gray-200">
+          <div className="text-3xl font-extralight text-black mb-2">{avgTenantRating.toFixed(1)}</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Avg. Rating</div>
+          <div className="text-xs text-gray-500 font-light">Lease status</div>
         </div>
         
-        <div className="text-center p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-3xl font-light text-slate-900 mb-2">{avgCommunicationScore.toFixed(0)}%</div>
-          <div className="text-sm text-slate-600 mb-1 font-medium">Communication</div>
-          <div className="text-xs text-slate-500">Response rate</div>
+        <div className="text-center p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group hover:border-gray-200">
+          <div className="text-3xl font-extralight text-black mb-2">{avgCommunicationScore.toFixed(0)}%</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Communication</div>
+          <div className="text-xs text-gray-500 font-light">Response rate</div>
         </div>
         
-        <div className="text-center p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="text-3xl font-light text-slate-900 mb-2">{formatCurrency(totalLateFees)}</div>
-          <div className="text-sm text-slate-600 mb-1 font-medium">Late Fees</div>
-          <div className="text-xs text-slate-500">This year</div>
+        <div className="text-center p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group hover:border-gray-200">
+          <div className="text-3xl font-extralight text-black mb-2">{formatCurrency(totalLateFees)}</div>
+          <div className="text-sm text-gray-600 mb-1 font-light">Late Fees</div>
+          <div className="text-xs text-gray-500 font-light">This year</div>
         </div>
       </div>
 
       {/* Modern Minimal Search and Filters */}
-      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200 rounded-3xl">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="search"
                   placeholder="Search by tenant, property, or lease ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-slate-200 focus:border-slate-400 focus:ring-slate-400 rounded-xl"
+                  className="pl-10 border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl font-light"
                 />
               </div>
             </div>
             
             <div className="w-full md:w-40">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="border-slate-200 rounded-xl">
+                <SelectTrigger className="border-gray-200 rounded-xl font-light">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1082,7 +1195,7 @@ const Lease = () => {
             
             <div className="w-full md:w-40">
               <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-                <SelectTrigger className="border-slate-200 rounded-xl">
+                <SelectTrigger className="border-gray-200 rounded-xl font-light">
                   <SelectValue placeholder="Property" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1097,7 +1210,7 @@ const Lease = () => {
 
             <div className="w-full md:w-40">
               <Select value={leaseTypeFilter} onValueChange={setLeaseTypeFilter}>
-                <SelectTrigger className="border-slate-200 rounded-xl">
+                <SelectTrigger className="border-gray-200 rounded-xl font-light">
                   <SelectValue placeholder="Lease Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1112,19 +1225,19 @@ const Lease = () => {
       </Card>
 
           {/* Modern Minimal Leases Table */}
-          <Card className="border-0 bg-white shadow-sm">
+          <Card className="border-0 bg-white shadow-sm rounded-3xl">
             <CardContent className="p-0">
-              <div className="rounded-2xl border border-slate-200 overflow-hidden">
+              <div className="rounded-3xl border border-gray-200 overflow-hidden">
             <Table>
-              <TableHeader className="bg-slate-50/50">
-                <TableRow className="border-slate-200">
-                  <TableHead className="font-medium text-slate-700 py-4">Lease ID</TableHead>
-                  <TableHead className="font-medium text-slate-700 py-4">Property & Tenant</TableHead>
-                  <TableHead className="font-medium text-slate-700 py-4">Lease Period</TableHead>
-                  <TableHead className="font-medium text-slate-700 py-4">Financial Details</TableHead>
-                  <TableHead className="font-medium text-slate-700 py-4">Status & Type</TableHead>
-                  <TableHead className="font-medium text-slate-700 py-4">Next Payment</TableHead>
-                  <TableHead className="font-medium text-slate-700 py-4">Actions</TableHead>
+              <TableHeader className="bg-gray-50/50">
+                <TableRow className="border-gray-200">
+                  <TableHead className="font-medium text-gray-700 py-4 font-light">Lease ID</TableHead>
+                  <TableHead className="font-medium text-gray-700 py-4 font-light">Property & Tenant</TableHead>
+                  <TableHead className="font-medium text-gray-700 py-4 font-light">Lease Period</TableHead>
+                  <TableHead className="font-medium text-gray-700 py-4 font-light">Financial Details</TableHead>
+                  <TableHead className="font-medium text-gray-700 py-4 font-light">Status & Type</TableHead>
+                  <TableHead className="font-medium text-gray-700 py-4 font-light">Next Payment</TableHead>
+                  <TableHead className="font-medium text-gray-700 py-4 font-light">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -1267,7 +1380,7 @@ const Lease = () => {
               </p>
               <Button 
                 onClick={() => setShowAddLeaseModal(true)}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                className="bg-black hover:bg-gray-800 text-white font-light shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Your First Lease
@@ -1280,8 +1393,8 @@ const Lease = () => {
       {/* Enhanced Quick Actions */}
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-orange-50 to-yellow-50 border-b border-orange-100">
-            <CardTitle className="flex items-center gap-2 text-orange-800">
+          <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+            <CardTitle className="flex items-center gap-2 text-black">
               <Calendar className="h-5 w-5" />
               Upcoming Renewals
             </CardTitle>
@@ -1297,17 +1410,17 @@ const Lease = () => {
                   return diffDays <= 90 && diffDays > 0;
                 })
                 .map((lease) => (
-                  <div key={lease.id} className="flex items-center justify-between p-4 border border-orange-200 rounded-lg bg-orange-50/50 hover:bg-orange-100/50 transition-colors duration-200">
+                  <div key={lease.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-gray-50/50 hover:bg-gray-100/50 transition-colors duration-200">
                     <div className="space-y-1">
                       <div className="font-medium text-gray-900">{lease.property}</div>
                       <div className="text-sm text-gray-600">
                         Expires: {new Date(lease.endDate).toLocaleDateString()}
                       </div>
-                      <div className="text-xs text-orange-600 font-medium">
+                      <div className="text-xs text-black font-medium">
                         {lease.daysRemaining} days remaining
                       </div>
                     </div>
-                    <Button size="sm" variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-100">
+                    <Button size="sm" variant="outline" className="border-black text-black hover:bg-gray-100">
                       <RefreshCw className="h-4 w-4 mr-1" />
                       Renew
                     </Button>
@@ -1315,7 +1428,7 @@ const Lease = () => {
                 ))}
               {expiringSoon === 0 && (
                 <div className="text-center py-8 text-gray-500">
-                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-black" />
                   <p>No leases expiring soon</p>
                   <p className="text-sm">All leases are in good standing</p>
                 </div>
@@ -1325,8 +1438,8 @@ const Lease = () => {
         </Card>
 
         <Card className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-red-50 to-pink-50 border-b border-red-100">
-            <CardTitle className="flex items-center gap-2 text-red-800">
+          <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+            <CardTitle className="flex items-center gap-2 text-black">
               <AlertTriangle className="h-5 w-5" />
               Attention Required
             </CardTitle>
@@ -1336,7 +1449,7 @@ const Lease = () => {
               {leases
                 .filter(lease => lease.latePayments > 0 || lease.status === 'expired')
                 .map((lease) => (
-                  <div key={lease.id} className="flex items-center justify-between p-4 border border-red-200 rounded-lg bg-red-50/50 hover:bg-red-100/50 transition-colors duration-200">
+                  <div key={lease.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-gray-50/50 hover:bg-gray-100/50 transition-colors duration-200">
                     <div className="space-y-1">
                       <div className="font-medium text-gray-900">{lease.property}</div>
                       <div className="text-sm text-gray-600">
@@ -1345,18 +1458,18 @@ const Lease = () => {
                           : 'Lease expired'
                         }
                       </div>
-                      <div className="text-xs text-red-600 font-medium">
+                      <div className="text-xs text-black font-medium">
                                                     {lease.latePayments > 0 ? `Late fees: ${formatCurrency(lease.lateFees)}` : 'Action required'}
                       </div>
                     </div>
-                    <Button size="sm" variant="destructive" className="hover:bg-red-700">
+                    <Button size="sm" variant="outline" className="border-black text-black hover:bg-gray-100">
                       {lease.latePayments > 0 ? 'Follow Up' : 'Renew'}
                     </Button>
                   </div>
                 ))}
               {leases.filter(lease => lease.latePayments > 0 || lease.status === 'expired').length === 0 && (
                 <div className="text-center py-8 text-gray-500">
-                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                  <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-black" />
                   <p>All leases are in good standing</p>
                   <p className="text-sm">No immediate action required</p>
                 </div>

@@ -35,198 +35,668 @@ import {
   Wrench,
   FileText,
   Settings,
-  MoreHorizontal
+  MoreHorizontal,
+  RefreshCw
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 const Dashboard = () => {
   const { profile } = useAuth();
   const { formatCurrency } = useCurrency();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  // State for dashboard data
+  const [dashboardStats, setDashboardStats] = useState({
+    totalProperties: 0,
+    activeTenants: 0,
+    monthlyRevenue: 0,
+    occupancyRate: 0,
+    averageRentPerProperty: 0,
+    totalPropertyValue: 0
+  });
+
+  // State for recent activity data
+  const [recentActivityData, setRecentActivityData] = useState<any[]>([]);
+
+  // State for upcoming tasks data
+  const [upcomingTasksData, setUpcomingTasksData] = useState<any[]>([]);
+
+  // Function to get total properties from localStorage
+  const getTotalProperties = () => {
+    try {
+      const savedProperties = localStorage.getItem('pms-properties');
+      if (savedProperties) {
+        const properties = JSON.parse(savedProperties);
+        return properties.length;
+      }
+    } catch (error) {
+      console.error('Error loading properties:', error);
+    }
+    return 0;
+  };
+
+  // Function to get active tenants from localStorage
+  const getActiveTenants = () => {
+    try {
+      const savedTenants = localStorage.getItem('pms-tenants');
+      if (savedTenants) {
+        const tenants = JSON.parse(savedTenants);
+        return tenants.filter((tenant: any) => tenant.status === 'active').length;
+      }
+    } catch (error) {
+      console.error('Error loading tenants:', error);
+    }
+    return 0;
+  };
+
+  // Function to get monthly revenue from localStorage
+  const getMonthlyRevenue = () => {
+    try {
+      const savedRentPayments = localStorage.getItem('pms-rent-payments');
+      if (savedRentPayments) {
+        const rentPayments = JSON.parse(savedRentPayments);
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+        
+        return rentPayments
+          .filter((payment: any) => {
+            const paymentDate = new Date(payment.date);
+            return payment.status === 'paid' && 
+                   paymentDate.getMonth() === currentMonth && 
+                   paymentDate.getFullYear() === currentYear;
+          })
+          .reduce((sum: number, payment: any) => sum + payment.amount + (payment.lateFees || 0), 0);
+      }
+    } catch (error) {
+      console.error('Error loading rent payments:', error);
+    }
+    return 0;
+  };
+
+  // Function to calculate occupancy rate
+  const getOccupancyRate = () => {
+    try {
+      const savedProperties = localStorage.getItem('pms-properties');
+      if (savedProperties) {
+        const properties = JSON.parse(savedProperties);
+        if (properties.length === 0) return 0;
+        
+        const totalUnits = properties.reduce((sum: number, prop: any) => sum + (prop.units || 0), 0);
+        const occupiedUnits = properties.reduce((sum: number, prop: any) => sum + (prop.occupiedUnits || 0), 0);
+        
+        return totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
+      }
+    } catch (error) {
+      console.error('Error calculating occupancy rate:', error);
+    }
+    return 0;
+  };
+
+  // Function to get average rent per property
+  const getAverageRentPerProperty = () => {
+    try {
+      const savedProperties = localStorage.getItem('pms-properties');
+      if (savedProperties) {
+        const properties = JSON.parse(savedProperties);
+        if (properties.length === 0) return 0;
+        
+        const totalRent = properties.reduce((sum: number, prop: any) => sum + (prop.monthlyRent || 0), 0);
+        return Math.round(totalRent / properties.length);
+      }
+    } catch (error) {
+      console.error('Error calculating average rent:', error);
+    }
+    return 0;
+  };
+
+  // Function to get total property value
+  const getTotalPropertyValue = () => {
+    try {
+      const savedProperties = localStorage.getItem('pms-properties');
+      if (savedProperties) {
+        const properties = JSON.parse(savedProperties);
+        return properties.reduce((sum: number, prop: any) => sum + (prop.propertyValue || 0), 0);
+      }
+    } catch (error) {
+      console.error('Error calculating total property value:', error);
+    }
+    return 0;
+  };
+
+  // Function to get recent rent payments
+  const getRecentRentPayments = () => {
+    try {
+      const savedPayments = localStorage.getItem('pms-rent-payments');
+      if (savedPayments) {
+        const payments = JSON.parse(savedPayments);
+        return payments
+          .filter((payment: any) => payment.status === 'paid')
+          .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .slice(0, 3);
+      }
+    } catch (error) {
+      console.error('Error loading rent payments:', error);
+    }
+    return [];
+  };
+
+  // Function to get recent maintenance requests
+  const getRecentMaintenanceRequests = () => {
+    try {
+      const savedMaintenance = localStorage.getItem('pms-maintenance-requests');
+      if (savedMaintenance) {
+        const maintenance = JSON.parse(savedMaintenance);
+        return maintenance
+          .sort((a: any, b: any) => new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime())
+          .slice(0, 2);
+      }
+    } catch (error) {
+      console.error('Error loading maintenance requests:', error);
+    }
+    return [];
+  };
+
+  // Function to get recent tenant activities
+  const getRecentTenantActivities = () => {
+    try {
+      const savedTenants = localStorage.getItem('pms-tenants');
+      if (savedTenants) {
+        const tenants = JSON.parse(savedTenants);
+        return tenants
+          .filter((tenant: any) => tenant.status === 'active')
+          .sort((a: any, b: any) => new Date(b.leaseStart || b.createdAt).getTime() - new Date(a.leaseStart || a.createdAt).getTime())
+          .slice(0, 2);
+      }
+    } catch (error) {
+      console.error('Error loading tenant activities:', error);
+    }
+    return [];
+  };
+
+  // Function to format time ago
+  const getTimeAgo = (dateString: string) => {
+    try {
+      if (!dateString) return 'Recently';
+      
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Recently';
+      
+      const now = new Date();
+      const diffInMs = now.getTime() - date.getTime();
+      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+      const diffInDays = Math.floor(diffInHours / 24);
+
+      if (diffInHours < 1) return 'Just now';
+      if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+      if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+      return date.toLocaleDateString();
+    } catch (error) {
+      console.error('Error formatting time ago:', error);
+      return 'Recently';
+    }
+  };
+
+  // Function to load and format recent activity data
+  const loadRecentActivityData = () => {
+    try {
+      const rentPayments = getRecentRentPayments();
+      const maintenanceRequests = getRecentMaintenanceRequests();
+      const tenantActivities = getRecentTenantActivities();
+
+      const activities: any[] = [];
+
+      // Add rent payment activities
+      rentPayments.forEach((payment: any) => {
+        if (payment && payment.date) {
+          activities.push({
+            type: 'payment',
+            message: `Rent payment received from ${payment.tenantName || 'Tenant'}`,
+            amount: formatCurrency((payment.amount || 0) + (payment.lateFees || 0)),
+            time: getTimeAgo(payment.date),
+            status: 'success',
+            property: payment.property || 'Property',
+            icon: CreditCard,
+            color: 'text-gray-600',
+            bgColor: 'bg-gray-50'
+          });
+        }
+      });
+
+      // Add maintenance request activities
+      maintenanceRequests.forEach((request: any) => {
+        if (request && (request.createdAt || request.date)) {
+          activities.push({
+            type: 'maintenance',
+            message: `Maintenance request - ${request.description || 'Issue reported'}`,
+            property: request.property || 'Property',
+            time: getTimeAgo(request.createdAt || request.date),
+            status: request.status === 'completed' ? 'success' : 'pending',
+            icon: Wrench,
+            color: 'text-gray-600',
+            bgColor: 'bg-gray-50'
+          });
+        }
+      });
+
+      // Add tenant activities
+      tenantActivities.forEach((tenant: any) => {
+        if (tenant && (tenant.leaseStart || tenant.createdAt)) {
+          activities.push({
+            type: 'lease',
+            message: `Lease ${tenant.leaseStatus === 'active' ? 'active' : 'signed'} for ${tenant.name || 'Tenant'}`,
+            property: tenant.property || 'Property',
+            time: getTimeAgo(tenant.leaseStart || tenant.createdAt),
+            status: 'success',
+            icon: FileText,
+            color: 'text-gray-600',
+            bgColor: 'bg-gray-50'
+          });
+        }
+      });
+
+      // Sort by time and take the most recent 4
+      const sortedActivities = activities
+        .sort((a, b) => {
+          const timeA = a.time && a.time.includes('ago') ? parseInt(a.time.split(' ')[0]) : 0;
+          const timeB = b.time && b.time.includes('ago') ? parseInt(b.time.split(' ')[0]) : 0;
+          return timeA - timeB;
+        })
+        .slice(0, 4);
+
+      setRecentActivityData(sortedActivities);
+    } catch (error) {
+      console.error('Error loading recent activity data:', error);
+      setRecentActivityData([]);
+    }
+  };
+
+  // Function to get upcoming inspections
+  const getUpcomingInspections = () => {
+    try {
+      const savedInspections = localStorage.getItem('pms-inspections');
+      if (savedInspections) {
+        const inspections = JSON.parse(savedInspections);
+        const now = new Date();
+        const thirtyDaysFromNow = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
+        
+        return inspections
+          .filter((inspection: any) => {
+            const scheduledDate = new Date(inspection.scheduledDate || inspection.nextInspection);
+            return scheduledDate >= now && scheduledDate <= thirtyDaysFromNow;
+          })
+          .sort((a: any, b: any) => new Date(a.scheduledDate || a.nextInspection).getTime() - new Date(b.scheduledDate || b.nextInspection).getTime())
+          .slice(0, 2);
+      }
+    } catch (error) {
+      console.error('Error loading inspections:', error);
+    }
+    return [];
+  };
+
+  // Function to get upcoming lease renewals
+  const getUpcomingLeaseRenewals = () => {
+    try {
+      const savedTenants = localStorage.getItem('pms-tenants');
+      if (savedTenants) {
+        const tenants = JSON.parse(savedTenants);
+        const now = new Date();
+        const ninetyDaysFromNow = new Date(now.getTime() + (90 * 24 * 60 * 60 * 1000));
+        
+        return tenants
+          .filter((tenant: any) => {
+            const leaseEnd = new Date(tenant.leaseEnd);
+            return leaseEnd >= now && leaseEnd <= ninetyDaysFromNow;
+          })
+          .sort((a: any, b: any) => new Date(a.leaseEnd).getTime() - new Date(b.leaseEnd).getTime())
+          .slice(0, 2);
+      }
+    } catch (error) {
+      console.error('Error loading lease renewals:', error);
+    }
+    return [];
+  };
+
+  // Function to get pending maintenance follow-ups
+  const getPendingMaintenanceFollowUps = () => {
+    try {
+      const savedMaintenance = localStorage.getItem('pms-maintenance-requests');
+      if (savedMaintenance) {
+        const maintenance = JSON.parse(savedMaintenance);
+        
+        return maintenance
+          .filter((request: any) => request.status === 'in_progress' || request.followUpRequired)
+          .sort((a: any, b: any) => new Date(a.createdAt || a.date).getTime() - new Date(b.createdAt || b.date).getTime())
+          .slice(0, 1);
+      }
+    } catch (error) {
+      console.error('Error loading maintenance follow-ups:', error);
+    }
+    return [];
+  };
+
+  // Function to load and format upcoming tasks data
+  const loadUpcomingTasksData = () => {
+    try {
+      const inspections = getUpcomingInspections();
+      const leaseRenewals = getUpcomingLeaseRenewals();
+      const maintenanceFollowUps = getPendingMaintenanceFollowUps();
+
+      const tasks: any[] = [];
+
+      // Add upcoming inspections
+      inspections.forEach((inspection: any) => {
+        if (inspection && (inspection.scheduledDate || inspection.nextInspection)) {
+          try {
+            const scheduledDate = new Date(inspection.scheduledDate || inspection.nextInspection);
+            if (!isNaN(scheduledDate.getTime())) {
+              const daysUntil = Math.ceil((scheduledDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+              
+              tasks.push({
+                task: `${inspection.type || 'Property'} inspection`,
+                property: inspection.property || 'Property',
+                date: daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil} days`,
+                priority: inspection.priority || 'medium',
+                icon: Eye,
+                color: 'text-gray-600',
+                bgColor: 'bg-gray-50'
+              });
+            }
+          } catch (dateError) {
+            console.error('Error processing inspection date:', dateError);
+          }
+        }
+      });
+
+      // Add lease renewal reminders
+      leaseRenewals.forEach((tenant: any) => {
+        if (tenant && tenant.leaseEnd) {
+          try {
+            const leaseEnd = new Date(tenant.leaseEnd);
+            if (!isNaN(leaseEnd.getTime())) {
+              const daysUntil = Math.ceil((leaseEnd.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+              
+              tasks.push({
+                task: 'Lease renewal reminder',
+                tenant: tenant.name || 'Tenant',
+                date: daysUntil === 0 ? 'Today' : daysUntil === 1 ? 'Tomorrow' : `${daysUntil} days`,
+                priority: daysUntil <= 30 ? 'high' : 'medium',
+                icon: Calendar,
+                color: 'text-gray-600',
+                bgColor: 'bg-gray-50'
+              });
+            }
+          } catch (dateError) {
+            console.error('Error processing lease end date:', dateError);
+          }
+        }
+      });
+
+      // Add maintenance follow-ups
+      maintenanceFollowUps.forEach((request: any) => {
+        if (request) {
+          tasks.push({
+            task: 'Maintenance follow-up',
+            property: request.property || 'Property',
+            date: 'Follow-up required',
+            priority: (request.urgencyScore && request.urgencyScore > 7) ? 'high' : 'medium',
+            icon: Wrench,
+            color: 'text-gray-600',
+            bgColor: 'bg-gray-50'
+          });
+        }
+      });
+
+      // Sort by priority and take the most important 3
+      const sortedTasks = tasks
+        .sort((a, b) => {
+          const priorityOrder = { high: 3, medium: 2, low: 1 };
+          return (priorityOrder[b.priority as keyof typeof priorityOrder] || 0) - (priorityOrder[a.priority as keyof typeof priorityOrder] || 0);
+        })
+        .slice(0, 3);
+
+      setUpcomingTasksData(sortedTasks);
+    } catch (error) {
+      console.error('Error loading upcoming tasks data:', error);
+      setUpcomingTasksData([]);
+    }
+  };
+
+  // Load dashboard data on component mount
+  useEffect(() => {
+    const loadDashboardData = () => {
+      const totalProperties = getTotalProperties();
+      const activeTenants = getActiveTenants();
+      const monthlyRevenue = getMonthlyRevenue();
+      const occupancyRate = getOccupancyRate();
+      const averageRentPerProperty = getAverageRentPerProperty();
+      const totalPropertyValue = getTotalPropertyValue();
+
+      setDashboardStats({
+        totalProperties,
+        activeTenants,
+        monthlyRevenue,
+        occupancyRate,
+        averageRentPerProperty,
+        totalPropertyValue
+      });
+
+      // Load recent activity data
+      loadRecentActivityData();
+
+      // Load upcoming tasks data
+      loadUpcomingTasksData();
+    };
+
+    loadDashboardData();
+  }, []);
+
+  // Refresh data when component comes into focus (user navigates back)
+  useEffect(() => {
+    const handleFocus = () => {
+      refreshDashboardData();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
+
+  // Function to refresh dashboard data
+  const refreshDashboardData = () => {
+    const totalProperties = getTotalProperties();
+    const activeTenants = getActiveTenants();
+    const monthlyRevenue = getMonthlyRevenue();
+    const occupancyRate = getOccupancyRate();
+    const averageRentPerProperty = getAverageRentPerProperty();
+    const totalPropertyValue = getTotalPropertyValue();
+
+    setDashboardStats({
+      totalProperties,
+      activeTenants,
+      monthlyRevenue,
+      occupancyRate,
+      averageRentPerProperty,
+      totalPropertyValue
+    });
+
+    // Refresh recent activity data
+    loadRecentActivityData();
+
+    // Refresh upcoming tasks data
+    loadUpcomingTasksData();
+
+    toast({
+      title: "Dashboard refreshed",
+      description: "All data has been updated with the latest information.",
+    });
+  };
+
+  // Redirect admin users to admin dashboard
+  useEffect(() => {
+    console.log('Dashboard: Profile loaded:', profile);
+    console.log('Dashboard: User role:', profile?.role);
+    console.log('Dashboard: Should redirect:', profile?.role === 'admin');
+    console.log('Dashboard: Current pathname:', window.location.pathname);
+    
+    if (profile?.role === 'admin') {
+      console.log('Dashboard: Redirecting to admin dashboard...');
+      navigate('/admin-dashboard', { replace: true });
+    }
+  }, [profile?.role, navigate]);
 
   const stats = [
     {
       title: 'Total Properties',
-      value: '12',
-      change: '+2 this month',
+      value: dashboardStats.totalProperties.toString(),
+      change: 'Properties managed',
       trend: 'up',
       icon: Building2,
-      color: 'blue',
-      progress: 85,
-      detail: '8 residential, 4 commercial'
+      progress: Math.min(dashboardStats.totalProperties * 10, 100),
+      detail: `${dashboardStats.totalProperties} properties in portfolio`
     },
     {
       title: 'Active Tenants',
-      value: '28',
-      change: '+3 this month',
+      value: dashboardStats.activeTenants.toString(),
+      change: 'Currently active',
       trend: 'up',
       icon: Users,
-      color: 'green',
-      progress: 94,
-      detail: '96% completion rate'
+      progress: Math.min(dashboardStats.activeTenants * 3, 100),
+      detail: `${dashboardStats.activeTenants} active tenants`
     },
     {
       title: 'Monthly Revenue',
-      value: formatCurrency(24580),
-      change: '+12% vs last month',
+      value: formatCurrency(dashboardStats.monthlyRevenue),
+      change: 'This month',
       trend: 'up',
       icon: DollarSign,
-      color: 'emerald',
-      progress: 78,
-      detail: `Target: ${formatCurrency(30000)}`
+      progress: Math.min((dashboardStats.monthlyRevenue / 50000) * 100, 100),
+      detail: `Revenue for ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
     },
     {
       title: 'Occupancy Rate',
-      value: '94%',
-      change: '+2% vs last month',
+      value: `${dashboardStats.occupancyRate}%`,
+      change: 'Current rate',
       trend: 'up',
       icon: TrendingUp,
-      color: 'purple',
-      progress: 94,
-      detail: '3 units available'
+      progress: dashboardStats.occupancyRate,
+      detail: `${dashboardStats.occupancyRate}% of units occupied`
     }
   ];
 
-  const recentActivity = [
-    {
-      type: 'payment',
-      message: 'Rent payment received from Sarah Johnson',
-      amount: formatCurrency(1200),
-      time: '2 hours ago',
-      status: 'success',
-      property: 'Oak Street Apartments #4B',
-      icon: CreditCard,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50'
-    },
-    {
-      type: 'maintenance',
-      message: 'Maintenance request - Kitchen faucet leak',
-      property: 'Oak Street Apartments #4B',
-      time: '4 hours ago',
-      status: 'pending',
-      icon: Wrench,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50'
-    },
-    {
-      type: 'lease',
-      message: 'Lease renewal signed by Mike Davis',
-      property: 'Downtown Loft #12',
-      time: '1 day ago',
-      status: 'success',
-      icon: FileText,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
-    },
-    {
-      type: 'application',
-      message: 'New rental application received',
-      property: 'Riverside Complex #8A',
-      time: '2 days ago',
-      status: 'review',
-      icon: Users,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
-    }
-  ];
 
-  const upcomingTasks = [
+
+  // Use dynamic upcoming tasks data instead of hardcoded
+  const upcomingTasks = upcomingTasksData.length > 0 ? upcomingTasksData : [
     {
-      task: 'Property inspection',
-      property: 'Oak Street Apartments',
-      date: 'Tomorrow, 10:00 AM',
-      priority: 'high',
-      icon: Eye,
-      color: 'text-red-600',
-      bgColor: 'bg-red-50'
-    },
-    {
-      task: 'Lease renewal reminder',
-      tenant: 'Emma Wilson',
-      date: 'Dec 15, 2024',
-      priority: 'medium',
-      icon: Calendar,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50'
-    },
-    {
-      task: 'Maintenance follow-up',
-      property: 'Downtown Loft #5',
-      date: 'Dec 18, 2024',
+      task: 'No upcoming tasks',
+      property: 'System',
+      date: 'All caught up!',
       priority: 'low',
-      icon: Wrench,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
+      icon: CheckCircle,
+      color: 'text-gray-500',
+      bgColor: 'bg-gray-100'
     }
   ];
+
+  // Quick action handlers
+  const handleAddProperty = () => {
+    navigate('/properties');
+    toast({
+      title: "Redirecting to Properties",
+      description: "You can add a new property from the Properties page.",
+    });
+  };
+
+  const handleAddTenant = () => {
+    navigate('/tenants');
+    toast({
+      title: "Redirecting to Tenants",
+      description: "You can add a new tenant from the Tenants page.",
+    });
+  };
+
+  const handleRecordPayment = () => {
+    navigate('/rent-collection');
+    toast({
+      title: "Redirecting to Rent Collection",
+      description: "You can record payments from the Rent Collection page.",
+    });
+  };
+
+  const handleScheduleInspection = () => {
+    navigate('/inspections');
+    toast({
+      title: "Redirecting to Property Inspections",
+      description: "You can schedule inspections from the Inspections page.",
+    });
+  };
 
   const quickActions = [
     {
       title: 'Add Property',
       icon: Building2,
       description: 'List new property',
-      color: 'from-blue-500 to-blue-600',
-      hoverColor: 'hover:from-blue-600 hover:to-blue-700'
+      onClick: handleAddProperty
     },
     {
       title: 'Add Tenant',
       icon: Users,
       description: 'Register new tenant',
-      color: 'from-green-500 to-green-600',
-      hoverColor: 'hover:from-green-600 hover:to-green-700'
+      onClick: handleAddTenant
     },
     {
       title: 'Record Payment',
       icon: DollarSign,
       description: 'Log rent payment',
-      color: 'from-emerald-500 to-emerald-600',
-      hoverColor: 'hover:from-emerald-600 hover:to-emerald-700'
+      onClick: handleRecordPayment
     },
     {
       title: 'Schedule Inspection',
       icon: Eye,
       description: 'Book property review',
-      color: 'from-purple-500 to-purple-600',
-      hoverColor: 'hover:from-purple-600 hover:to-purple-700'
+      onClick: handleScheduleInspection
     }
   ];
 
   const performanceMetrics = [
     {
-      label: 'Revenue Growth',
-      value: '+12.5%',
+      label: 'Collection Rate',
+      value: `${Math.round((dashboardStats.activeTenants / Math.max(dashboardStats.totalProperties, 1)) * 100)}%`,
       trend: 'up',
-      period: 'vs last month'
+      period: 'rent collection rate'
     },
     {
-      label: 'Expense Reduction',
-      value: '-8.2%',
-      trend: 'down',
-      period: 'vs last month'
-    },
-    {
-      label: 'Tenant Retention',
-      value: '96%',
+      label: 'Avg Rent per Unit',
+      value: dashboardStats.totalProperties > 0 ? formatCurrency(Math.round(dashboardStats.monthlyRevenue / Math.max(dashboardStats.totalProperties, 1))) : formatCurrency(0),
       trend: 'up',
-      period: 'current rate'
+      period: 'per property'
     },
     {
-      label: 'Maintenance Response',
-      value: '2.3 days',
+      label: 'Units Available',
+      value: `${Math.max(dashboardStats.totalProperties - dashboardStats.activeTenants, 0)}`,
       trend: 'down',
-      period: 'avg response time'
+      period: 'vacant units'
+    },
+    {
+      label: 'Revenue per Tenant',
+      value: dashboardStats.activeTenants > 0 ? formatCurrency(Math.round(dashboardStats.monthlyRevenue / Math.max(dashboardStats.activeTenants, 1))) : formatCurrency(0),
+      trend: 'up',
+      period: 'monthly average'
     }
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'success':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
       case 'review':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -235,11 +705,11 @@ const Dashboard = () => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
       case 'low':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
     }
@@ -247,13 +717,15 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8 p-1">
+
+      
       {/* Modern Minimal Welcome Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-gray-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 to-gray-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
             <div className="space-y-3">
-              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+              <h1 className="text-5xl font-extralight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight font-google-sans">
                 Welcome back, {profile?.first_name || 'Owner'}!
               </h1>
               <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
@@ -261,7 +733,7 @@ const Dashboard = () => {
               </p>
               <div className="flex items-center gap-6 pt-3">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                   <span className="font-medium">All systems operational</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -271,11 +743,32 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200">
+              {/* Admin Test Button */}
+              {profile?.role === 'admin' && (
+                <Button 
+                  onClick={() => navigate('/admin-dashboard')}
+                  className="bg-black hover:bg-gray-800 text-white font-light shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3"
+                >
+                  Go to Admin Dashboard
+                </Button>
+              )}
+              
+              <Button 
+                variant="outline" 
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light"
+                onClick={refreshDashboardData}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+              <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light">
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
-              <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
+              <Button 
+                onClick={handleAddProperty}
+                className="bg-black hover:bg-gray-800 text-white font-light shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Property
               </Button>
@@ -287,28 +780,28 @@ const Dashboard = () => {
       {/* Modern Minimal KPI Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
-          <Card key={index} className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
+          <Card key={index} className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md rounded-3xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-slate-600">
+              <CardTitle className="text-sm font-light text-gray-600">
                 {stat.title}
               </CardTitle>
-              <div className={`p-2 rounded-lg bg-${stat.color}-50 group-hover:bg-${stat.color}-100 transition-colors duration-200`}>
-                <stat.icon className={`h-5 w-5 text-${stat.color}-600`} />
+              <div className="p-2 rounded-lg bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <stat.icon className="h-5 w-5 text-gray-600" />
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="text-3xl font-light text-slate-900">{stat.value}</div>
+              <div className="text-3xl font-extralight text-black">{stat.value}</div>
               <div className="space-y-2">
                 <div className="flex items-center text-sm text-gray-600">
                   {stat.trend === 'up' ? (
-                    <TrendingUp className="h-4 w-4 text-green-600 mr-2" />
+                    <TrendingUp className="h-4 w-4 text-gray-600 mr-2" />
                   ) : (
-                    <TrendingDown className="h-4 w-4 text-red-600 mr-2" />
+                    <TrendingDown className="h-4 w-4 text-gray-600 mr-2" />
                   )}
                   <span className="font-medium">{stat.change}</span>
                 </div>
                 <div className="text-xs text-gray-500">{stat.detail}</div>
-                <Progress value={stat.progress} className="h-2" />
+                <Progress value={stat.progress} className="h-2 [&>div]:bg-black" />
               </div>
             </CardContent>
           </Card>
@@ -316,70 +809,93 @@ const Dashboard = () => {
       </div>
 
       {/* Modern Minimal Performance Metrics Row */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
         {performanceMetrics.map((metric, index) => (
-          <div key={index} className="text-center p-4 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-            <div className="text-2xl font-light text-slate-900 mb-1">{metric.value}</div>
-            <div className="text-sm text-slate-600 mb-1">{metric.label}</div>
-            <div className="text-xs text-slate-500">{metric.period}</div>
-            <div className="flex items-center justify-center mt-2">
+          <div key={index} className="text-center p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
+            <div className="text-3xl font-extralight text-black mb-2">{metric.value}</div>
+            <div className="text-sm font-light text-gray-600 mb-1">{metric.label}</div>
+            <div className="text-xs font-light text-gray-400">{metric.period}</div>
+            <div className="flex items-center justify-center mt-3">
               {metric.trend === 'up' ? (
-                <TrendingUp className="h-4 w-4 text-emerald-600" />
+                <TrendingUp className="h-4 w-4 text-gray-600" />
               ) : (
-                <TrendingDown className="h-4 w-4 text-red-600" />
+                <TrendingDown className="h-4 w-4 text-gray-600" />
               )}
             </div>
           </div>
         ))}
+        {/* Additional useful metric */}
+        <div className="text-center p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="text-3xl font-extralight text-black mb-2">
+            {dashboardStats.totalProperties > 0 ? Math.round((dashboardStats.activeTenants / dashboardStats.totalProperties) * 100) : 0}%
+          </div>
+          <div className="text-sm font-light text-gray-600 mb-1">Tenant Coverage</div>
+          <div className="text-xs font-light text-gray-400">properties with tenants</div>
+          <div className="flex items-center justify-center mt-3">
+            <TrendingUp className="h-4 w-4 text-gray-600" />
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Modern Minimal Recent Activity */}
-        <Card className="lg:col-span-2 border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
-          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
-            <CardTitle className="flex items-center gap-3 text-lg">
-              <div className="p-2 rounded-lg bg-slate-100">
-                <Bell className="h-5 w-5 text-slate-600" />
+        <Card className="lg:col-span-2 border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200 rounded-3xl">
+          <CardHeader className="border-b border-gray-100 bg-gray-50/50">
+            <CardTitle className="flex items-center gap-3 text-lg font-light">
+              <div className="p-2 rounded-lg bg-gray-100">
+                <Bell className="h-5 w-5 text-gray-600" />
               </div>
               Recent Activity
-              <Badge variant="secondary" className="ml-auto">28 items</Badge>
+              <Badge variant="secondary" className="ml-auto font-light">{recentActivityData.length} items</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="divide-y divide-slate-100">
-              {recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-start gap-4 p-4 hover:bg-slate-50/50 transition-colors duration-200">
-                  <div className={`p-2 rounded-lg ${activity.bgColor} ${activity.color}`}>
-                    <activity.icon className="h-4 w-4" />
-                  </div>
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <p className="text-sm font-medium text-slate-900">
-                      {activity.message}
-                    </p>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <MapPin className="h-3 w-3" />
-                      <span>{activity.property}</span>
+            <div className="divide-y divide-gray-100">
+              {recentActivityData.length > 0 ? (
+                recentActivityData.map((activity, index) => (
+                  <div key={index} className="flex items-start gap-4 p-4 hover:bg-gray-50/50 transition-colors duration-200">
+                    <div className={`p-2 rounded-lg ${activity.bgColor} ${activity.color}`}>
+                      <activity.icon className="h-4 w-4" />
                     </div>
-                    {activity.amount && (
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-emerald-600">{activity.amount}</span>
-                        <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-xs">
-                          Payment
-                        </Badge>
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <p className="text-sm font-light text-black">
+                        {activity.message}
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <MapPin className="h-3 w-3" />
+                        <span>{activity.property}</span>
                       </div>
-                    )}
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <span className="text-xs text-slate-500">{activity.time}</span>
-                    <Badge className={getStatusColor(activity.status)}>
-                      {activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
+                      {activity.amount && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-semibold text-gray-600">{activity.amount}</span>
+                          <Badge className="bg-gray-100 text-gray-800 border-gray-200 text-xs">
+                            Payment
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <span className="text-xs text-gray-500">{activity.time}</span>
+                                          <Badge className={getStatusColor(activity.status)}>
+                      {activity.status ? activity.status.charAt(0).toUpperCase() + activity.status.slice(1) : 'Info'}
                     </Badge>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center justify-center p-8 text-center">
+                  <div className="space-y-3">
+                    <Clock className="h-12 w-12 text-gray-300 mx-auto" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">No recent activity</p>
+                      <p className="text-xs text-gray-400">Activities will appear here as they happen</p>
+                    </div>
                   </div>
                 </div>
-              ))}
+              )}
             </div>
-            <div className="p-4 border-t border-slate-100 bg-slate-50/30">
-              <Button variant="ghost" className="w-full text-slate-600 hover:text-slate-700 hover:bg-slate-50">
+            <div className="p-4 border-t border-gray-100 bg-gray-50/30">
+              <Button variant="ghost" className="w-full text-gray-600 hover:text-black hover:bg-gray-50 font-light">
                 View All Activity
                 <ArrowUpRight className="h-4 w-4 ml-2" />
               </Button>
@@ -388,54 +904,66 @@ const Dashboard = () => {
         </Card>
 
         {/* Modern Minimal Upcoming Tasks */}
-        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
-          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
-            <CardTitle className="flex items-center gap-3 text-lg">
-              <div className="p-2 rounded-lg bg-slate-100">
-                <Calendar className="h-5 w-5 text-slate-600" />
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200 rounded-3xl">
+          <CardHeader className="border-b border-gray-100 bg-gray-50/50">
+            <CardTitle className="flex items-center gap-3 text-lg font-light">
+              <div className="p-2 rounded-lg bg-gray-100">
+                <Calendar className="h-5 w-5 text-gray-600" />
               </div>
               Upcoming Tasks
-              <Badge variant="secondary" className="ml-auto">3 pending</Badge>
+              <Badge variant="secondary" className="ml-auto font-light">{upcomingTasksData.length} pending</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-gray-100">
-              {upcomingTasks.map((task, index) => (
-                <div key={index} className="p-4 hover:bg-gray-50/50 transition-colors duration-200">
-                  <div className="flex items-start gap-3">
-                    <div className={`p-2 rounded-lg ${task.bgColor} ${task.color}`}>
-                      <task.icon className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1 min-w-0 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium text-gray-900">{task.task}</p>
-                        <Badge className={`text-xs ${getPriorityColor(task.priority)}`}>
-                          {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                        </Badge>
+              {upcomingTasksData.length > 0 ? (
+                upcomingTasksData.map((task, index) => (
+                  <div key={index} className="p-4 hover:bg-gray-50/50 transition-colors duration-200">
+                    <div className="flex items-start gap-3">
+                      <div className={`p-2 rounded-lg ${task.bgColor} ${task.color}`}>
+                        <task.icon className="h-4 w-4" />
                       </div>
-                      {task.property && (
-                        <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <Building2 className="h-3 w-3" />
-                          <span>{task.property}</span>
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-light text-black">{task.task}</p>
+                          <Badge className={`text-xs ${getPriorityColor(task.priority)}`}>
+                            {task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Low'}
+                          </Badge>
                         </div>
-                      )}
-                      {task.tenant && (
+                        {task.property && (
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                            <Building2 className="h-3 w-3" />
+                            <span>{task.property}</span>
+                          </div>
+                        )}
+                        {task.tenant && (
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <Users className="h-3 w-3" />
+                            <span>{task.tenant}</span>
+                          </div>
+                        )}
                         <div className="flex items-center gap-1 text-xs text-gray-500">
-                          <Users className="h-3 w-3" />
-                          <span>{task.tenant}</span>
+                          <Clock className="h-3 w-3" />
+                          <span>{task.date}</span>
                         </div>
-                      )}
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
-                        <Clock className="h-3 w-3" />
-                        <span>{task.date}</span>
                       </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="flex items-center justify-center p-8 text-center">
+                  <div className="space-y-3">
+                    <CheckCircle className="h-12 w-12 text-gray-300 mx-auto" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-600">No upcoming tasks</p>
+                      <p className="text-xs text-gray-400">You're all caught up!</p>
+                    </div>
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
             <div className="p-4 border-t border-gray-100 bg-gray-50/30">
-              <Button variant="ghost" className="w-full text-purple-600 hover:text-purple-700 hover:bg-purple-50">
+              <Button variant="ghost" className="w-full text-gray-600 hover:text-black hover:bg-gray-50 font-light">
                 View All Tasks
                 <ArrowUpRight className="h-4 w-4 ml-2" />
               </Button>
@@ -445,14 +973,14 @@ const Dashboard = () => {
       </div>
 
       {/* Enhanced Quick Actions */}
-      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
-        <CardHeader className="border-b border-slate-100 bg-slate-50/50">
-          <CardTitle className="flex items-center gap-3 text-lg">
-            <div className="p-2 rounded-lg bg-slate-100">
-              <Zap className="h-5 w-5 text-slate-600" />
+      <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200 rounded-3xl">
+        <CardHeader className="border-b border-gray-100 bg-gray-50/50">
+          <CardTitle className="flex items-center gap-3 text-lg font-light">
+            <div className="p-2 rounded-lg bg-gray-100">
+              <Zap className="h-5 w-5 text-gray-600" />
             </div>
             Quick Actions
-            <span className="text-sm font-normal text-slate-500 ml-auto">Frequently used tools</span>
+            <span className="text-sm font-light text-gray-500 ml-auto">Frequently used tools</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
@@ -461,12 +989,13 @@ const Dashboard = () => {
               <Button
                 key={index}
                 variant="outline"
-                className="h-24 flex-col gap-3 bg-slate-900 hover:bg-slate-800 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                onClick={action.onClick}
+                className="h-24 flex-col gap-3 bg-black hover:bg-gray-800 text-white border-0 shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 rounded-2xl font-light cursor-pointer"
               >
                 <action.icon className="h-6 w-6" />
                 <div className="text-center">
-                  <div className="font-medium text-sm">{action.title}</div>
-                  <div className="text-xs opacity-90">{action.description}</div>
+                  <div className="font-light text-sm">{action.title}</div>
+                  <div className="text-xs opacity-90 font-light">{action.description}</div>
                 </div>
               </Button>
             ))}
@@ -477,11 +1006,11 @@ const Dashboard = () => {
       {/* Modern Minimal Additional Dashboard Widgets */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Property Overview */}
-        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
-          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
-            <CardTitle className="flex items-center gap-3 text-lg">
-              <div className="p-2 rounded-lg bg-slate-100">
-                <Home className="h-5 w-5 text-slate-600" />
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200 rounded-3xl">
+          <CardHeader className="border-b border-gray-100 bg-gray-50/50">
+            <CardTitle className="flex items-center gap-3 text-lg font-light">
+              <div className="p-2 rounded-lg bg-gray-100">
+                <Home className="h-5 w-5 text-gray-600" />
               </div>
               Property Overview
             </CardTitle>
@@ -489,31 +1018,31 @@ const Dashboard = () => {
           <CardContent className="p-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600">Residential Properties</span>
-                <span className="font-semibold">8 units</span>
+                <span className="text-sm font-light text-gray-600">Total Properties</span>
+                <span className="font-light">{dashboardStats.totalProperties} properties</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600">Commercial Properties</span>
-                <span className="font-semibold">4 units</span>
+                <span className="text-sm font-light text-gray-600">Total Value</span>
+                <span className="font-light text-gray-600">{formatCurrency(dashboardStats.totalPropertyValue)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600">Total Value</span>
-                                    <span className="font-semibold text-emerald-600">{formatCurrency(2400000)}</span>
+                <span className="text-sm font-light text-gray-600">Avg Rent/Property</span>
+                <span className="font-light text-gray-600">{formatCurrency(dashboardStats.averageRentPerProperty)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600">Average Rent</span>
-                                    <span className="font-semibold">{formatCurrency(1850)}</span>
+                <span className="text-sm font-light text-gray-600">Occupancy Rate</span>
+                <span className="font-light">{dashboardStats.occupancyRate}%</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* System Status */}
-        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
-          <CardHeader className="border-b border-slate-100 bg-slate-50/50">
-            <CardTitle className="flex items-center gap-3 text-lg">
-              <div className="p-2 rounded-lg bg-slate-100">
-                <Shield className="h-5 w-5 text-slate-600" />
+        <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200 rounded-3xl">
+          <CardHeader className="border-b border-gray-100 bg-gray-50/50">
+            <CardTitle className="flex items-center gap-3 text-lg font-light">
+              <div className="p-2 rounded-lg bg-gray-100">
+                <Shield className="h-5 w-5 text-gray-600" />
               </div>
               System Status
             </CardTitle>
@@ -521,29 +1050,29 @@ const Dashboard = () => {
           <CardContent className="p-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600">Database</span>
+                <span className="text-sm font-light text-gray-600">Database</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                  <span className="text-sm text-emerald-600">Online</span>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                  <span className="text-sm font-light text-gray-600">Online</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600">API Services</span>
+                <span className="text-sm font-light text-gray-600">API Services</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                  <span className="text-sm text-emerald-600">Online</span>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                  <span className="text-sm font-light text-gray-600">Online</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600">Payment Gateway</span>
+                <span className="text-sm font-light text-gray-600">Payment Gateway</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                  <span className="text-sm text-emerald-600">Online</span>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                  <span className="text-sm font-light text-gray-600">Online</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-600">Last Backup</span>
-                <span className="text-sm text-slate-600">2 hours ago</span>
+                <span className="text-sm font-light text-gray-600">Last Backup</span>
+                <span className="text-sm font-light text-gray-600">2 hours ago</span>
               </div>
             </div>
           </CardContent>

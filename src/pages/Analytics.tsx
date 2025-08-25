@@ -96,12 +96,7 @@ const Analytics = () => {
     { month: 'Dec', revenue: 125000, expenses: 32000, occupancy: 95, roi: 20.8 }
   ];
 
-  const propertyPerformance = [
-    { property: 'Oak Street Apartments', revenue: 48000, expenses: 12000, roi: 22.5, occupancy: 96, trend: 'up', change: '+2.1%' },
-    { property: 'Downtown Lofts', revenue: 36000, expenses: 8500, roi: 19.8, occupancy: 92, trend: 'up', change: '+1.5%' },
-    { property: 'Riverside Complex', revenue: 28000, expenses: 7200, roi: 18.1, occupancy: 88, trend: 'down', change: '-0.8%' },
-    { property: 'Suburban Homes', revenue: 13000, expenses: 4300, roi: 15.2, occupancy: 94, trend: 'up', change: '+3.2%' }
-  ];
+  const propertyPerformance: any[] = [];
 
   const expenseBreakdown = [
     { category: 'Maintenance', amount: 18500, percentage: 35.2, trend: 'up', icon: Wrench, color: 'text-red-600', bgColor: 'bg-red-50' },
@@ -162,6 +157,8 @@ const Analytics = () => {
 
   return (
     <div className="space-y-8 p-1">
+
+      
       {/* Modern Minimal Header */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>

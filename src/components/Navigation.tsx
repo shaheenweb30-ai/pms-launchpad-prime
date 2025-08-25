@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Building2, Menu, X, User, LogOut, ChevronDown } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 const Navigation = () => {
-  const { t } = useTranslation();
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -62,30 +60,24 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            <button 
-              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+            <a 
+              href="#features"
               className="text-[#a5afbe] hover:text-[#ed1c24] transition-colors duration-300 font-medium rounded-full px-4 py-2 hover:bg-[#f8f9fa]"
             >
               Features
-            </button>
-            <button 
-              onClick={() => document.getElementById('benefits')?.scrollIntoView({ behavior: 'smooth' })}
+            </a>
+            <a 
+              href="#testimonials"
               className="text-[#a5afbe] hover:text-[#ed1c24] transition-colors duration-300 font-medium rounded-full px-4 py-2 hover:bg-[#f8f9fa]"
             >
-              Benefits
-            </button>
-            <button 
-              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+              Testimonials
+            </a>
+            <Link 
+              to="/create-users"
               className="text-[#a5afbe] hover:text-[#ed1c24] transition-colors duration-300 font-medium rounded-full px-4 py-2 hover:bg-[#f8f9fa]"
             >
-              Pricing
-            </button>
-            <button 
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-              className="text-[#a5afbe] hover:text-[#ed1c24] transition-colors duration-300 font-medium rounded-full px-4 py-2 hover:bg-[#f8f9fa]"
-            >
-              Contact
-            </button>
+              Setup Users
+            </Link>
           </div>
 
           {/* Desktop Auth Buttons */}
@@ -110,7 +102,6 @@ const Navigation = () => {
                 {/* Profile Dropdown */}
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-[#a5afbe]/20 py-2 z-50">
-
                     <button
                       onClick={() => {
                         handleSignOut();
@@ -131,9 +122,9 @@ const Navigation = () => {
                     Sign In
                   </Button>
                 </Link>
-                <Link to="/demo">
+                <Link to="/signup">
                   <Button className="bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-full">
-                    Get Demo
+                    Sign Up
                   </Button>
                 </Link>
               </>
@@ -153,42 +144,27 @@ const Navigation = () => {
         {isMenuOpen && (
           <div className="lg:hidden border-t border-[#a5afbe]/20 bg-white/95 backdrop-blur-sm">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <button 
-                onClick={() => {
-                  document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-                  closeMenu();
-                }}
+              <a 
+                href="#features"
+                onClick={closeMenu}
                 className="block w-full text-left px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
               >
                 Features
-              </button>
-              <button 
-                onClick={() => {
-                  document.getElementById('benefits')?.scrollIntoView({ behavior: 'smooth' });
-                  closeMenu();
-                }}
+              </a>
+              <a 
+                href="#testimonials"
+                onClick={closeMenu}
                 className="block w-full text-left px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
               >
-                Benefits
-              </button>
-              <button 
-                onClick={() => {
-                  document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
-                  closeMenu();
-                }}
+                Testimonials
+              </a>
+              <Link 
+                to="/create-users"
+                onClick={closeMenu}
                 className="block w-full text-left px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
               >
-                Pricing
-              </button>
-              <button 
-                onClick={() => {
-                  document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-                  closeMenu();
-                }}
-                className="block w-full text-left px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
-              >
-                Contact
-              </button>
+                Setup Users
+              </Link>
               
               {/* Mobile Auth Section */}
               <div className="pt-4 border-t border-[#a5afbe]/20">
@@ -213,7 +189,6 @@ const Navigation = () => {
                       {/* Mobile Profile Dropdown */}
                       {isProfileDropdownOpen && (
                         <div className="mt-2 ml-4 bg-[#f8f9fa] rounded-lg py-2">
-
                           <button
                             onClick={() => {
                               handleSignOut();
@@ -236,9 +211,9 @@ const Navigation = () => {
                         Sign In
                       </Button>
                     </Link>
-                    <Link to="/demo" onClick={closeMenu}>
+                    <Link to="/signup" onClick={closeMenu}>
                       <Button className="w-full bg-gradient-to-r from-[#ed1c24] to-[#225fac] hover:from-[#d41920] hover:to-[#1e4f9a] text-white rounded-full">
-                        Get Demo
+                        Sign Up
                       </Button>
                     </Link>
                   </div>

@@ -67,8 +67,7 @@ import {
 
 const Tenants = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [paymentFilter, setPaymentFilter] = useState('all');
+
   const [propertyFilter, setPropertyFilter] = useState('all');
   const [showAddTenantModal, setShowAddTenantModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,9 +90,7 @@ const Tenants = () => {
     leaseStart: '',
     leaseEnd: '',
     paymentDue: '',
-    status: 'active',
-    paymentStatus: 'current',
-    paymentHistory: 'good',
+
     emergencyContact: '',
     emergencyPhone: '',
     pets: 'no',
@@ -111,23 +108,38 @@ const Tenants = () => {
     const matchesSearch = tenant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          tenant.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          tenant.property.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || tenant.status === statusFilter;
-    const matchesPayment = paymentFilter === 'all' || tenant.paymentStatus === paymentFilter;
     const matchesProperty = propertyFilter === 'all' || tenant.property === propertyFilter;
     
-    return matchesSearch && matchesStatus && matchesPayment && matchesProperty;
+    return matchesSearch && matchesProperty;
   });
 
   const totalTenants = tenants.length;
-  const activeTenants = tenants.filter(t => t.status === 'active').length;
-  const lateTenants = tenants.filter(t => t.paymentStatus === 'late' || t.paymentStatus === 'overdue').length;
-  const expiringLeases = tenants.filter(t => t.status === 'expiring').length;
+  const activeTenants = tenants.length; // All tenants are considered active
+  const lateTenants = 0; // No payment status tracking
+  const expiringLeases = 0; // No status tracking
   const totalMonthlyRent = tenants.reduce((sum, t) => sum + t.rent, 0);
   const avgTenantRating = tenants.reduce((sum, t) => sum + t.tenantRating, 0) / tenants.length;
   const totalLatePayments = tenants.reduce((sum, t) => sum + t.latePayments, 0);
-  const avgCommunicationScore = tenants.reduce((sum, t) => sum + t.communicationScore, 0) / tenants.length;
+  
   
   const [properties, setProperties] = useState<string[]>(['All Properties']);
+
+  // Manual refresh function
+  const refreshTenants = () => {
+    const savedTenants = localStorage.getItem('pms-tenants');
+    
+    if (savedTenants) {
+      try {
+        const parsedTenants = JSON.parse(savedTenants);
+        setTenants(parsedTenants);
+      } catch (error) {
+        console.error('Error parsing saved tenants:', error);
+        setTenants([]);
+      }
+    } else {
+      setTenants([]);
+    }
+  };
 
   // Load properties from localStorage on component mount
   useEffect(() => {
@@ -169,12 +181,13 @@ const Tenants = () => {
   useEffect(() => {
     const loadTenants = () => {
       const savedTenants = localStorage.getItem('pms-tenants');
+      
       if (savedTenants) {
         try {
           const parsedTenants = JSON.parse(savedTenants);
           setTenants(parsedTenants);
         } catch (error) {
-          console.error('Error parsing saved tenants:', error);
+          console.error('Error parsing initial tenants:', error);
           setTenants([]);
         }
       } else {
@@ -183,6 +196,27 @@ const Tenants = () => {
     };
     
     loadTenants();
+    
+    // Listen for storage changes to refresh tenants when they're updated elsewhere
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'pms-tenants') {
+        loadTenants();
+      }
+    };
+    
+    // Listen for custom tenant added events
+    const handleTenantAdded = (e: CustomEvent) => {
+      loadTenants();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('tenantAdded', handleTenantAdded as EventListener);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('tenantAdded', handleTenantAdded as EventListener);
+    };
   }, []);
 
   // Tenant Analytics Data
@@ -194,19 +228,19 @@ const Tenants = () => {
       expiringLeases,
       totalMonthlyRent,
       avgTenantRating,
-      avgCommunicationScore,
+
       totalLatePayments
     },
     paymentAnalysis: {
-      currentPayments: tenants.filter(t => t.paymentStatus === 'current').length,
-      latePayments: tenants.filter(t => t.paymentStatus === 'late').length,
-      overduePayments: tenants.filter(t => t.paymentStatus === 'overdue').length,
+      currentPayments: totalTenants, // All tenants are considered current
+      latePayments: 0, // No payment status tracking
+      overduePayments: 0, // No payment status tracking
       totalCollected: tenants.reduce((sum, t) => sum + t.totalPaid, 0),
       averageRent: totalMonthlyRent / totalTenants,
-      rentCollectionRate: ((totalTenants - lateTenants) / totalTenants) * 100
+      rentCollectionRate: 100 // All tenants are considered current
     },
     leaseAnalysis: {
-      activeLeases: tenants.filter(t => t.status === 'active').length,
+      activeLeases: totalTenants, // All tenants are considered active
       expiringSoon: tenants.filter(t => t.leaseDaysRemaining <= 90 && t.leaseDaysRemaining > 0).length,
       expiredLeases: tenants.filter(t => t.leaseDaysRemaining <= 0).length,
       averageLeaseDuration: tenants.reduce((sum, t) => {
@@ -214,7 +248,7 @@ const Tenants = () => {
         const end = new Date(t.leaseEnd);
         return sum + Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
       }, 0) / totalTenants,
-      renewalRate: 85 // Mock data - could be calculated from historical data
+      renewalRate: 0 // No historical data available yet
     },
     performanceMetrics: {
       topPerformers: tenants
@@ -225,9 +259,7 @@ const Tenants = () => {
         .filter(t => t.paymentStatus === 'overdue' || t.leaseDaysRemaining <= 30)
         .sort((a, b) => a.leaseDaysRemaining - b.leaseDaysRemaining)
         .slice(0, 3),
-      communicationLeaders: tenants
-        .sort((a, b) => b.communicationScore - a.communicationScore)
-        .slice(0, 3)
+
     },
     propertyDistribution: {
       byProperty: properties.slice(1).map(property => ({
@@ -238,9 +270,7 @@ const Tenants = () => {
                   tenants.filter(t => t.property === property).length || 0
       })).filter(property => property.tenantCount > 0), // Only show properties with tenants
       byStatus: [
-        { status: 'Active', count: activeTenants, color: 'bg-green-500' },
-        { status: 'Expiring Soon', count: expiringLeases, color: 'bg-orange-500' },
-        { status: 'Late Payments', count: lateTenants, color: 'bg-red-500' }
+        { status: 'Active', count: totalTenants, color: 'bg-green-500' }
       ]
     }
   };
@@ -290,6 +320,16 @@ const Tenants = () => {
     return 'Active';
   };
 
+  const calculateTotalPaid = (tenant: any) => {
+    // Calculate total paid based on rent history or use the stored value
+    if (tenant.rentHistory && tenant.rentHistory.length > 0) {
+      return tenant.rentHistory
+        .filter((payment: any) => payment.status === 'paid')
+        .reduce((sum: number, payment: any) => sum + (payment.amount || 0), 0);
+    }
+    return tenant.totalPaid || 0;
+  };
+
   const getLeaseStatusBadge = (daysRemaining: number) => {
     if (daysRemaining <= 0) return 'bg-red-100 text-red-800 border-red-200';
     if (daysRemaining <= 30) return 'bg-red-100 text-red-800 border-red-200';
@@ -313,9 +353,7 @@ const Tenants = () => {
       leaseStart: '',
       leaseEnd: '',
       paymentDue: '',
-      status: 'active',
-      paymentStatus: 'current',
-      paymentHistory: 'good',
+
       emergencyContact: '',
       emergencyPhone: '',
       pets: 'no',
@@ -382,7 +420,7 @@ const Tenants = () => {
         `Expiring Leases: ${expiringLeases}`,
         `Total Monthly Rent: $${totalMonthlyRent.toLocaleString()}`,
         `Average Tenant Rating: ${avgTenantRating.toFixed(1)}/5.0`,
-        `Average Communication Score: ${avgCommunicationScore.toFixed(0)}%`,
+
         `Total Late Payments This Year: ${totalLatePayments}`
       ];
       
@@ -461,7 +499,7 @@ const Tenants = () => {
         xPosition += columnWidths[3];
         
         // Status
-        pdf.text(tenant.status, xPosition, yPosition);
+        pdf.text('Active', xPosition, yPosition);
         xPosition += columnWidths[4];
         
         // Rating
@@ -553,7 +591,7 @@ const Tenants = () => {
         id: Date.now(), // Simple ID generation
         ...newTenant,
         avatar: '/placeholder.svg',
-        paymentHistory: newTenant.paymentHistory || 'good',
+
         maintenanceRequests: 0,
         tenantRating: 5.0, // Default rating for new tenants
         leaseDaysRemaining: newTenant.leaseStart && newTenant.leaseEnd ? 
@@ -562,31 +600,12 @@ const Tenants = () => {
         nextPayment: newTenant.paymentDue || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         totalPaid: 0,
         latePayments: 0,
-        communicationScore: 100, // Default communication score
+
         propertyValue: 0,
         monthlyExpenses: 0
       };
       
-      // Calculate payment status based on payment due date
-      const today = new Date();
-      const paymentDueDate = new Date(newTenant.paymentDue);
-      let calculatedPaymentStatus = 'current';
-      
-      if (newTenant.paymentDue) {
-        if (today > paymentDueDate) {
-          const daysLate = Math.ceil((today.getTime() - paymentDueDate.getTime()) / (1000 * 60 * 60 * 24));
-          if (daysLate > 30) {
-            calculatedPaymentStatus = 'overdue';
-          } else {
-            calculatedPaymentStatus = 'late';
-          }
-        }
-      }
-      
-      // Update payment status if calculated
-      if (calculatedPaymentStatus !== 'current') {
-        newTenantData.paymentStatus = calculatedPaymentStatus;
-      }
+
       
       // Add new tenant to the list
       const updatedTenants = [...tenants, newTenantData];
@@ -610,13 +629,15 @@ const Tenants = () => {
 
   return (
     <div className="space-y-8 p-1">
+
+      
       {/* Modern Minimal Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50/30 p-8 border border-slate-200/50 shadow-sm">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-60"></div>
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-50 via-white to-gray-50/30 p-8 border border-slate-200/50 shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-500/5 to-gray-500/5 opacity-60"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between">
             <div className="space-y-3">
-              <h1 className="text-5xl font-light bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">
+              <h1 className="text-5xl font-extralight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight font-google-sans">
                 Tenant Management
               </h1>
               <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
@@ -624,7 +645,7 @@ const Tenants = () => {
               </p>
               <div className="flex items-center gap-6 pt-3">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                   <span className="font-medium">{totalTenants} tenants managed</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -636,7 +657,16 @@ const Tenants = () => {
             <div className="hidden lg:flex items-center gap-3">
               <Button 
                 variant="outline" 
-                className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light"
+                onClick={refreshTenants}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+
+              <Button 
+                variant="outline" 
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light"
                 onClick={exportTenantsPDF}
                 disabled={isExporting}
               >
@@ -645,7 +675,7 @@ const Tenants = () => {
               </Button>
               <Button 
                 variant="outline" 
-                className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200"
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light"
                 onClick={() => setShowTenantAnalyticsModal(true)}
               >
                 <BarChart3 className="h-4 w-4 mr-2" />
@@ -653,18 +683,18 @@ const Tenants = () => {
               </Button>
               <Dialog open={showAddTenantModal} onOpenChange={setShowAddTenantModal}>
                 <DialogTrigger asChild>
-                  <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
+                  <Button className="bg-black hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3 font-light">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Tenant
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl">
                   <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-xl">
-                      <Users className="h-6 w-6 text-purple-600" />
+                    <DialogTitle className="flex items-center gap-2 text-xl font-light">
+                      <Users className="h-6 w-6 text-gray-600" />
                       Add New Tenant
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="font-light text-gray-600">
                       Complete the form below to add a new tenant to your property management system.
                     </DialogDescription>
                     
@@ -673,15 +703,15 @@ const Tenants = () => {
                       <div className="flex items-center">
                         {[1, 2, 3, 4].map((step) => (
                           <div key={step} className="flex items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                              step < currentStep ? 'bg-green-500 text-white' : 
-                              step === currentStep ? 'bg-purple-500 text-white' : 'bg-gray-200 text-gray-600'
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-light ${
+                              step < currentStep ? 'bg-gray-600 text-white' : 
+                              step === currentStep ? 'bg-black text-white' : 'bg-gray-200 text-gray-500'
                             }`}>
                               {step < currentStep ? '✓' : step}
                             </div>
                             {step < 4 && (
                               <div className={`w-12 h-0.5 mx-2 ${
-                                step < currentStep ? 'bg-green-500' : 'bg-gray-200'
+                                step < currentStep ? 'bg-gray-600' : 'bg-gray-200'
                               }`} />
                             )}
                           </div>
@@ -691,13 +721,13 @@ const Tenants = () => {
                     
                     {/* Step Labels */}
                     <div className="flex items-center justify-center mt-2 text-xs text-gray-600">
-                      <span className={currentStep === 1 ? 'text-purple-600 font-medium' : ''}>Basic Info</span>
+                      <span className={currentStep === 1 ? 'text-black font-medium' : ''}>Basic Info</span>
                       <span className="mx-4">•</span>
-                      <span className={currentStep === 2 ? 'text-purple-600 font-medium' : ''}>Lease Details</span>
+                      <span className={currentStep === 2 ? 'text-black font-medium' : ''}>Lease Details</span>
                       <span className="mx-4">•</span>
-                      <span className={currentStep === 3 ? 'text-purple-600 font-medium' : ''}>Emergency & Additional</span>
+                      <span className={currentStep === 3 ? 'text-black font-medium' : ''}>Emergency & Additional</span>
                       <span className="mx-4">•</span>
-                      <span className={currentStep === 4 ? 'text-purple-600 font-medium' : ''}>Review & Submit</span>
+                      <span className={currentStep === 4 ? 'text-black font-medium' : ''}>Review & Submit</span>
                     </div>
                   </DialogHeader>
                   
@@ -706,8 +736,8 @@ const Tenants = () => {
                     {currentStep === 1 && (
                       <div className="space-y-6">
                         <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Basic Tenant Information</h3>
-                          <p className="text-gray-600">Let's start with the essential details about your tenant</p>
+                          <h3 className="text-xl font-light text-black">Basic Tenant Information</h3>
+                          <p className="text-gray-500 font-light">Let's start with the essential details about your tenant</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -788,8 +818,8 @@ const Tenants = () => {
                     {currentStep === 2 && (
                       <div className="space-y-6">
                         <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Lease Agreement Details</h3>
-                          <p className="text-gray-600">Set up the lease terms and payment information</p>
+                          <h3 className="text-xl font-light text-black">Lease Agreement Details</h3>
+                          <p className="text-gray-500 font-light">Set up the lease terms and payment information</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -814,7 +844,7 @@ const Tenants = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="paymentDue">Payment Due Date</Label>
+                          <Label htmlFor="paymentDue">First Rent Payment</Label>
                           <Input
                             id="paymentDue"
                             type="date"
@@ -822,53 +852,13 @@ const Tenants = () => {
                             onChange={(e) => handleInputChange('paymentDue', e.target.value)}
                           />
                           <p className="text-sm text-gray-500">
-                            Set the monthly payment due date for this tenant
+                            Set the date for the first rent payment from this tenant
                           </p>
                         </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="status">Tenant Status</Label>
-                            <Select value={newTenant.status} onValueChange={(value) => handleInputChange('status', value)}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select status" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="active">Active</SelectItem>
-                                <SelectItem value="expiring">Expiring Soon</SelectItem>
-                                <SelectItem value="inactive">Inactive</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="paymentStatus">Payment Status</Label>
-                            <Select value={newTenant.paymentStatus} onValueChange={(value) => handleInputChange('paymentStatus', value)}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select payment status" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="current">Current</SelectItem>
-                                <SelectItem value="late">Late</SelectItem>
-                                <SelectItem value="overdue">Overdue</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
+
                         
-                        <div className="space-y-2">
-                          <Label htmlFor="paymentHistory">Payment History</Label>
-                          <Select value={newTenant.paymentHistory} onValueChange={(value) => handleInputChange('paymentHistory', value)}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select payment history" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="excellent">Excellent</SelectItem>
-                              <SelectItem value="good">Good</SelectItem>
-                              <SelectItem value="fair">Fair</SelectItem>
-                              <SelectItem value="poor">Poor</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+
                       </div>
                     )}
 
@@ -876,8 +866,8 @@ const Tenants = () => {
                     {currentStep === 3 && (
                       <div className="space-y-6">
                         <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Emergency & Additional Information</h3>
-                          <p className="text-gray-600">Important details for property management and emergencies</p>
+                          <h3 className="text-xl font-light text-black">Emergency & Additional Information</h3>
+                          <p className="text-gray-500 font-light">Important details for property management and emergencies</p>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -994,14 +984,14 @@ const Tenants = () => {
                     {currentStep === 4 && (
                       <div className="space-y-6">
                         <div className="text-center mb-6">
-                          <h3 className="text-xl font-semibold text-gray-900">Review & Submit</h3>
-                          <p className="text-gray-600">Please review all the information before submitting</p>
+                          <h3 className="text-xl font-light text-black">Review & Submit</h3>
+                          <p className="text-gray-500 font-light">Please review all the information before submitting</p>
                         </div>
                         
                         <div className="bg-gray-50 rounded-lg p-6 space-y-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <h4 className="font-semibold text-gray-900 mb-2">Basic Information</h4>
+                              <h4 className="font-light text-black mb-2">Basic Information</h4>
                               <div className="space-y-1 text-sm text-gray-600">
                                 <p><span className="font-medium">Name:</span> {newTenant.name}</p>
                                 <p><span className="font-medium">Email:</span> {newTenant.email}</p>
@@ -1012,20 +1002,17 @@ const Tenants = () => {
                               </div>
                             </div>
                             <div>
-                              <h4 className="font-semibold text-gray-900 mb-2">Lease Details</h4>
+                              <h4 className="font-light text-black mb-2">Lease Details</h4>
                               <div className="space-y-1 text-sm text-gray-600">
                                 <p><span className="font-medium">Start Date:</span> {newTenant.leaseStart}</p>
                                 <p><span className="font-medium">End Date:</span> {newTenant.leaseEnd}</p>
-                                <p><span className="font-medium">Payment Due:</span> {newTenant.paymentDue}</p>
-                                <p><span className="font-medium">Status:</span> {newTenant.status}</p>
-                                <p><span className="font-medium">Payment Status:</span> {newTenant.paymentStatus}</p>
-                                <p><span className="font-medium">Payment History:</span> {newTenant.paymentHistory}</p>
+                                <p><span className="font-medium">First Rent Payment:</span> {newTenant.paymentDue}</p>
                               </div>
                             </div>
                           </div>
                           
                           <div className="border-t pt-4">
-                            <h4 className="font-semibold text-gray-900 mb-2">Additional Information</h4>
+                            <h4 className="font-light text-black mb-2">Additional Information</h4>
                             <div className="space-y-1 text-sm text-gray-600">
                               <p><span className="font-medium">Emergency Contact:</span> {newTenant.emergencyContact} ({newTenant.emergencyPhone})</p>
                               <p><span className="font-medium">Pets:</span> {newTenant.pets}</p>
@@ -1048,6 +1035,7 @@ const Tenants = () => {
                           setShowAddTenantModal(false);
                         }}
                         disabled={isSubmitting}
+                        className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
                       >
                         Cancel
                       </Button>
@@ -1059,6 +1047,7 @@ const Tenants = () => {
                             variant="outline" 
                             onClick={prevStep}
                             disabled={isSubmitting}
+                            className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
                           >
                             Previous
                           </Button>
@@ -1069,7 +1058,7 @@ const Tenants = () => {
                             type="button"
                             onClick={nextStep}
                             disabled={!canProceedToNext() || isSubmitting}
-                            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                            className="bg-black hover:bg-gray-800 text-white font-light"
                           >
                             Next
                           </Button>
@@ -1078,7 +1067,7 @@ const Tenants = () => {
                             type="button"
                             onClick={handleSubmit}
                             disabled={isSubmitting}
-                            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                            className="bg-black hover:bg-gray-800 text-white font-light"
                           >
                             {isSubmitting ? (
                               <div className="flex items-center gap-2">
@@ -1105,13 +1094,13 @@ const Tenants = () => {
 
       {/* Tenant Analytics Modal */}
       <Dialog open={showTenantAnalyticsModal} onOpenChange={setShowTenantAnalyticsModal}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <BarChart3 className="h-6 w-6 text-pink-600" />
+            <DialogTitle className="flex items-center gap-2 text-xl font-light">
+              <BarChart3 className="h-6 w-6 text-gray-600" />
               Tenant Portfolio Analytics
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="font-light text-gray-600">
               Comprehensive insights into your tenant portfolio performance, payment trends, and lease management metrics.
             </DialogDescription>
           </DialogHeader>
@@ -1119,28 +1108,28 @@ const Tenants = () => {
           <div className="space-y-8">
             {/* Portfolio Overview */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-100">
-                <div className="text-2xl font-bold text-blue-600 mb-1">{tenantAnalytics.portfolioOverview.totalTenants}</div>
-                <div className="text-sm text-gray-600 mb-1">Total Tenants</div>
-                <div className="text-xs text-blue-600">Portfolio size</div>
+              <div className="text-center p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-100">
+                <div className="text-2xl font-extralight text-black mb-1">{tenantAnalytics.portfolioOverview.totalTenants}</div>
+                <div className="text-sm text-gray-600 mb-1 font-light">Total Tenants</div>
+                <div className="text-xs text-gray-600">Portfolio size</div>
               </div>
               
-              <div className="text-center p-4 rounded-xl bg-gradient-to-br from-green-50 to-white border border-green-100">
-                <div className="text-2xl font-bold text-green-600 mb-1">{tenantAnalytics.portfolioOverview.activeTenants}</div>
-                <div className="text-sm text-gray-600 mb-1">Active Tenants</div>
-                <div className="text-xs text-green-600">{Math.round((tenantAnalytics.portfolioOverview.activeTenants / tenantAnalytics.portfolioOverview.totalTenants) * 100)}% of total</div>
+              <div className="text-center p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-100">
+                <div className="text-2xl font-extralight text-black mb-1">{tenantAnalytics.portfolioOverview.activeTenants}</div>
+                <div className="text-sm text-gray-600 mb-1 font-light">Active Tenants</div>
+                <div className="text-xs text-gray-600">{Math.round((tenantAnalytics.portfolioOverview.activeTenants / tenantAnalytics.portfolioOverview.totalTenants) * 100)}% of total</div>
               </div>
               
-              <div className="text-center p-4 rounded-xl bg-gradient-to-br from-red-50 to-white border border-red-100">
-                <div className="text-2xl font-bold text-red-600 mb-1">{tenantAnalytics.portfolioOverview.lateTenants}</div>
-                <div className="text-sm text-gray-600 mb-1">Late Payments</div>
-                <div className="text-xs text-red-600">Need attention</div>
+              <div className="text-center p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-100">
+                <div className="text-2xl font-extralight text-black mb-1">{tenantAnalytics.portfolioOverview.lateTenants}</div>
+                <div className="text-sm text-gray-600 mb-1 font-light">Late Payments</div>
+                <div className="text-xs text-gray-600">Need attention</div>
               </div>
               
-              <div className="text-center p-4 rounded-xl bg-gradient-to-br from-orange-50 to-white border border-orange-100">
-                <div className="text-2xl font-bold text-orange-600 mb-1">{tenantAnalytics.portfolioOverview.expiringLeases}</div>
-                <div className="text-sm text-gray-600 mb-1">Expiring Leases</div>
-                <div className="text-xs text-orange-600">Next 90 days</div>
+              <div className="text-center p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-100">
+                <div className="text-2xl font-extralight text-black mb-1">{tenantAnalytics.portfolioOverview.expiringLeases}</div>
+                <div className="text-sm text-gray-600 mb-1 font-light">Expiring Leases</div>
+                <div className="text-xs text-gray-600">Next 90 days</div>
               </div>
             </div>
 
@@ -1148,54 +1137,51 @@ const Tenants = () => {
             <div className="grid gap-6 md:grid-cols-2">
               <Card className="border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-green-600" />
+                  <CardTitle className="flex items-center gap-2 font-light">
+                    <DollarSign className="h-5 w-5 text-gray-600" />
                     Financial Overview
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Total Monthly Rent</span>
-                    <span className="font-semibold text-green-600">${tenantAnalytics.portfolioOverview.totalMonthlyRent.toLocaleString()}</span>
+                    <span className="font-light text-black">${tenantAnalytics.portfolioOverview.totalMonthlyRent.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Total Collected</span>
-                    <span className="font-semibold text-blue-600">${tenantAnalytics.paymentAnalysis.totalCollected.toLocaleString()}</span>
+                    <span className="font-light text-black">${tenantAnalytics.paymentAnalysis.totalCollected.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Average Rent</span>
-                    <span className="font-semibold text-purple-600">${Math.round(tenantAnalytics.paymentAnalysis.averageRent)}</span>
+                    <span className="font-light text-black">${Math.round(tenantAnalytics.paymentAnalysis.averageRent)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Rent Collection Rate</span>
-                    <span className="font-semibold text-green-600">{tenantAnalytics.paymentAnalysis.rentCollectionRate.toFixed(1)}%</span>
+                    <span className="font-light text-black">{tenantAnalytics.paymentAnalysis.rentCollectionRate.toFixed(1)}%</span>
                   </div>
                 </CardContent>
               </Card>
 
               <Card className="border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5 text-yellow-600" />
+                  <CardTitle className="flex items-center gap-2 font-light">
+                    <Star className="h-5 w-5 text-gray-600" />
                     Performance Metrics
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Average Rating</span>
-                    <span className="font-semibold text-yellow-600">{tenantAnalytics.portfolioOverview.avgTenantRating.toFixed(1)}/5.0</span>
+                    <span className="font-light text-black">{tenantAnalytics.portfolioOverview.avgTenantRating.toFixed(1)}/5.0</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Communication Score</span>
-                    <span className="font-semibold text-blue-600">{tenantAnalytics.portfolioOverview.avgCommunicationScore.toFixed(0)}%</span>
-                  </div>
+
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Late Payments</span>
-                    <span className="font-semibold text-red-600">{tenantAnalytics.portfolioOverview.totalLatePayments} this year</span>
+                    <span className="font-light text-black">{tenantAnalytics.portfolioOverview.totalLatePayments} this year</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Renewal Rate</span>
-                    <span className="font-semibold text-green-600">{tenantAnalytics.leaseAnalysis.renewalRate}%</span>
+                    <span className="font-light text-black">{tenantAnalytics.leaseAnalysis.renewalRate}%</span>
                   </div>
                 </CardContent>
               </Card>
@@ -1204,27 +1190,27 @@ const Tenants = () => {
             {/* Payment Analysis */}
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5 text-blue-600" />
-                  Payment Status Distribution
-                </CardTitle>
+                                  <CardTitle className="flex items-center gap-2 font-light">
+                    <CreditCard className="h-5 w-5 text-gray-600" />
+                    Payment Status Distribution
+                  </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-3">
-                  <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">{tenantAnalytics.paymentAnalysis.currentPayments}</div>
-                    <div className="text-sm text-gray-600">Current</div>
-                    <div className="text-xs text-green-600">On time payments</div>
+                  <div className="text-center p-4 bg-gray-50 rounded-2xl">
+                    <div className="text-2xl font-extralight text-black">{tenantAnalytics.paymentAnalysis.currentPayments}</div>
+                    <div className="text-sm text-gray-600 font-light">Current</div>
+                    <div className="text-xs text-gray-600">On time payments</div>
                   </div>
-                  <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                    <div className="text-2xl font-bold text-yellow-600">{tenantAnalytics.paymentAnalysis.latePayments}</div>
-                    <div className="text-sm text-gray-600">Late</div>
-                    <div className="text-xs text-yellow-600">Past due</div>
+                  <div className="text-center p-4 bg-gray-50 rounded-2xl">
+                    <div className="text-2xl font-extralight text-black">{tenantAnalytics.paymentAnalysis.latePayments}</div>
+                    <div className="text-sm text-gray-600 font-light">Late</div>
+                    <div className="text-xs text-gray-600">Past due</div>
                   </div>
-                  <div className="text-center p-4 bg-red-50 rounded-lg">
-                    <div className="text-2xl font-bold text-red-600">{tenantAnalytics.paymentAnalysis.overduePayments}</div>
-                    <div className="text-sm text-gray-600">Overdue</div>
-                    <div className="text-xs text-red-600">Critical</div>
+                  <div className="text-center p-4 bg-gray-50 rounded-2xl">
+                    <div className="text-2xl font-extralight text-black">{tenantAnalytics.paymentAnalysis.overduePayments}</div>
+                    <div className="text-sm text-gray-600 font-light">Overdue</div>
+                    <div className="text-xs text-gray-600">Critical</div>
                   </div>
                 </div>
               </CardContent>
@@ -1234,25 +1220,25 @@ const Tenants = () => {
             <div className="grid gap-6 md:grid-cols-2">
               <Card className="border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Award className="h-5 w-5 text-yellow-600" />
+                  <CardTitle className="flex items-center gap-2 font-light">
+                    <Award className="h-5 w-5 text-gray-600" />
                     Top Performers
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {tenantAnalytics.performanceMetrics.topPerformers.map((tenant, index) => (
-                    <div key={tenant.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <div key={tenant.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm font-bold text-green-600">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-light text-gray-600">
                           {index + 1}
                         </div>
                         <div>
-                          <div className="font-medium text-gray-900">{tenant.name}</div>
+                          <div className="font-light text-black">{tenant.name}</div>
                           <div className="text-sm text-gray-600">{tenant.property} - Unit {tenant.unit}</div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-green-600">{tenant.tenantRating}/5.0</div>
+                        <div className="font-light text-black">{tenant.tenantRating}/5.0</div>
                         <div className="text-xs text-gray-500">Rating</div>
                       </div>
                     </div>
@@ -1262,25 +1248,25 @@ const Tenants = () => {
 
               <Card className="border-0 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-red-600" />
+                  <CardTitle className="flex items-center gap-2 font-light">
+                    <AlertCircle className="h-5 w-5 text-gray-600" />
                     Needs Attention
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {tenantAnalytics.performanceMetrics.needsAttention.map((tenant, index) => (
-                    <div key={tenant.id} className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                    <div key={tenant.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-sm font-bold text-red-600">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm font-light text-gray-600">
                           {index + 1}
                         </div>
                         <div>
-                          <div className="font-medium text-gray-900">{tenant.name}</div>
+                          <div className="font-light text-black">{tenant.name}</div>
                           <div className="text-sm text-gray-600">{tenant.property} - Unit {tenant.unit}</div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-red-600">{tenant.leaseDaysRemaining} days</div>
+                        <div className="font-light text-black">{tenant.leaseDaysRemaining} days</div>
                         <div className="text-xs text-gray-500">Lease remaining</div>
                       </div>
                     </div>
@@ -1292,23 +1278,23 @@ const Tenants = () => {
             {/* Property Distribution */}
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-purple-600" />
-                  Property Distribution
-                </CardTitle>
+                                  <CardTitle className="flex items-center gap-2 font-light">
+                    <Building2 className="h-5 w-5 text-gray-600" />
+                    Property Distribution
+                  </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {tenantAnalytics.propertyDistribution.byProperty.map((property) => (
-                    <div key={property.name} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div key={property.name} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                       <div>
-                        <div className="font-medium text-gray-900">{property.name}</div>
+                        <div className="font-light text-black">{property.name}</div>
                         <div className="text-sm text-gray-600">{property.tenantCount} tenants</div>
                       </div>
                       <div className="text-right space-y-1">
-                        <div className="font-semibold text-green-600">${property.totalRent.toLocaleString()}</div>
+                        <div className="font-light text-black">${property.totalRent.toLocaleString()}</div>
                         <div className="text-sm text-gray-600">Total rent</div>
-                        <div className="text-xs text-blue-600">{property.avgRating.toFixed(1)} avg rating</div>
+                        <div className="text-xs text-gray-600">{property.avgRating.toFixed(1)} avg rating</div>
                       </div>
                     </div>
                   ))}
@@ -1317,26 +1303,26 @@ const Tenants = () => {
             </Card>
 
             {/* Recommendations */}
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-purple-50">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-gray-50 to-gray-50">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-blue-600" />
+                <CardTitle className="flex items-center gap-2 font-light">
+                  <Zap className="h-5 w-5 text-gray-600" />
                   Portfolio Recommendations
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div className="p-4 bg-white rounded-lg border border-blue-200">
-                    <h4 className="font-semibold text-blue-900 mb-2">Immediate Actions</h4>
-                    <ul className="text-sm text-blue-800 space-y-1">
+                  <div className="p-4 bg-white rounded-2xl border border-gray-200">
+                    <h4 className="font-light text-black mb-2">Immediate Actions</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
                       <li>• Contact {tenantAnalytics.performanceMetrics.needsAttention.length} tenants with expiring leases</li>
                       <li>• Follow up with {tenantAnalytics.paymentAnalysis.overduePayments} overdue payments</li>
                       <li>• Review communication with low-scoring tenants</li>
                     </ul>
                   </div>
-                  <div className="p-4 bg-white rounded-lg border border-purple-200">
-                    <h4 className="font-semibold text-purple-900 mb-2">Growth Opportunities</h4>
-                    <ul className="text-sm text-purple-800 space-y-1">
+                  <div className="p-4 bg-white rounded-2xl border border-gray-200">
+                    <h4 className="font-light text-black mb-2">Growth Opportunities</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
                       <li>• Renew leases for top-performing tenants</li>
                       <li>• Increase rent for properties with high demand</li>
                       <li>• Implement tenant satisfaction surveys</li>
@@ -1351,127 +1337,137 @@ const Tenants = () => {
 
       {/* View Profile Modal */}
       <Dialog open={showViewProfileModal} onOpenChange={setShowViewProfileModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Eye className="h-6 w-6 text-blue-600" />
-              Tenant Profile
-            </DialogTitle>
-            <DialogDescription>
-              Detailed information about {selectedTenant?.name || 'the tenant'}.
-            </DialogDescription>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl border-0 shadow-2xl">
+          <DialogHeader className="pb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center">
+                <Eye className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-3xl font-extralight text-black tracking-tight">
+                  Tenant Profile
+                </DialogTitle>
+                <DialogDescription className="text-lg font-light text-gray-600 mt-1">
+                  Comprehensive overview of {selectedTenant?.name || 'the tenant'}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
           
           {selectedTenant && (
             <div className="space-y-6">
               {/* Basic Information */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5 text-purple-600" />
-                    Basic Information
+              <Card className="border-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/30 shadow-lg rounded-3xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-xl font-light">
+                    <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                      <User className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-black">Basic Information</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Full Name</Label>
-                      <p className="text-lg font-semibold">{selectedTenant.name}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.name}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Email</Label>
-                      <p className="text-lg">{selectedTenant.email}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.email}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Phone</Label>
-                      <p className="text-lg">{selectedTenant.phone}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.phone}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Property</Label>
-                      <p className="text-lg">{selectedTenant.property}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.property}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Unit</Label>
-                      <p className="text-lg">{selectedTenant.unit}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.unit}</p>
                     </div>
-                                         <div>
-                       <Label className="text-sm font-medium text-gray-600">Monthly Rent</Label>
-                       <p className="text-lg font-semibold text-green-600">${selectedTenant.rent}</p>
-                     </div>
-                     <div>
-                       <Label className="text-sm font-medium text-gray-600">Payment Due Date</Label>
-                       <p className="text-lg">{selectedTenant.paymentDue || 'Not set'}</p>
-                     </div>
-                   </div>
-                 </CardContent>
-               </Card>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-600">Monthly Rent</Label>
+                      <p className="text-xl font-light text-black">${selectedTenant.rent}</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-600">First Rent Payment</Label>
+                      <p className="text-xl font-light text-black">{selectedTenant.paymentDue || 'Not set'}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
               {/* Lease Information */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-blue-600" />
-                    Lease Information
+              <Card className="border-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/30 shadow-lg rounded-3xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-xl font-light">
+                    <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                      <FileText className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-black">Lease Information</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Lease Start</Label>
-                      <p className="text-lg">{selectedTenant.leaseStart}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.leaseStart}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Lease End</Label>
-                      <p className="text-lg">{selectedTenant.leaseEnd}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-gray-600">Status</Label>
-                      <Badge className={getStatusColor(selectedTenant.status)}>
-                        {selectedTenant.status}
-                      </Badge>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-gray-600">Payment Status</Label>
-                      <Badge className={getPaymentStatusColor(selectedTenant.paymentStatus)}>
-                        {selectedTenant.paymentStatus}
-                      </Badge>
+                      <p className="text-xl font-light text-black">{selectedTenant.leaseEnd}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Performance Metrics */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5 text-yellow-600" />
-                    Performance Metrics
+              <Card className="border-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/30 shadow-lg rounded-3xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-xl font-light">
+                    <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                      <BarChart3 className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-black">Performance Metrics</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-sm font-medium text-gray-600">Tenant Rating</Label>
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-semibold">{selectedTenant.tenantRating}/5.0</span>
-                        <Star className="h-5 w-5 text-yellow-500 fill-current" />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-gray-600">Communication Score</Label>
-                      <p className="text-lg font-semibold text-blue-600">{selectedTenant.communicationScore}%</p>
-                    </div>
-                    <div>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Maintenance Requests</Label>
-                      <p className="text-lg">{selectedTenant.maintenanceRequests}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.maintenanceRequests}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Late Payments</Label>
-                      <p className="text-lg font-semibold text-red-600">{selectedTenant.latePayments}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.latePayments}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+              
+              {/* Action Buttons Footer */}
+              <div className="flex items-center justify-center gap-4 pt-8 border-t border-gray-200">
+                <Button 
+                  variant="outline" 
+                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light px-8 py-3 rounded-2xl"
+                  onClick={() => setShowViewProfileModal(false)}
+                >
+                  Close
+                </Button>
+                <Button 
+                  className="bg-black hover:bg-gray-800 text-white font-light px-8 py-3 rounded-2xl transition-all duration-200"
+                  onClick={() => {
+                    setShowViewProfileModal(false);
+                    setShowViewLeaseModal(true);
+                  }}
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  View Lease Details
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
@@ -1479,42 +1475,50 @@ const Tenants = () => {
 
       {/* View Lease Modal */}
       <Dialog open={showViewLeaseModal} onOpenChange={setShowViewLeaseModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <FileText className="h-6 w-6 text-blue-600" />
-              Lease Agreement Details
-            </DialogTitle>
-            <DialogDescription>
-              Complete lease information for {selectedTenant?.name || 'the tenant'}.
-            </DialogDescription>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl border-0 shadow-2xl">
+          <DialogHeader className="pb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center">
+                <FileText className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-3xl font-extralight text-black tracking-tight">
+                  Lease Agreement Details
+                </DialogTitle>
+                <DialogDescription className="text-lg font-light text-gray-600 mt-1">
+                  Complete lease information for {selectedTenant?.name || 'the tenant'}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
           
           {selectedTenant && (
             <div className="space-y-6">
               {/* Lease Terms */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-green-600" />
-                    Lease Terms
+              <Card className="border-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/30 shadow-lg rounded-3xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-xl font-light">
+                    <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                      <Calendar className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-black">Lease Terms</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Start Date</Label>
-                      <p className="text-lg font-semibold">{selectedTenant.leaseStart}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.leaseStart}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">End Date</Label>
-                      <p className="text-lg font-semibold">{selectedTenant.leaseEnd}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.leaseEnd}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Duration</Label>
-                      <p className="text-lg">{selectedTenant.leaseDaysRemaining} days remaining</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.leaseDaysRemaining} days remaining</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Status</Label>
                       <Badge className={getLeaseStatusBadge(selectedTenant.leaseDaysRemaining)}>
                         {getLeaseStatusText(selectedTenant.leaseDaysRemaining)}
@@ -1525,56 +1529,81 @@ const Tenants = () => {
               </Card>
 
               {/* Financial Terms */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-green-600" />
-                    Financial Terms
+              <Card className="border-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/30 shadow-lg rounded-3xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-xl font-light">
+                    <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                      <DollarSign className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-black">Financial Terms</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Monthly Rent</Label>
-                      <p className="text-lg font-semibold text-green-600">${selectedTenant.rent}</p>
+                      <p className="text-xl font-light text-black">${selectedTenant.rent}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Total Paid</Label>
-                      <p className="text-lg font-semibold text-blue-600">${selectedTenant.totalPaid.toLocaleString()}</p>
+                      <p className="text-xl font-light text-black">${calculateTotalPaid(selectedTenant).toLocaleString()}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Last Payment</Label>
-                      <p className="text-lg">{new Date(selectedTenant.lastPayment).toLocaleDateString()}</p>
+                      <p className="text-xl font-light text-black">{new Date(selectedTenant.lastPayment).toLocaleDateString()}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Next Payment</Label>
-                      <p className="text-lg">{new Date(selectedTenant.nextPayment).toLocaleDateString()}</p>
+                      <p className="text-xl font-light text-black">{new Date(selectedTenant.nextPayment).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Property Information */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-purple-600" />
-                    Property Information
+              <Card className="border-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/30 shadow-lg rounded-3xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-xl font-light">
+                    <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                      <Building2 className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-black">Property Information</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Property Name</Label>
-                      <p className="text-lg font-semibold">{selectedTenant.property}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.property}</p>
                     </div>
-                    <div>
+                    <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-600">Unit/Address</Label>
-                      <p className="text-lg">{selectedTenant.unit}</p>
+                      <p className="text-xl font-light text-black">{selectedTenant.unit}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+              
+              {/* Action Buttons Footer */}
+              <div className="flex items-center justify-center gap-4 pt-8 border-t border-gray-200">
+                <Button 
+                  variant="outline" 
+                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light px-8 py-3 rounded-2xl"
+                  onClick={() => setShowViewLeaseModal(false)}
+                >
+                  Close
+                </Button>
+                <Button 
+                  className="bg-black hover:bg-gray-800 text-white font-light px-8 py-3 rounded-2xl transition-all duration-200"
+                  onClick={() => {
+                    setShowViewLeaseModal(false);
+                    setShowViewProfileModal(true);
+                  }}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Back to Profile
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
@@ -1582,78 +1611,109 @@ const Tenants = () => {
 
       {/* Payment History Modal */}
       <Dialog open={showPaymentHistoryModal} onOpenChange={setShowPaymentHistoryModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <CreditCard className="h-6 w-6 text-green-600" />
-              Payment History
-            </DialogTitle>
-            <DialogDescription>
-              Complete payment records for {selectedTenant?.name || 'the tenant'}.
-            </DialogDescription>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto rounded-3xl border-0 shadow-2xl">
+          <DialogHeader className="pb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center">
+                <CreditCard className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-3xl font-extralight text-black tracking-tight">
+                  Payment History
+                </DialogTitle>
+                <DialogDescription className="text-lg font-light text-gray-600 mt-1">
+                  Complete payment records for {selectedTenant?.name || 'the tenant'}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
           
           {selectedTenant && (
             <div className="space-y-6">
               {/* Payment Summary */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5 text-blue-600" />
-                    Payment Summary
+              <Card className="border-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/30 shadow-lg rounded-3xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-xl font-light">
+                    <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                      <BarChart3 className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-black">Payment Summary</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">${selectedTenant.totalPaid.toLocaleString()}</div>
-                      <div className="text-sm text-gray-600">Total Paid</div>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center p-6 bg-gradient-to-br from-slate-50 to-gray-100 rounded-2xl border border-gray-200">
+                      <div className="text-3xl font-light text-black">${calculateTotalPaid(selectedTenant).toLocaleString()}</div>
+                      <div className="text-sm font-medium text-gray-600 mt-1">Total Paid</div>
                     </div>
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">${selectedTenant.rent}</div>
-                      <div className="text-sm text-gray-600">Monthly Rent</div>
+                    <div className="text-center p-6 bg-gradient-to-br from-slate-50 to-gray-100 rounded-2xl border border-gray-200">
+                      <div className="text-3xl font-light text-black">${selectedTenant.rent}</div>
+                      <div className="text-sm font-medium text-gray-600 mt-1">Monthly Rent</div>
                     </div>
-                    <div className="text-center p-4 bg-red-50 rounded-lg">
-                      <div className="text-2xl font-bold text-red-600">{selectedTenant.latePayments}</div>
-                      <div className="text-sm text-gray-600">Late Payments</div>
+                    <div className="text-center p-6 bg-gradient-to-br from-slate-50 to-gray-100 rounded-2xl border border-gray-200">
+                      <div className="text-3xl font-light text-black">{selectedTenant.latePayments}</div>
+                      <div className="text-sm font-medium text-gray-600 mt-1">Late Payments</div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Recent Payments */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-purple-600" />
-                    Recent Payments
+              <Card className="border-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/30 shadow-lg rounded-3xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-xl font-light">
+                    <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                      <Clock className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-black">Recent Payments</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <CardContent className="space-y-4">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-gray-100 rounded-2xl border border-gray-200">
                       <div>
-                        <div className="font-medium">Monthly Rent</div>
+                        <div className="font-medium text-black">Monthly Rent</div>
                         <div className="text-sm text-gray-600">{new Date(selectedTenant.lastPayment).toLocaleDateString()}</div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-green-600">${selectedTenant.rent}</div>
-                        <div className="text-sm text-gray-500">On time</div>
+                        <div className="font-light text-xl text-black">${selectedTenant.rent}</div>
+                        <div className="text-sm font-medium text-gray-600">On time</div>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-gray-100 rounded-2xl border border-gray-200">
                       <div>
-                        <div className="font-medium">Next Payment Due</div>
+                        <div className="font-medium text-black">Next Payment Due</div>
                         <div className="text-sm text-gray-600">{new Date(selectedTenant.nextPayment).toLocaleDateString()}</div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-blue-600">${selectedTenant.rent}</div>
-                        <div className="text-sm text-gray-500">Pending</div>
+                        <div className="font-light text-xl text-black">${selectedTenant.rent}</div>
+                        <div className="text-sm font-medium text-gray-600">Pending</div>
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+              
+              {/* Action Buttons Footer */}
+              <div className="flex items-center justify-center gap-4 pt-8 border-t border-gray-200">
+                <Button 
+                  variant="outline" 
+                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light px-8 py-3 rounded-2xl"
+                  onClick={() => setShowPaymentHistoryModal(false)}
+                >
+                  Close
+                </Button>
+                <Button 
+                  className="bg-black hover:bg-gray-800 text-white font-light px-8 py-3 rounded-2xl transition-all duration-200"
+                  onClick={() => {
+                    setShowPaymentHistoryModal(false);
+                    setShowViewProfileModal(true);
+                  }}
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Back to Profile
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
@@ -1661,40 +1721,63 @@ const Tenants = () => {
 
       {/* Send Message Modal */}
       <Dialog open={showSendMessageModal} onOpenChange={setShowSendMessageModal}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <MessageSquare className="h-6 w-6 text-blue-600" />
-              Send Message
-            </DialogTitle>
-            <DialogDescription>
-              Send a message to {selectedTenant?.name || 'the tenant'}.
-            </DialogDescription>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl border-0 shadow-2xl">
+          <DialogHeader className="pb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center">
+                <MessageSquare className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <DialogTitle className="text-3xl font-extralight text-black tracking-tight">
+                  Send Message
+                </DialogTitle>
+                <DialogDescription className="text-lg font-light text-gray-600 mt-1">
+                  Send a message to {selectedTenant?.name || 'the tenant'}
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
           
           {selectedTenant && (
             <div className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="messageSubject">Subject</Label>
-                <Input
-                  id="messageSubject"
-                  placeholder="Enter message subject..."
-                />
-              </div>
+              {/* Message Form Card */}
+              <Card className="border-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/30 shadow-lg rounded-3xl">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-xl font-light">
+                    <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                      <Edit className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-black">Message Details</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="messageSubject" className="text-sm font-medium text-gray-600">Subject</Label>
+                    <Input
+                      id="messageSubject"
+                      placeholder="Enter message subject..."
+                      className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="messageContent" className="text-sm font-medium text-gray-600">Message</Label>
+                    <Textarea
+                      id="messageContent"
+                      placeholder="Type your message here..."
+                      rows={6}
+                      className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl resize-none"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
               
-              <div className="space-y-2">
-                <Label htmlFor="messageContent">Message</Label>
-                <Textarea
-                  id="messageContent"
-                  placeholder="Type your message here..."
-                  rows={6}
-                />
-              </div>
-              
-              <div className="flex items-center gap-2">
+              {/* Action Buttons Footer */}
+              <div className="flex items-center justify-center gap-4 pt-6">
                 <Button 
                   onClick={() => setShowSendMessageModal(false)}
                   variant="outline"
+                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light px-8 py-3 rounded-2xl"
                 >
                   Cancel
                 </Button>
@@ -1703,7 +1786,7 @@ const Tenants = () => {
                     alert('Message sent successfully!');
                     setShowSendMessageModal(false);
                   }}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  className="bg-black hover:bg-gray-800 text-white font-light px-8 py-3 rounded-2xl transition-all duration-200"
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Send Message
@@ -1835,7 +1918,7 @@ const Tenants = () => {
                     alert('Tenant updated successfully!');
                     setShowEditTenantModal(false);
                   }}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  className="bg-black hover:bg-gray-800 text-white font-light"
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Update Tenant
@@ -1850,7 +1933,7 @@ const Tenants = () => {
       <div className="lg:hidden">
         <Button 
           variant="outline" 
-          className="w-full border-purple-200 text-purple-700 hover:bg-purple-50"
+          className="w-full border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
           onClick={exportTenantsPDF}
           disabled={isExporting}
         >
@@ -1864,13 +1947,13 @@ const Tenants = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-blue-50 group-hover:bg-blue-100 transition-colors duration-200">
-                <Users className="h-7 w-7 text-blue-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <Users className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">{totalTenants}</p>
-                <p className="text-sm text-slate-600 font-medium">Total Tenants</p>
-                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{totalTenants}</p>
+                <p className="text-sm text-gray-600 font-light">Total Tenants</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   +2 this year
                 </div>
@@ -1882,13 +1965,13 @@ const Tenants = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-emerald-50 group-hover:bg-emerald-100 transition-colors duration-200">
-                <DollarSign className="h-7 w-7 text-emerald-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <DollarSign className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">${(totalMonthlyRent / 1000).toFixed(1)}K</p>
-                <p className="text-sm text-slate-600 font-medium">Monthly Rent</p>
-                <div className="flex items-center gap-1 text-xs text-emerald-600 mt-1">
+                <p className="text-3xl font-extralight text-black">${(totalMonthlyRent / 1000).toFixed(1)}K</p>
+                <p className="text-sm text-gray-600 font-light">Monthly Rent</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <TrendingUp className="h-3 w-3" />
                   Total collected
                 </div>
@@ -1900,13 +1983,13 @@ const Tenants = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-red-50 group-hover:bg-red-100 transition-colors duration-200">
-                <AlertCircle className="h-7 w-7 text-red-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <AlertCircle className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">{lateTenants}</p>
-                <p className="text-sm text-slate-600 font-medium">Late Payments</p>
-                <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{lateTenants}</p>
+                <p className="text-sm text-gray-600 font-light">Late Payments</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <TrendingDown className="h-3 w-3" />
                   {totalLatePayments} total late payments
                 </div>
@@ -1918,13 +2001,13 @@ const Tenants = () => {
         <Card className="group hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1 border-0 bg-white shadow-sm hover:shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-amber-50 group-hover:bg-amber-100 transition-colors duration-200">
-                <Clock className="h-7 w-7 text-amber-600" />
+              <div className="p-3 rounded-2xl bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
+                <Clock className="h-7 w-7 text-gray-600" />
               </div>
               <div>
-                <p className="text-3xl font-light text-slate-900">{totalLatePayments}</p>
-                <p className="text-sm text-slate-600 font-medium">Late Payments</p>
-                <div className="flex items-center gap-1 text-xs text-amber-600 mt-1">
+                <p className="text-3xl font-extralight text-black">{totalLatePayments}</p>
+                <p className="text-sm text-gray-600 font-light">Late Payments</p>
+                <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
                   <TrendingDown className="h-3 w-3" />
                   This year
                 </div>
@@ -1950,29 +2033,7 @@ const Tenants = () => {
               />
             </div>
             
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-40 border-slate-200 rounded-xl">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="expiring">Expiring</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Select value={paymentFilter} onValueChange={setPaymentFilter}>
-              <SelectTrigger className="w-40 border-slate-200 rounded-xl">
-                <SelectValue placeholder="Payment" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Payments</SelectItem>
-                <SelectItem value="current">Current</SelectItem>
-                <SelectItem value="late">Late</SelectItem>
-                <SelectItem value="overdue">Overdue</SelectItem>
-              </SelectContent>
-            </Select>
+
             
             <Select value={propertyFilter} onValueChange={setPropertyFilter}>
               <SelectTrigger className="w-40 border-slate-200 rounded-xl">
@@ -2018,22 +2079,22 @@ const Tenants = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-6">
-                  <Avatar className="h-16 w-16 border-4 border-slate-100 group-hover:border-slate-200 transition-colors duration-200">
+                  <Avatar className="h-16 w-16 border-4 border-gray-100 group-hover:border-gray-200 transition-colors duration-200">
                     <AvatarImage src={tenant.avatar} alt={tenant.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-slate-600 to-slate-800 text-white text-lg font-bold">
+                    <AvatarFallback className="bg-gray-100 text-gray-600 text-lg font-light">
                       {getInitials(tenant.name)}
                     </AvatarFallback>
                   </Avatar>
                   
                   <div className="space-y-2">
-                    <h3 className="font-bold text-xl text-gray-900">{tenant.name}</h3>
+                    <h3 className="font-light text-xl text-black">{tenant.name}</h3>
                     <div className="flex items-center gap-4 text-sm text-gray-600">
                       <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-purple-500" />
+                        <Mail className="h-4 w-4 text-gray-500" />
                         <span>{tenant.email}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-blue-500" />
+                        <Phone className="h-4 w-4 text-gray-500" />
                         <span>{tenant.phone}</span>
                       </div>
                     </div>
@@ -2057,11 +2118,11 @@ const Tenants = () => {
                 <div className="flex items-center gap-6">
                   <div className="text-right space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-green-600">${tenant.rent}</span>
+                      <span className="text-2xl font-extralight text-black">${tenant.rent}</span>
                       <span className="text-sm text-gray-600">/month</span>
                     </div>
                     <div className="text-sm text-gray-600">
-                      Total paid: ${tenant.totalPaid.toLocaleString()}
+                      Total paid: ${calculateTotalPaid(tenant).toLocaleString()}
                     </div>
                   </div>
 
@@ -2081,8 +2142,8 @@ const Tenants = () => {
 
                   <div className="text-right space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-purple-600">{tenant.tenantRating}</span>
-                      <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                      <span className="text-lg font-light text-black">{tenant.tenantRating}</span>
+                      <Star className="h-4 w-4 text-gray-500" />
                     </div>
                     <div className="text-sm text-gray-600">
                       {tenant.maintenanceRequests} maintenance requests
@@ -2146,33 +2207,32 @@ const Tenants = () => {
               </div>
 
               {/* Additional Tenant Metrics */}
-              <div className="mt-6 pt-6 border-t border-slate-100">
+              <div className="mt-6 pt-6 border-t border-gray-100">
                 <div className="grid grid-cols-4 gap-4">
-                  <div className="text-center p-3 bg-slate-50 rounded-lg">
-                    <div className="text-sm text-slate-600 mb-1">Communication</div>
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="font-semibold">{tenant.communicationScore}%</span>
-                      <Progress value={tenant.communicationScore} className="w-16 h-2" />
+                  <div className="text-center p-3 bg-gray-50 rounded-2xl">
+                    <div className="text-sm text-gray-600 mb-1 font-light">Total Paid</div>
+                    <div className="font-light text-black">
+                      ${calculateTotalPaid(tenant).toLocaleString()}
                     </div>
                   </div>
                   
-                  <div className="text-center p-3 bg-slate-50 rounded-lg">
-                    <div className="text-sm text-slate-600 mb-1">Last Payment</div>
-                    <div className="font-semibold text-emerald-600">
+                  <div className="text-center p-3 bg-gray-50 rounded-2xl">
+                    <div className="text-sm text-gray-600 mb-1 font-light">Last Payment</div>
+                    <div className="font-light text-black">
                       {new Date(tenant.lastPayment).toLocaleDateString()}
                     </div>
                   </div>
                   
-                  <div className="text-center p-3 bg-slate-50 rounded-lg">
-                    <div className="text-sm text-slate-600 mb-1">Next Payment</div>
-                    <div className="font-semibold text-slate-700">
+                  <div className="text-center p-3 bg-gray-50 rounded-2xl">
+                    <div className="text-sm text-gray-600 mb-1 font-light">Next Payment</div>
+                    <div className="font-light text-black">
                       {new Date(tenant.nextPayment).toLocaleDateString()}
                     </div>
                   </div>
                   
-                  <div className="text-center p-3 bg-slate-50 rounded-lg">
-                    <div className="text-sm text-slate-600 mb-1">Late Payments</div>
-                    <div className="font-semibold text-red-600">
+                  <div className="text-center p-3 bg-gray-50 rounded-2xl">
+                    <div className="text-sm text-gray-600 mb-1 font-light">Late Payments</div>
+                    <div className="font-light text-black">
                       {tenant.latePayments} this year
                     </div>
                   </div>
@@ -2186,14 +2246,14 @@ const Tenants = () => {
       {filteredTenants.length === 0 && (
         <Card className="border-0 bg-white shadow-sm hover:shadow-md transition-all duration-200">
           <CardContent className="p-12 text-center">
-            <Users className="h-16 w-16 text-slate-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-600 mb-2">No tenants found</h3>
-            <p className="text-slate-500 mb-4">
+            <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-light text-black mb-2">No tenants found</h3>
+            <p className="text-gray-500 mb-4 font-light">
               {searchQuery ? 'Try adjusting your search criteria or filters' : 'Get started by adding your first tenant'}
             </p>
             <Button 
               onClick={() => setShowAddTenantModal(true)}
-              className="bg-slate-900 hover:bg-slate-800 text-white rounded-2xl px-6 py-3"
+              className="bg-black hover:bg-gray-800 text-white rounded-2xl px-6 py-3 font-light"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Your First Tenant

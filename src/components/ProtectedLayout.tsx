@@ -39,7 +39,11 @@ import {
   Calendar,
   FolderOpen,
   UserCheck,
-  Search
+  Search,
+  Shield,
+  Eye,
+  Clock,
+  MessageSquare
 } from 'lucide-react';
 
 interface ProtectedLayoutProps {
@@ -74,92 +78,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
     }
   };
 
-  const navigationItems = [
-    {
-      title: t('sidebar.dashboard'),
-      href: '/dashboard',
-      icon: Home,
-      isActive: location.pathname === '/dashboard'
-    },
-    {
-      title: t('sidebar.analytics'),
-      href: '/analytics',
-      icon: BarChart3,
-      isActive: location.pathname === '/analytics'
-    },
-    {
-      title: t('sidebar.properties'),
-      href: '/properties',
-      icon: Building2,
-      isActive: location.pathname === '/properties' || location.pathname.startsWith('/properties/')
-    },
-    {
-      title: t('sidebar.tenants'),
-      href: '/tenants',
-      icon: Users,
-      isActive: location.pathname === '/tenants'
-    },
-    {
-      title: t('sidebar.leases'),
-      href: '/leases',
-      icon: ClipboardList,
-      isActive: location.pathname === '/leases'
-    },
-    {
-      title: t('sidebar.applications'),
-      href: '/applications',
-      icon: UserCheck,
-      isActive: location.pathname === '/applications'
-    }
-  ];
 
-  const financialItems = [
-    {
-      title: t('sidebar.financials'),
-      href: '/financials',
-      icon: DollarSign,
-      isActive: location.pathname === '/financials'
-    },
-    {
-      title: t('sidebar.rentCollection'),
-      href: '/rent-collection',
-      icon: CreditCard,
-      isActive: location.pathname === '/rent-collection'
-    },
-    {
-      title: t('sidebar.expenses'),
-      href: '/expenses',
-      icon: Receipt,
-      isActive: location.pathname === '/expenses'
-    }
-  ];
-
-  const operationsItems = [
-    {
-      title: t('sidebar.maintenance'),
-      href: '/maintenance',
-      icon: Wrench,
-      isActive: location.pathname === '/maintenance'
-    },
-    {
-      title: t('sidebar.inspections'),
-      href: '/inspections',
-      icon: Search,
-      isActive: location.pathname === '/inspections'
-    },
-    {
-      title: t('sidebar.documents'),
-      href: '/documents',
-      icon: FolderOpen,
-      isActive: location.pathname === '/documents'
-    },
-    {
-      title: t('sidebar.reports'),
-      href: '/reports',
-      icon: FileText,
-      isActive: location.pathname === '/reports'
-    }
-  ];
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -169,15 +88,15 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
       >
         {/* Sidebar - Conditionally positioned based on language */}
         {!isRTL ? (
-          <Sidebar className="border-r border-border/5">
-            <SidebarHeader className="border-b border-border/5">
-              <div className="flex items-center gap-2 px-2 py-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">PF</span>
+          <Sidebar className="border-r border-gray-200 bg-white shadow-sm">
+            <SidebarHeader className="border-b border-gray-200 bg-gray-50/30">
+              <div className="flex items-center gap-3 px-4 py-4">
+                <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                  <span className="text-white font-medium text-lg">P</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground">PropertyFlow</p>
-                  <p className="text-xs text-muted-foreground truncate">
+                  <p className="text-sm font-light text-black">PropertyFlow</p>
+                  <p className="text-xs text-gray-600 truncate">
                     {profile?.first_name || user?.email}
                   </p>
                 </div>
@@ -186,74 +105,255 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
             
             <SidebarContent>
               {/* Main Navigation */}
-              <SidebarGroup>
-                <SidebarGroupLabel>{t('sidebar.overview')}</SidebarGroupLabel>
-                <SidebarMenu>
-                  {navigationItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
+              <SidebarMenu>
+                {/* Dashboard - Different for each role */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.pathname === '/dashboard' || location.pathname === '/admin-dashboard' || location.pathname === '/tenant-dashboard' || location.pathname === '/vendor-dashboard'}
+                    tooltip="Dashboard"
+                  >
+                    <Link to={
+                      profile?.role === 'admin' ? '/admin-dashboard' :
+                      profile?.role === 'tenant' ? '/tenant-dashboard' :
+                      profile?.role === 'vendor' ? '/vendor-dashboard' :
+                      '/dashboard'
+                    }>
+                      <Home className="h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
+                {/* Property Owner Navigation */}
+                {profile?.role === 'homeowner' && (
+                  <>
+                    <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={item.isActive}
-                        tooltip={item.title}
+                        isActive={location.pathname === '/properties'}
+                        tooltip="Properties"
                       >
-                        <Link to={item.href}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
+                        <Link to="/properties">
+                          <Building2 className="h-4 w-4" />
+                          <span>Properties</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroup>
 
-              <SidebarSeparator />
-
-              {/* Financial Management */}
-              <SidebarGroup>
-                <SidebarGroupLabel>{t('sidebar.financial')}</SidebarGroupLabel>
-                <SidebarMenu>
-                  {financialItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
+                    <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={item.isActive}
-                        tooltip={item.title}
+                        isActive={location.pathname === '/tenants'}
+                        tooltip="Tenants"
                       >
-                        <Link to={item.href}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
+                        <Link to="/tenants">
+                          <Users className="h-4 w-4" />
+                          <span>Tenants</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroup>
 
-              <SidebarSeparator />
-
-              {/* Operations */}
-              <SidebarGroup>
-                <SidebarGroupLabel>{t('sidebar.operations')}</SidebarGroupLabel>
-                <SidebarMenu>
-                  {operationsItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
+                    <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={item.isActive}
-                        tooltip={item.title}
+                        isActive={location.pathname === '/chat'}
+                        tooltip="Chat"
                       >
-                        <Link to={item.href}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
+                        <Link to="/chat">
+                          <MessageSquare className="h-4 w-4" />
+                          <span>Chat</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroup>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/leases'}
+                        tooltip="Leases"
+                      >
+                        <Link to="/leases">
+                          <FileText className="h-4 w-4" />
+                          <span>Leases</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+
+
+
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/rent-collection'}
+                        tooltip="Rent Collection"
+                      >
+                        <Link to="/rent-collection">
+                          <CreditCard className="h-4 w-4" />
+                          <span>Rent Collection</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/maintenance'}
+                        tooltip="Maintenance"
+                      >
+                        <Link to="/maintenance">
+                          <Wrench className="h-4 w-4" />
+                          <span>Maintenance</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+
+
+
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/reports'}
+                        tooltip="Reports"
+                      >
+                        <Link to="/reports">
+                          <BarChart3 className="h-4 w-4" />
+                          <span>Reports</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </>
+                )}
+
+                {/* Tenant Navigation */}
+                {profile?.role === 'tenant' && (
+                  <>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/my-lease'}
+                        tooltip="My Lease"
+                      >
+                        <Link to="/my-lease">
+                          <FileText className="h-4 w-4" />
+                          <span>My Lease</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/payment-history'}
+                        tooltip="Payment History"
+                      >
+                        <Link to="/payment-history">
+                          <CreditCard className="h-4 w-4" />
+                          <span>Payment History</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/maintenance-requests'}
+                        tooltip="Maintenance Requests"
+                      >
+                        <Link to="/maintenance-requests">
+                          <Wrench className="h-4 w-4" />
+                          <span>Maintenance Requests</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </>
+                )}
+
+                {/* Vendor/Maintainer Navigation */}
+                {profile?.role === 'vendor' && (
+                  <>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/maintenance-tasks'}
+                        tooltip="Maintenance Tasks"
+                      >
+                        <Link to="/maintenance-tasks">
+                          <Wrench className="h-4 w-4" />
+                          <span>Maintenance Tasks</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/work-history'}
+                        tooltip="Work History"
+                      >
+                        <Link to="/work-history">
+                          <Clock className="h-4 w-4" />
+                          <span>Work History</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </>
+                )}
+
+                {/* Admin Navigation */}
+                {profile?.role === 'admin' && (
+                  <>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/admin-panel'}
+                        tooltip="Admin Panel"
+                      >
+                        <Link to="/admin-panel">
+                          <Settings className="h-4 w-4" />
+                          <span>Admin Panel</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/admin-access-control'}
+                        tooltip="Access Control"
+                      >
+                        <Link to="/admin-access-control">
+                          <Shield className="h-4 w-4" />
+                          <span>Access Control</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </>
+                )}
+
+                {/* Settings - Available to all roles */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.pathname === '/settings'}
+                    tooltip="Settings"
+                  >
+                    <Link to="/settings">
+                      <Settings className="h-4 w-4" />
+                      <span>Settings</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-border/5">
+            <SidebarFooter className="border-t border-gray-200 bg-gray-50/30">
               <SidebarGroup>
                 <SidebarMenu>
                   <SidebarMenuItem>
@@ -303,61 +403,99 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-w-0 w-full">
           {/* Top Header */}
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
-            <SidebarTrigger className={isRTL ? '-mr-1' : '-ml-1'} />
-            <div className="flex items-center gap-2 px-4 text-sm">
-              <span className="text-muted-foreground">/</span>
-              <span className="font-medium capitalize">
-                {location.pathname.split('/')[1] || t('sidebar.dashboard')}
-              </span>
+          <header className="flex h-20 shrink-0 items-center gap-4 border-b border-gray-100 bg-gradient-to-r from-white via-white to-gray-50/30 backdrop-blur-sm px-8 shadow-sm">
+            {/* Left Section - Sidebar Trigger & Breadcrumb */}
+            <div className="flex items-center gap-6">
+              <SidebarTrigger 
+                className={`${isRTL ? '-mr-1' : '-ml-1'} hover:bg-gray-50 hover:text-black text-gray-600 rounded-2xl transition-all duration-200 p-2 hover:shadow-sm`} 
+              />
+              
+              {/* Enhanced Breadcrumb */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-2xl border border-gray-100 shadow-sm">
+                  <span className="text-gray-400 text-sm font-medium">/</span>
+                  <span className="font-medium capitalize text-gray-800 text-sm">
+                    {location.pathname.split('/')[1] || t('sidebar.dashboard')}
+                  </span>
+                </div>
+              </div>
             </div>
             
-            <div className={`${isRTL ? 'mr-auto' : 'ml-auto'} flex items-center gap-2`}>
-              <Button variant="ghost" size="icon" className="relative" title={t('sidebar.notifications')}>
-                <Bell className="h-4 w-4" />
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs">
+            {/* Right Section - Notifications & Profile */}
+            <div className={`${isRTL ? 'mr-auto' : 'ml-auto'} flex items-center gap-4`}>
+              {/* Enhanced Notifications Button */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => {
+                  // Handle notifications click
+                  toast({
+                    title: "Notifications",
+                    description: "You have 3 unread notifications",
+                  });
+                }}
+                className="relative hover:bg-gray-50 hover:text-black hover:shadow-md text-gray-600 rounded-2xl transition-all duration-300 p-3 h-12 w-12 group active:scale-95" 
+                title={t('sidebar.notifications')}
+              >
+                <Bell className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+                <Badge className="absolute -top-2 -right-2 h-7 w-7 rounded-full p-0 text-xs font-bold bg-gradient-to-r from-red-500 to-red-600 text-white border-2 border-white shadow-lg">
                   3
                 </Badge>
+                {/* Subtle notification indicator */}
+                <div className="absolute -top-1 -right-1 h-3 w-3 bg-red-400 rounded-full animate-ping opacity-75"></div>
               </Button>
               
+              {/* Enhanced Profile Section */}
               <div className="relative">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-3 hover:bg-gray-50 hover:text-black text-gray-700 rounded-2xl px-4 py-2 h-11 transition-all duration-200"
                 >
-                  <div className="w-6 h-6 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-full flex items-center justify-center">
-                    <span className="text-white font-medium text-xs">
+                  {/* Enhanced Avatar */}
+                  <div className="w-9 h-9 bg-gradient-to-br from-black to-gray-800 rounded-2xl flex items-center justify-center shadow-sm">
+                    <span className="text-white font-medium text-sm">
                       {profile?.first_name?.[0] || user?.email?.[0] || 'U'}
                     </span>
                   </div>
-                  <span className="hidden sm:inline-block text-sm font-medium">
-                    {profile?.first_name || user?.email}
-                  </span>
-                  <ChevronDown className="h-3 w-3" />
+                  
+                  {/* User Info */}
+                  <div className="hidden sm:flex flex-col items-start">
+                    <span className="text-sm font-medium text-gray-900">
+                      {profile?.first_name || 'User'}
+                    </span>
+                    <span className="text-xs text-gray-500 font-light">
+                      {profile?.role === 'admin' ? 'Administrator' : 
+                       profile?.role === 'homeowner' ? 'Property Owner' : 
+                       profile?.role === 'tenant' ? 'Tenant' : 
+                       profile?.role === 'vendor' ? 'Vendor' : 'User'}
+                    </span>
+                  </div>
+                  
+                  <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
                 </Button>
               </div>
             </div>
           </header>
 
           {/* Page Content */}
-          <div className="flex-1 overflow-auto p-6 w-full max-w-none protected-content">
+          <div className="flex-1 overflow-auto p-8 w-full max-w-none protected-content bg-gradient-to-br from-gray-50 via-white to-gray-50/30">
             {children}
           </div>
         </div>
 
         {/* Sidebar for Arabic RTL - positioned on the right */}
         {isRTL ? (
-          <Sidebar className="border-l border-border/5">
-            <SidebarHeader className="border-b border-border/5">
-              <div className="flex items-center gap-2 px-2 py-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">PF</span>
+          <Sidebar className="border-l border-gray-200 bg-white shadow-sm">
+            <SidebarHeader className="border-b border-gray-200 bg-gray-50/30">
+              <div className="flex items-center gap-3 px-4 py-4">
+                <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
+                  <span className="text-white font-medium text-lg">P</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground">PropertyFlow</p>
-                  <p className="text-xs text-muted-foreground truncate">
+                  <p className="text-sm font-light text-black">PropertyFlow</p>
+                  <p className="text-xs text-gray-600 truncate">
                     {profile?.first_name || user?.email}
                   </p>
                 </div>
@@ -366,74 +504,297 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
             
             <SidebarContent>
               {/* Main Navigation */}
-              <SidebarGroup>
-                <SidebarGroupLabel>{t('sidebar.overview')}</SidebarGroupLabel>
-                <SidebarMenu>
-                  {navigationItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
+              <SidebarMenu>
+                {/* Dashboard - Different for each role */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.pathname === '/dashboard' || location.pathname === '/admin-dashboard' || location.pathname === '/tenant-dashboard' || location.pathname === '/vendor-dashboard'}
+                    tooltip="Dashboard"
+                  >
+                    <Link to={
+                      profile?.role === 'admin' ? '/admin-dashboard' :
+                      profile?.role === 'tenant' ? '/tenant-dashboard' :
+                      profile?.role === 'vendor' ? '/vendor-dashboard' :
+                      '/dashboard'
+                    }>
+                      <Home className="h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
+                {/* Property Owner Navigation */}
+                {profile?.role === 'homeowner' && (
+                  <>
+                    <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={item.isActive}
-                        tooltip={item.title}
+                        isActive={location.pathname === '/properties'}
+                        tooltip="Properties"
                       >
-                        <Link to={item.href}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
+                        <Link to="/properties">
+                          <Building2 className="h-4 w-4" />
+                          <span>Properties</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroup>
 
-              <SidebarSeparator />
-
-              {/* Financial Management */}
-              <SidebarGroup>
-                <SidebarGroupLabel>{t('sidebar.financial')}</SidebarGroupLabel>
-                <SidebarMenu>
-                  {financialItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
+                    <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={item.isActive}
-                        tooltip={item.title}
+                        isActive={location.pathname === '/tenants'}
+                        tooltip="Tenants"
                       >
-                        <Link to={item.href}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
+                        <Link to="/tenants">
+                          <Users className="h-4 w-4" />
+                          <span>Tenants</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroup>
 
-              <SidebarSeparator />
-
-              {/* Operations */}
-              <SidebarGroup>
-                <SidebarGroupLabel>{t('sidebar.operations')}</SidebarGroupLabel>
-                <SidebarMenu>
-                  {operationsItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
+                    <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={item.isActive}
-                        tooltip={item.title}
+                        isActive={location.pathname === '/leases'}
+                        tooltip="Leases"
                       >
-                        <Link to={item.href}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
+                        <Link to="/leases">
+                          <FileText className="h-4 w-4" />
+                          <span>Leases</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroup>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/applications'}
+                        tooltip="Applications"
+                      >
+                        <Link to="/applications">
+                          <ClipboardList className="h-4 w-4" />
+                          <span>Applications</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/financials'}
+                        tooltip="Financials"
+                      >
+                        <Link to="/financials">
+                          <DollarSign className="h-4 w-4" />
+                          <span>Financials</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/rent-collection'}
+                        tooltip="Rent Collection"
+                      >
+                        <Link to="/rent-collection">
+                          <CreditCard className="h-4 w-4" />
+                          <span>Rent Collection</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/expenses'}
+                        tooltip="Expenses"
+                      >
+                        <Link to="/expenses">
+                          <Receipt className="h-4 w-4" />
+                          <span>Expenses</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/maintenance'}
+                        tooltip="Maintenance"
+                      >
+                        <Link to="/maintenance">
+                          <Wrench className="h-4 w-4" />
+                          <span>Maintenance</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/inspections'}
+                        tooltip="Inspections"
+                      >
+                        <Link to="/inspections">
+                          <Eye className="h-4 w-4" />
+                          <span>Inspections</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/documents'}
+                        tooltip="Documents"
+                      >
+                        <Link to="/documents">
+                          <FolderOpen className="h-4 w-4" />
+                          <span>Documents</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/reports'}
+                        tooltip="Reports"
+                      >
+                        <Link to="/reports">
+                          <BarChart3 className="h-4 w-4" />
+                          <span>Reports</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </>
+                )}
+
+                {/* Tenant Navigation */}
+                {profile?.role === 'tenant' && (
+                  <>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/my-lease'}
+                        tooltip="My Lease"
+                      >
+                        <Link to="/my-lease">
+                          <FileText className="h-4 w-4" />
+                          <span>My Lease</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/payment-history'}
+                        tooltip="Payment History"
+                      >
+                        <Link to="/payment-history">
+                          <CreditCard className="h-4 w-4" />
+                          <span>Payment History</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/maintenance-requests'}
+                        tooltip="Maintenance Requests"
+                      >
+                        <Link to="/maintenance-requests">
+                          <Wrench className="h-4 w-4" />
+                          <span>Maintenance Requests</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </>
+                )}
+
+                {/* Vendor/Maintainer Navigation */}
+                {profile?.role === 'vendor' && (
+                  <>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/maintenance-tasks'}
+                        tooltip="Maintenance Tasks"
+                      >
+                        <Link to="/maintenance-tasks">
+                          <Wrench className="h-4 w-4" />
+                          <span>Maintenance Tasks</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/work-history'}
+                        tooltip="Work History"
+                      >
+                        <Link to="/work-history">
+                          <Clock className="h-4 w-4" />
+                          <span>Work History</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </>
+                )}
+
+                {/* Admin Navigation */}
+                {profile?.role === 'admin' && (
+                  <>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/admin-panel'}
+                        tooltip="Admin Panel"
+                      >
+                        <Link to="/admin-panel">
+                          <Settings className="h-4 w-4" />
+                          <span>Admin Panel</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/admin-access-control'}
+                        tooltip="Access Control"
+                      >
+                        <Link to="/admin-access-control">
+                          <Shield className="h-4 w-4" />
+                          <span>Access Control</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </>
+                )}
+
+                {/* Settings - Available to all roles */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.pathname === '/settings'}
+                    tooltip="Settings"
+                  >
+                    <Link to="/settings">
+                      <Settings className="h-4 w-4" />
+                      <span>Settings</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-border/5">
+            <SidebarFooter className="border-t border-gray-200 bg-gray-50/30">
               <SidebarGroup>
                 <SidebarMenu>
                   <SidebarMenuItem>
