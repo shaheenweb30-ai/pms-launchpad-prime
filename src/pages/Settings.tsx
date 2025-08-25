@@ -28,7 +28,8 @@ import {
   ShieldIcon,
   WrenchIcon,
   Calendar,
-  CreditCard
+  CreditCard,
+  Building2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -46,6 +47,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Settings = () => {
   const { user, profile } = useAuth();
@@ -88,6 +97,8 @@ const Settings = () => {
     currency: 'USD',
     dateFormat: 'MM/DD/YYYY'
   });
+
+  const [showHelpSupport, setShowHelpSupport] = useState(false);
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -210,11 +221,11 @@ const Settings = () => {
 
             </div>
             <div className="hidden lg:flex items-center gap-3">
-              <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light">
-                <Activity className="h-4 w-4 mr-2" />
-                {t('settings.accountAnalytics')}
-              </Button>
-              <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light">
+              <Button 
+                variant="outline" 
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light"
+                onClick={() => setShowHelpSupport(true)}
+              >
                 <HelpCircle className="h-4 w-4 mr-2" />
                 Help & Support
               </Button>
@@ -732,6 +743,193 @@ const Settings = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Help & Support Modal */}
+      <Dialog open={showHelpSupport} onOpenChange={setShowHelpSupport}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl font-light text-black">
+              <HelpCircle className="h-6 w-6 text-gray-600" />
+              Help & Support Center
+            </DialogTitle>
+            <DialogDescription className="font-light text-gray-600 text-base">
+              Get help with your property management system and find answers to common questions.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Quick Help Categories */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-light text-black border-b pb-2">Quick Help</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl hover:bg-gray-100/50 transition-colors cursor-pointer">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      <User className="h-5 w-5 text-gray-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-black">Getting Started</h4>
+                      <p className="text-sm text-gray-600">New user guide and setup</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl hover:bg-gray-100/50 transition-colors cursor-pointer">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      <Building2 className="h-5 w-5 text-gray-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-black">Property Management</h4>
+                      <p className="text-sm text-gray-600">Managing properties and units</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl hover:bg-gray-100/50 transition-colors cursor-pointer">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      <CreditCard className="h-5 w-5 text-gray-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-black">Rent Collection</h4>
+                      <p className="text-sm text-gray-600">Payment processing and tracking</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl hover:bg-gray-100/50 transition-colors cursor-pointer">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      <WrenchIcon className="h-5 w-5 text-gray-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-black">Maintenance</h4>
+                      <p className="text-sm text-gray-600">Request management and tracking</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* FAQ Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-light text-black border-b pb-2">Frequently Asked Questions</h3>
+              <div className="space-y-3">
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl">
+                  <h4 className="font-medium text-black mb-2">How do I add a new property?</h4>
+                  <p className="text-sm text-gray-600">
+                    Navigate to the Properties page and click "Add Property". Fill in the required information including address, property type, and amenities.
+                  </p>
+                </div>
+                
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl">
+                  <h4 className="font-medium text-black mb-2">How can I track rent payments?</h4>
+                  <p className="text-sm text-gray-600">
+                    Use the Rent Collection page to view all payment records, track overdue payments, and generate payment reports.
+                  </p>
+                </div>
+                
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl">
+                  <h4 className="font-medium text-black mb-2">What should I do if a tenant reports maintenance?</h4>
+                  <p className="text-sm text-gray-600">
+                    Go to the Maintenance page, click "Create Request", and fill out the maintenance request form with all relevant details.
+                  </p>
+                </div>
+                
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl">
+                  <h4 className="font-medium text-black mb-2">How do I change my account settings?</h4>
+                  <p className="text-sm text-gray-600">
+                    Use the tabs above to navigate between Profile, Notifications, Security, and Preferences. Make your changes and click "Save Changes".
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Support */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-light text-black border-b pb-2">Contact Support</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl text-center">
+                  <div className="p-3 bg-gray-100 rounded-lg w-fit mx-auto mb-3">
+                    <Mail className="h-6 w-6 text-gray-600" />
+                  </div>
+                  <h4 className="font-medium text-black mb-1">Email Support</h4>
+                  <p className="text-sm text-gray-600 mb-2">support@pmslaunchpad.com</p>
+                  <p className="text-xs text-gray-500">Response within 24 hours</p>
+                </div>
+                
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl text-center">
+                  <div className="p-3 bg-gray-100 rounded-lg w-fit mx-auto mb-3">
+                    <Phone className="h-6 w-6 text-gray-600" />
+                  </div>
+                  <h4 className="font-medium text-black mb-1">Phone Support</h4>
+                  <p className="text-sm text-gray-600 mb-2">+1 (555) 123-4567</p>
+                  <p className="text-xs text-gray-500">Mon-Fri 9AM-6PM EST</p>
+                </div>
+                
+                <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl text-center">
+                  <div className="p-3 bg-gray-100 rounded-lg w-fit mx-auto mb-3">
+                    <HelpCircle className="h-6 w-6 text-gray-600" />
+                  </div>
+                  <h4 className="font-medium text-black mb-1">Live Chat</h4>
+                  <p className="text-sm text-gray-600 mb-2">Available 24/7</p>
+                  <p className="text-xs text-gray-500">Instant assistance</p>
+                </div>
+              </div>
+            </div>
+
+            {/* System Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-light text-black border-b pb-2">System Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50/50 border border-gray-200 rounded-xl">
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Version:</span>
+                    <span className="text-sm font-medium text-black">1.0.0</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Last Updated:</span>
+                    <span className="text-sm font-medium text-black">January 2024</span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Browser:</span>
+                    <span className="text-sm font-medium text-black">Chrome 120.0</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">Status:</span>
+                    <Badge className="bg-gray-100 text-black border-gray-200">
+                      All Systems Operational
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter className="pt-6">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowHelpSupport(false)}
+              className="border-gray-200 text-gray-700 hover:bg-gray-50 font-light rounded-xl px-6 py-2"
+            >
+              Close
+            </Button>
+            <Button 
+              onClick={() => {
+                // In a real app, this would open email client
+                window.open('mailto:support@pmslaunchpad.com?subject=Support Request', '_blank');
+              }}
+              className="bg-black hover:bg-gray-800 text-white font-light rounded-xl px-6 py-2"
+            >
+              <Mail className="h-4 w-4 mr-2" />
+              Contact Support
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

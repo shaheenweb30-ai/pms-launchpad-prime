@@ -26,6 +26,8 @@ import AdminAccessControl from "./pages/AdminAccessControl";
 import AdminPanel from "./components/AdminPanel";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreateUsers from "./pages/CreateUsers";
+import TenantDashboard from "./pages/TenantDashboard";
+import TenantMaintenance from "./pages/TenantMaintenance";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
 import { useEffect } from 'react';
@@ -218,7 +220,18 @@ const App = () => {
                 element={
                   <ProtectedRoute allowedRoles={['tenant']}>
                     <ProtectedLayout>
-                      <Dashboard />
+                      <TenantDashboard />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/tenant-maintenance" 
+                element={
+                  <ProtectedRoute allowedRoles={['tenant']}>
+                    <ProtectedLayout>
+                      <TenantMaintenance />
                     </ProtectedLayout>
                   </ProtectedRoute>
                 } 

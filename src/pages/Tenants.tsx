@@ -2108,7 +2108,6 @@ const Tenants = () => {
                         Unit {tenant.unit}
                       </Badge>
                       <Badge className={getPaymentHistoryColor(tenant.paymentHistory)}>
-                        <Star className="h-3 w-3 mr-1" />
                         {tenant.paymentHistory}
                       </Badge>
                     </div>
@@ -2141,10 +2140,6 @@ const Tenants = () => {
                   </div>
 
                   <div className="text-right space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg font-light text-black">{tenant.tenantRating}</span>
-                      <Star className="h-4 w-4 text-gray-500" />
-                    </div>
                     <div className="text-sm text-gray-600">
                       {tenant.maintenanceRequests} maintenance requests
                     </div>

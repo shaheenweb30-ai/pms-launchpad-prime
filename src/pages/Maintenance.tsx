@@ -151,6 +151,82 @@ const Maintenance = () => {
   const [recentlyCreatedId, setRecentlyCreatedId] = useState<number | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const newRequestRef = useRef<HTMLDivElement>(null);
+  
+  // Load tenants and properties from localStorage
+  const [tenants, setTenants] = useState<any[]>([]);
+  const [properties, setProperties] = useState<any[]>([]);
+
+  // Load maintenance requests, tenants, and properties from localStorage on component mount
+  useEffect(() => {
+    const loadMaintenanceRequests = () => {
+      const savedRequests = localStorage.getItem('pms-maintenance-requests');
+      if (savedRequests) {
+        try {
+          const parsedRequests = JSON.parse(savedRequests);
+          setMaintenanceRequests(parsedRequests);
+        } catch (error) {
+          console.error('Error parsing saved maintenance requests:', error);
+          setMaintenanceRequests([]);
+        }
+      } else {
+        setMaintenanceRequests([]);
+      }
+    };
+
+    const loadTenants = () => {
+      const savedTenants = localStorage.getItem('pms-tenants');
+      if (savedTenants) {
+        try {
+          const parsedTenants = JSON.parse(savedTenants);
+          setTenants(parsedTenants);
+        } catch (error) {
+          console.error('Error parsing saved tenants:', error);
+          setTenants([]);
+        }
+      } else {
+        setTenants([]);
+      }
+    };
+
+    const loadProperties = () => {
+      const savedProperties = localStorage.getItem('pms-properties');
+      if (savedProperties) {
+        try {
+          const parsedProperties = JSON.parse(savedProperties);
+          setProperties(parsedProperties);
+        } catch (error) {
+          console.error('Error parsing saved properties:', error);
+          setProperties([]);
+        }
+      } else {
+        setProperties([]);
+      }
+    };
+
+    loadMaintenanceRequests();
+    loadTenants();
+    loadProperties();
+
+    // Listen for storage changes to refresh data when they're updated elsewhere
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'pms-maintenance-requests') {
+        loadMaintenanceRequests();
+      }
+      if (e.key === 'pms-tenants') {
+        loadTenants();
+      }
+      if (e.key === 'pms-properties') {
+        loadProperties();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   // Scroll to newly created request
   useEffect(() => {
@@ -163,7 +239,7 @@ const Maintenance = () => {
   }, [recentlyCreatedId]);
 
   // Enhanced maintenance requests data with more details
-  const maintenanceRequests: any[] = [];
+  const [maintenanceRequests, setMaintenanceRequests] = useState<any[]>([]);
 
   const filteredRequests = maintenanceRequests.filter(request => {
     const matchesSearch = request.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -266,6 +342,15 @@ const Maintenance = () => {
     return 'text-red-600';
   };
 
+  // Helper function to save maintenance requests to localStorage
+  const saveMaintenanceRequestsToStorage = (requestsToSave: any[]) => {
+    try {
+      localStorage.setItem('pms-maintenance-requests', JSON.stringify(requestsToSave));
+    } catch (error) {
+      console.error('Error saving maintenance requests to localStorage:', error);
+    }
+  };
+
   const handleCreateRequest = async () => {
     // Validate required fields
     const errors: {[key: string]: string} = {};
@@ -291,7 +376,7 @@ const Maintenance = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const request = {
-        id: maintenanceRequests.length + 1,
+        id: Date.now(), // Generate unique ID
         ...newRequest,
         estimatedCost: parseFloat(newRequest.estimatedCost) || 0,
         status: 'pending',
@@ -310,8 +395,12 @@ const Maintenance = () => {
         lastUpdate: new Date().toISOString().split('T')[0]
       };
 
-      // In a real app, this would be sent to an API
-      maintenanceRequests.unshift(request);
+      // Add new request to the list
+      const updatedRequests = [request, ...maintenanceRequests];
+      setMaintenanceRequests(updatedRequests);
+      
+      // Save to localStorage
+      saveMaintenanceRequestsToStorage(updatedRequests);
       
       // Set recently created ID for highlighting
       setRecentlyCreatedId(request.id);
@@ -441,6 +530,24 @@ const Maintenance = () => {
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light"
+                onClick={() => {
+                  const savedRequests = localStorage.getItem('pms-maintenance-requests');
+                  if (savedRequests) {
+                    try {
+                      const parsedRequests = JSON.parse(savedRequests);
+                      setMaintenanceRequests(parsedRequests);
+                    } catch (error) {
+                      console.error('Error parsing saved maintenance requests:', error);
+                    }
+                  }
+                }}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
               <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light">
                 <Activity className="h-4 w-4 mr-2" />
                 Analytics
@@ -531,18 +638,70 @@ const Maintenance = () => {
 
             {/* Property & Tenant Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-light text-black border-b pb-2">Property & Tenant</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-light text-black border-b pb-2">Property & Tenant</h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const savedTenants = localStorage.getItem('pms-tenants');
+                    const savedProperties = localStorage.getItem('pms-properties');
+                    
+                    if (savedTenants) {
+                      try {
+                        const parsedTenants = JSON.parse(savedTenants);
+                        setTenants(parsedTenants);
+                      } catch (error) {
+                        console.error('Error parsing saved tenants:', error);
+                      }
+                    }
+                    
+                    if (savedProperties) {
+                      try {
+                        const parsedProperties = JSON.parse(savedProperties);
+                        setProperties(parsedProperties);
+                      } catch (error) {
+                        console.error('Error parsing saved properties:', error);
+                      }
+                    }
+                  }}
+                  className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                  title="Refresh tenants and properties"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Refresh
+                </Button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="property">Property *</Label>
-                  <Input
-                    id="property"
-                    placeholder="e.g., Oak Street Apartments"
-                    value={newRequest.property}
-                    onChange={(e) => handleInputChange('property', e.target.value)}
-                    className={formErrors.property ? 'border-red-500 focus:border-red-500' : ''}
-                  />
+                  <Label htmlFor="property">Select Property *</Label>
+                  <Select value={newRequest.property} onValueChange={(value) => handleInputChange('property', value)}>
+                    <SelectTrigger className={formErrors.property ? 'border-red-500 focus:border-red-500' : ''}>
+                      <SelectValue placeholder="Choose a property" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {properties.length > 0 ? (
+                        properties.map((property) => (
+                          <SelectItem key={property.id} value={property.name}>
+                            <div className="flex items-center gap-2">
+                              <Building2 className="h-4 w-4 text-gray-500" />
+                              <span>{property.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="" disabled>
+                          No properties available
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
                   {formErrors.property && <p className="text-red-500 text-xs mt-1">{formErrors.property}</p>}
+                  {properties.length === 0 && (
+                    <p className="text-xs text-orange-600">
+                      No properties found. Please add properties in the Properties section first.
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="unit">Unit *</Label>
@@ -556,15 +715,37 @@ const Maintenance = () => {
                   {formErrors.unit && <p className="text-red-500 text-xs mt-1">{formErrors.unit}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="tenant">Tenant Name *</Label>
-                  <Input
-                    id="tenant"
-                    placeholder="e.g., Sarah Johnson"
-                    value={newRequest.tenant}
-                    onChange={(e) => handleInputChange('tenant', e.target.value)}
-                    className={formErrors.tenant ? 'border-red-500 focus:border-red-500' : ''}
-                  />
+                  <Label htmlFor="tenant">Select Tenant *</Label>
+                  <Select value={newRequest.tenant} onValueChange={(value) => handleInputChange('tenant', value)}>
+                    <SelectTrigger className={formErrors.tenant ? 'border-red-500 focus:border-red-500' : ''}>
+                      <SelectValue placeholder="Choose a tenant" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tenants.length > 0 ? (
+                        tenants.map((tenant) => (
+                          <SelectItem key={tenant.id} value={tenant.name}>
+                            <div className="flex items-center gap-2">
+                              <Users className="h-4 w-4 text-gray-500" />
+                              <span>{tenant.name}</span>
+                              {tenant.email && (
+                                <span className="text-xs text-gray-500">({tenant.email})</span>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="" disabled>
+                          No tenants available
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
                   {formErrors.tenant && <p className="text-red-500 text-xs mt-1">{formErrors.tenant}</p>}
+                  {tenants.length === 0 && (
+                    <p className="text-xs text-orange-600">
+                      No tenants found. Please add tenants in the Tenants section first.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

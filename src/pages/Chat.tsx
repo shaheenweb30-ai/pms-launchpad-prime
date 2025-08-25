@@ -10,8 +10,6 @@ import {
   Send, 
   Search, 
   MoreVertical, 
-  Phone, 
-  Video,
   Paperclip,
   Smile
 } from 'lucide-react';
@@ -245,12 +243,6 @@ const Chat = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl">
-                      <Phone className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl">
-                      <Video className="h-4 w-4" />
-                    </Button>
                     <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl">
                       <MoreVertical className="h-4 w-4" />
                     </Button>

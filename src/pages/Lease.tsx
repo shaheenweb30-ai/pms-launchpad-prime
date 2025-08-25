@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -107,6 +107,61 @@ const Lease = () => {
   const [showAddLeaseModal, setShowAddLeaseModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  
+  // Load properties and leases from localStorage on component mount
+  useEffect(() => {
+    const loadProperties = () => {
+      const savedProperties = localStorage.getItem('pms-properties');
+      if (savedProperties) {
+        try {
+          const parsedProperties = JSON.parse(savedProperties);
+          // Extract property names and add 'All Properties' option
+          const propertyNames = ['All Properties', ...parsedProperties.map((prop: any) => prop.name)];
+          setProperties(propertyNames);
+        } catch (error) {
+          console.error('Error parsing saved properties:', error);
+          setProperties(['All Properties']);
+        }
+      } else {
+        setProperties(['All Properties']);
+      }
+    };
+
+    const loadLeases = () => {
+      const savedLeases = localStorage.getItem('pms-leases');
+      if (savedLeases) {
+        try {
+          const parsedLeases = JSON.parse(savedLeases);
+          setLeases(parsedLeases);
+        } catch (error) {
+          console.error('Error parsing saved leases:', error);
+          setLeases([]);
+        }
+      } else {
+        setLeases([]);
+      }
+    };
+    
+    loadProperties();
+    loadLeases();
+    
+    // Listen for storage changes to refresh data when they're updated elsewhere
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'pms-properties') {
+        loadProperties();
+      }
+      if (e.key === 'pms-leases') {
+        loadLeases();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
   const [newLease, setNewLease] = useState({
     property: '',
     tenant: '',
@@ -139,9 +194,9 @@ const Lease = () => {
   const [selectedTenantOption, setSelectedTenantOption] = useState<'manual' | 'invite' | 'existing' | null>(null);
 
   // Enhanced lease data with more details
-  const leases: any[] = [];
+  const [leases, setLeases] = useState<any[]>([]);
 
-  const properties: string[] = [];
+  const [properties, setProperties] = useState<string[]>([]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -292,27 +347,67 @@ const Lease = () => {
   };
 
   const canProceedToNext = () => {
-    switch (currentStep) {
-      case 1:
-        return newLease.property && newLease.tenant && newLease.startDate && newLease.endDate && selectedTenantOption;
-      case 2:
-        return newLease.monthlyRent && newLease.deposit;
-      case 3:
-        return newLease.securityDeposit;
-      default:
-        return true;
+    // All fields are now optional, so users can proceed to next step regardless
+    return true;
+  };
+
+  // Helper function to save leases to localStorage
+  const saveLeasesToStorage = (leasesToSave: any[]) => {
+    try {
+      localStorage.setItem('pms-leases', JSON.stringify(leasesToSave));
+    } catch (error) {
+      console.error('Error saving leases to localStorage:', error);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setIsSubmitting(true);
     
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log('New Lease Data:', newLease);
+      // Create lease with default values for missing fields
+      const leaseData = {
+        id: Date.now().toString(), // Generate unique ID
+        ...newLease,
+        property: newLease.property || 'Unspecified Property',
+        tenant: newLease.tenant || 'Unspecified Tenant',
+        startDate: newLease.startDate || new Date().toISOString().split('T')[0],
+        endDate: newLease.endDate || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        monthlyRent: parseFloat(newLease.monthlyRent) || 0,
+        deposit: parseFloat(newLease.deposit) || 0,
+        securityDeposit: parseFloat(newLease.securityDeposit) || 0,
+        lateFees: parseFloat(newLease.lateFees) || 0,
+        status: 'active',
+        leaseType: newLease.leaseType || 'residential',
+        autoRenew: newLease.autoRenew || false,
+        utilities: newLease.utilities || 'included',
+        parking: newLease.parking || 'included',
+        petPolicy: newLease.petPolicy || 'not allowed',
+        smokingPolicy: newLease.smokingPolicy || 'not allowed',
+        notes: newLease.notes || '',
+        pdfDocument: newLease.pdfDocument,
+        // Additional fields for table display
+        daysRemaining: newLease.endDate ? 
+          Math.ceil((new Date(newLease.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 365,
+        totalCollected: 0,
+        lastPayment: new Date().toISOString().split('T')[0],
+        nextPayment: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        latePayments: 0,
+        tenantRating: 5.0,
+        communicationScore: 100,
+        paymentHistory: 'excellent'
+      };
+      
+      // Add new lease to the list
+      const updatedLeases = [...leases, leaseData];
+      setLeases(updatedLeases);
+      
+      // Save to localStorage
+      saveLeasesToStorage(updatedLeases);
+      
+      console.log('New Lease Data:', leaseData);
       alert('Lease created successfully!');
       
       resetForm();
@@ -401,6 +496,24 @@ const Lease = () => {
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light rounded-xl"
+                onClick={() => {
+                  const savedLeases = localStorage.getItem('pms-leases');
+                  if (savedLeases) {
+                    try {
+                      const parsedLeases = JSON.parse(savedLeases);
+                      setLeases(parsedLeases);
+                    } catch (error) {
+                      console.error('Error parsing saved leases:', error);
+                    }
+                  }
+                }}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
               <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light rounded-xl">
                 <Download className="h-4 w-4 mr-2" />
                 Export
@@ -459,7 +572,7 @@ const Lease = () => {
                     </div>
                   </DialogHeader>
                   
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-6">
                     {/* Step 1: Basic Information */}
                     {currentStep === 1 && (
                       <div className="space-y-6">
@@ -470,25 +583,62 @@ const Lease = () => {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="property" className="font-light text-gray-700">Property *</Label>
-                            <Select value={newLease.property} onValueChange={(value) => handleInputChange('property', value)}>
-                              <SelectTrigger className="font-light">
-                                <SelectValue placeholder="Select property" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {/* Property options will be populated dynamically */}
-                              </SelectContent>
-                            </Select>
+                            <Label htmlFor="property" className="font-light text-gray-700">Property</Label>
+                            <div className="flex gap-2">
+                              <Select value={newLease.property} onValueChange={(value) => handleInputChange('property', value)}>
+                                <SelectTrigger className="font-light flex-1">
+                                  <SelectValue placeholder="Select property" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {properties.slice(1).length > 0 ? (
+                                    properties.slice(1).map((property) => (
+                                      <SelectItem key={property} value={property}>
+                                        {property}
+                                      </SelectItem>
+                                    ))
+                                  ) : (
+                                    <SelectItem value="" disabled>
+                                      No properties available
+                                    </SelectItem>
+                                  )}
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  const savedProperties = localStorage.getItem('pms-properties');
+                                  if (savedProperties) {
+                                    try {
+                                      const parsedProperties = JSON.parse(savedProperties);
+                                      const propertyNames = ['All Properties', ...parsedProperties.map((prop: any) => prop.name)];
+                                      setProperties(propertyNames);
+                                    } catch (error) {
+                                      console.error('Error parsing saved properties:', error);
+                                    }
+                                  }
+                                }}
+                                className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                                title="Refresh properties list"
+                              >
+                                <RefreshCw className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            {properties.slice(1).length === 0 && (
+                              <p className="text-sm text-orange-600">
+                                No properties found. Please add properties first in the Properties section.
+                              </p>
+                            )}
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="tenant" className="font-light text-gray-700">Tenant *</Label>
+                            <Label htmlFor="tenant" className="font-light text-gray-700">Tenant</Label>
                             {selectedTenantOption === 'manual' ? (
                               <Input
                                 id="tenant"
                                 placeholder="e.g., John Smith"
                                 value={newLease.tenant}
                                 onChange={(e) => handleInputChange('tenant', e.target.value)}
-                                required
                                 className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
                               />
                             ) : newLease.tenant ? (
@@ -524,23 +674,21 @@ const Lease = () => {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="startDate" className="font-light text-gray-700">Lease Start Date *</Label>
+                            <Label htmlFor="startDate" className="font-light text-gray-700">Lease Start Date</Label>
                             <Input
                               id="startDate"
                               type="date"
                               value={newLease.startDate}
                               onChange={(e) => handleInputChange('startDate', e.target.value)}
-                              required
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="endDate" className="font-light text-gray-700">Lease End Date *</Label>
+                            <Label htmlFor="endDate" className="font-light text-gray-700">Lease End Date</Label>
                             <Input
                               id="endDate"
                               type="date"
                               value={newLease.endDate}
                               onChange={(e) => handleInputChange('endDate', e.target.value)}
-                              required
                             />
                           </div>
                         </div>
@@ -572,25 +720,23 @@ const Lease = () => {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="monthlyRent">Monthly Rent *</Label>
+                            <Label htmlFor="monthlyRent">Monthly Rent</Label>
                             <Input
                               id="monthlyRent"
                               type="number"
                               placeholder="e.g., 1800"
                               value={newLease.monthlyRent}
                               onChange={(e) => handleInputChange('monthlyRent', e.target.value)}
-                              required
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label htmlFor="deposit">Security Deposit *</Label>
+                            <Label htmlFor="deposit">Security Deposit</Label>
                             <Input
                               id="deposit"
                               type="number"
                               placeholder="e.g., 1800"
                               value={newLease.deposit}
                               onChange={(e) => handleInputChange('deposit', e.target.value)}
-                              required
                             />
                           </div>
                         </div>
@@ -850,7 +996,8 @@ const Lease = () => {
                           </Button>
                         ) : (
                           <Button 
-                            type="submit"
+                            type="button"
+                            onClick={handleSubmit}
                             disabled={isSubmitting}
                             className="bg-black hover:bg-gray-800 text-white font-light rounded-xl px-8 py-2"
                           >
@@ -869,7 +1016,7 @@ const Lease = () => {
                         )}
                       </div>
                     </div>
-                  </form>
+                  </div>
                 </DialogContent>
               </Dialog>
             </div>
@@ -949,7 +1096,7 @@ const Lease = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="inviteName">Full Name</Label>
+              <Label htmlFor="inviteName">Full Name (Optional)</Label>
               <Input
                 id="inviteName"
                 placeholder="e.g., John Smith"
@@ -959,7 +1106,7 @@ const Lease = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="inviteEmail">Email Address</Label>
+              <Label htmlFor="inviteEmail">Email Address *</Label>
               <Input
                 id="inviteEmail"
                 type="email"
@@ -970,7 +1117,7 @@ const Lease = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="invitePhone">Phone Number</Label>
+              <Label htmlFor="invitePhone">Phone Number (Optional)</Label>
               <Input
                 id="invitePhone"
                 placeholder="e.g., +1 (555) 123-4567"
@@ -989,7 +1136,7 @@ const Lease = () => {
               </Button>
               <Button
                 onClick={handleSendInvitation}
-                disabled={!tenantInvitation.name || !tenantInvitation.email}
+                disabled={!tenantInvitation.email}
                 className="flex-1 bg-black hover:bg-gray-800 text-white font-light"
               >
                 <Mail className="h-4 w-4 mr-2" />
@@ -1177,6 +1324,28 @@ const Lease = () => {
                   className="pl-10 border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl font-light"
                 />
               </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
+                onClick={() => {
+                  const savedLeases = localStorage.getItem('pms-leases');
+                  if (savedLeases) {
+                    try {
+                      const parsedLeases = JSON.parse(savedLeases);
+                      setLeases(parsedLeases);
+                    } catch (error) {
+                      console.error('Error parsing saved leases:', error);
+                    }
+                  }
+                }}
+                title="Refresh leases"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
             </div>
             
             <div className="w-full md:w-40">

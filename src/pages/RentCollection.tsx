@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,9 +63,6 @@ import {
   Settings,
   HelpCircle,
   Star,
-  TrendingUp2,
-  TrendingDown2,
-  DollarSignIcon,
   PiggyBank,
   Wallet,
   Coins,
@@ -125,6 +122,7 @@ const RentCollection = () => {
   const [selectedPayment, setSelectedPayment] = useState<any>(null);
   const [showRecordPaymentModal, setShowRecordPaymentModal] = useState(false);
   const [recordingPayment, setRecordingPayment] = useState<any>(null);
+  const [showManualPaymentModal, setShowManualPaymentModal] = useState(false);
   const [newPayment, setNewPayment] = useState({
     amount: '',
     paymentMethod: '',
@@ -134,13 +132,102 @@ const RentCollection = () => {
     lateFees: '',
     partialPayment: false
   });
+  const [manualPayment, setManualPayment] = useState({
+    tenant: '',
+    property: '',
+    month: '',
+    amount: '',
+    paymentMethod: '',
+    paymentDate: '',
+    dueDate: '',
+    reference: '',
+    notes: '',
+    paymentType: 'rent', // rent, deposit, lateFees, other
+    status: 'pending'
+  });
+
+  // Load tenants and properties from localStorage
+  const [tenants, setTenants] = useState<any[]>([]);
+  const [properties, setProperties] = useState<string[]>([]);
 
   // Enhanced rent collection data with more details
-  const rentPayments: any[] = [];
-
-  const properties: string[] = [];
+  const [rentPayments, setRentPayments] = useState<any[]>([]);
 
   const months: string[] = [];
+
+  // Load tenants and properties from localStorage on component mount
+  useEffect(() => {
+    const loadTenants = () => {
+      const savedTenants = localStorage.getItem('pms-tenants');
+      if (savedTenants) {
+        try {
+          const parsedTenants = JSON.parse(savedTenants);
+          setTenants(parsedTenants);
+        } catch (error) {
+          console.error('Error parsing saved tenants:', error);
+          setTenants([]);
+        }
+      } else {
+        setTenants([]);
+      }
+    };
+
+    const loadProperties = () => {
+      const savedProperties = localStorage.getItem('pms-properties');
+      if (savedProperties) {
+        try {
+          const parsedProperties = JSON.parse(savedProperties);
+          // Extract property names
+          const propertyNames = parsedProperties.map((prop: any) => prop.name);
+          setProperties(propertyNames);
+        } catch (error) {
+          console.error('Error parsing saved properties:', error);
+          setProperties([]);
+        }
+      } else {
+        setProperties([]);
+      }
+    };
+
+    const loadPayments = () => {
+      const savedPayments = localStorage.getItem('pms-rent-payments');
+      if (savedPayments) {
+        try {
+          const parsedPayments = JSON.parse(savedPayments);
+          setRentPayments(parsedPayments);
+        } catch (error) {
+          console.error('Error parsing saved payments:', error);
+          setRentPayments([]);
+        }
+      } else {
+        setRentPayments([]);
+      }
+    };
+
+    loadTenants();
+    loadProperties();
+    loadPayments();
+
+    // Listen for storage changes to refresh data when they're updated elsewhere
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'pms-tenants') {
+        loadTenants();
+      }
+      if (e.key === 'pms-properties') {
+        loadProperties();
+      }
+      if (e.key === 'pms-rent-payments') {
+        loadPayments();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -272,7 +359,27 @@ const RentCollection = () => {
       return;
     }
 
-    // In a real app, this would save the payment to the database
+    // Create updated payment record
+    const updatedPayment = {
+      ...recordingPayment,
+      amount: parseFloat(newPayment.amount),
+      paymentMethod: newPayment.paymentMethod,
+      paidDate: newPayment.paymentDate,
+      reference: newPayment.reference,
+      notes: newPayment.notes,
+      lateFees: parseFloat(newPayment.lateFees) || 0,
+      status: newPayment.partialPayment ? 'partial' : 'paid'
+    };
+
+    // Update the payment in the list
+    const updatedPayments = rentPayments.map(p => 
+      p.id === recordingPayment.id ? updatedPayment : p
+    );
+    setRentPayments(updatedPayments);
+    
+    // Save to localStorage
+    savePaymentsToStorage(updatedPayments);
+
     console.log('Recording payment:', {
       paymentId: recordingPayment.id,
       ...newPayment
@@ -311,6 +418,78 @@ const RentCollection = () => {
     setRecordingPayment(null);
   };
 
+  const resetManualPaymentForm = () => {
+    setManualPayment({
+      tenant: '',
+      property: '',
+      month: '',
+      amount: '',
+      paymentMethod: '',
+      paymentDate: '',
+      dueDate: '',
+      reference: '',
+      notes: '',
+      paymentType: 'rent',
+      status: 'pending'
+    });
+  };
+
+  // Helper function to save payments to localStorage
+  const savePaymentsToStorage = (paymentsToSave: any[]) => {
+    try {
+      localStorage.setItem('pms-rent-payments', JSON.stringify(paymentsToSave));
+    } catch (error) {
+      console.error('Error saving payments to localStorage:', error);
+    }
+  };
+
+  const handleManualPaymentSubmit = () => {
+    if (!manualPayment.tenant || !manualPayment.property || !manualPayment.amount || !manualPayment.paymentMethod || !manualPayment.paymentDate) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create new payment record
+    const newPaymentRecord = {
+      id: `PAY-${Date.now()}`,
+      ...manualPayment,
+      amount: parseFloat(manualPayment.amount),
+      paymentScore: 100,
+      tenantRating: 5.0,
+      reminderSent: 0,
+      autoPay: false,
+      daysOverdue: 0,
+      lateFees: 0,
+      propertyType: 'Residential', // Default, can be enhanced later
+      dueDate: manualPayment.dueDate || manualPayment.paymentDate,
+      paidDate: manualPayment.paymentDate,
+      status: 'paid' // Since we're recording a payment
+    };
+
+    // Add new payment to the list
+    const updatedPayments = [...rentPayments, newPaymentRecord];
+    setRentPayments(updatedPayments);
+    
+    // Save to localStorage
+    savePaymentsToStorage(updatedPayments);
+
+    console.log('New manual payment record:', newPaymentRecord);
+
+    // Reset form and close modal
+    resetManualPaymentForm();
+    setShowManualPaymentModal(false);
+
+    // Show success message
+    toast({
+      title: "Payment Recorded",
+      description: `Successfully recorded payment of ${formatCurrency(parseFloat(manualPayment.amount))} for ${manualPayment.tenant}`,
+    });
+  };
+
   return (
     <div className="space-y-6">
 
@@ -339,6 +518,24 @@ const RentCollection = () => {
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200"
+                onClick={() => {
+                  const savedPayments = localStorage.getItem('pms-rent-payments');
+                  if (savedPayments) {
+                    try {
+                      const parsedPayments = JSON.parse(savedPayments);
+                      setRentPayments(parsedPayments);
+                    } catch (error) {
+                      console.error('Error parsing saved payments:', error);
+                    }
+                  }
+                }}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
               <Button variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Analytics
@@ -347,7 +544,10 @@ const RentCollection = () => {
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
-              <Button className="bg-black hover:bg-gray-800 text-white font-light shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3">
+              <Button 
+                onClick={() => setShowManualPaymentModal(true)}
+                className="bg-black hover:bg-gray-800 text-white font-light shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Record Payment
               </Button>
@@ -993,6 +1193,275 @@ const RentCollection = () => {
             <Button 
               onClick={handleSubmitPayment}
               disabled={!newPayment.amount || !newPayment.paymentMethod || !newPayment.paymentDate}
+              className="bg-black hover:bg-gray-800 text-white font-light rounded-xl px-6 py-2"
+            >
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Record Payment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Manual Payment Modal */}
+      <Dialog open={showManualPaymentModal} onOpenChange={setShowManualPaymentModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl border border-gray-200 shadow-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl font-light text-black">
+              <Plus className="h-6 w-6 text-gray-600" />
+              Record New Payment
+            </DialogTitle>
+            <DialogDescription className="font-light text-gray-600 text-base">
+              Record a new payment manually or create a payment request for a tenant.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Payment Type Selection */}
+            <div className="space-y-4">
+              <Label className="text-sm font-medium text-gray-700">Payment Type</Label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { value: 'rent', label: 'Rent', icon: <Home className="h-4 w-4" /> },
+                  { value: 'deposit', label: 'Deposit', icon: <Shield className="h-4 w-4" /> },
+                  { value: 'lateFees', label: 'Late Fees', icon: <AlertTriangle className="h-4 w-4" /> },
+                  { value: 'other', label: 'Other', icon: <FileText className="h-4 w-4" /> }
+                ].map((type) => (
+                  <Button
+                    key={type.value}
+                    variant={manualPayment.paymentType === type.value ? "default" : "outline"}
+                    onClick={() => setManualPayment({...manualPayment, paymentType: type.value})}
+                    className={`h-16 flex-col gap-2 ${
+                      manualPayment.paymentType === type.value 
+                        ? 'bg-black text-white' 
+                        : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {type.icon}
+                    <span className="text-sm font-medium">{type.label}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Basic Information */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-800">Tenant & Property Selection</h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const savedTenants = localStorage.getItem('pms-tenants');
+                  const savedProperties = localStorage.getItem('pms-properties');
+                  
+                  if (savedTenants) {
+                    try {
+                      const parsedTenants = JSON.parse(savedTenants);
+                      setTenants(parsedTenants);
+                    } catch (error) {
+                      console.error('Error parsing saved tenants:', error);
+                    }
+                  }
+                  
+                  if (savedProperties) {
+                    try {
+                      const parsedProperties = JSON.parse(savedProperties);
+                      const propertyNames = parsedProperties.map((prop: any) => prop.name);
+                      setProperties(propertyNames);
+                    } catch (error) {
+                      console.error('Error parsing saved properties:', error);
+                    }
+                  }
+                }}
+                className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                title="Refresh tenants and properties"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="manualTenant" className="font-light text-gray-700">Select Tenant *</Label>
+                <Select value={manualPayment.tenant} onValueChange={(value) => setManualPayment({...manualPayment, tenant: value})}>
+                  <SelectTrigger className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl">
+                    <SelectValue placeholder="Choose a tenant" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tenants.length > 0 ? (
+                      tenants.map((tenant) => (
+                        <SelectItem key={tenant.id} value={tenant.name}>
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-gray-500" />
+                            <span>{tenant.name}</span>
+                            {tenant.email && (
+                              <span className="text-xs text-gray-500">({tenant.email})</span>
+                            )}
+                          </div>
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="" disabled>
+                        No tenants available
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                {tenants.length === 0 && (
+                  <p className="text-xs text-orange-600">
+                    No tenants found. Please add tenants in the Tenants section first.
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="manualProperty" className="font-light text-gray-700">Select Property *</Label>
+                <Select value={manualPayment.property} onValueChange={(value) => setManualPayment({...manualPayment, property: value})}>
+                  <SelectTrigger className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl">
+                    <SelectValue placeholder="Choose a property" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {properties.length > 0 ? (
+                      properties.map((property) => (
+                        <SelectItem key={property} value={property}>
+                          <div className="flex items-center gap-2">
+                            <Building2 className="h-4 w-4 text-gray-500" />
+                            <span>{property}</span>
+                          </div>
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="" disabled>
+                        No properties available
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                {properties.length === 0 && (
+                  <p className="text-xs text-orange-600">
+                    No properties found. Please add properties in the Properties section first.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="manualMonth" className="font-light text-gray-700">Month/Period</Label>
+                <Input
+                  id="manualMonth"
+                  placeholder="e.g., January 2024, Q1 2024"
+                  value={manualPayment.month}
+                  onChange={(e) => setManualPayment({...manualPayment, month: e.target.value})}
+                  className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="manualAmount" className="font-light text-gray-700">Amount *</Label>
+                <Input
+                  id="manualAmount"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={manualPayment.amount}
+                  onChange={(e) => setManualPayment({...manualPayment, amount: e.target.value})}
+                  className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
+                />
+              </div>
+            </div>
+
+            {/* Payment Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="manualPaymentMethod" className="font-light text-gray-700">Payment Method *</Label>
+                <Select value={manualPayment.paymentMethod} onValueChange={(value) => setManualPayment({...manualPayment, paymentMethod: value})}>
+                  <SelectTrigger className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl">
+                    <SelectValue placeholder="Select payment method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
+                    <SelectItem value="Credit Card">Credit Card</SelectItem>
+                    <SelectItem value="ACH Transfer">ACH Transfer</SelectItem>
+                    <SelectItem value="Cash">Cash</SelectItem>
+                    <SelectItem value="Check">Check</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="manualPaymentDate" className="font-light text-gray-700">Payment Date *</Label>
+                <Input
+                  id="manualPaymentDate"
+                  type="date"
+                  value={manualPayment.paymentDate}
+                  onChange={(e) => setManualPayment({...manualPayment, paymentDate: e.target.value})}
+                  className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="manualDueDate" className="font-light text-gray-700">Due Date</Label>
+                <Input
+                  id="manualDueDate"
+                  type="date"
+                  value={manualPayment.dueDate}
+                  onChange={(e) => setManualPayment({...manualPayment, dueDate: e.target.value})}
+                  className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
+                />
+                <p className="text-xs text-gray-500">Leave empty if same as payment date</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="manualReference" className="font-light text-gray-700">Reference Number</Label>
+                <Input
+                  id="manualReference"
+                  placeholder="Transaction ID, check #, etc."
+                  value={manualPayment.reference}
+                  onChange={(e) => setManualPayment({...manualPayment, reference: e.target.value})}
+                  className="border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="manualNotes" className="font-light text-gray-700">Notes</Label>
+              <textarea
+                id="manualNotes"
+                placeholder="Additional payment details, special arrangements, etc."
+                value={manualPayment.notes}
+                onChange={(e) => setManualPayment({...manualPayment, notes: e.target.value})}
+                rows={3}
+                className="w-full border border-gray-200 rounded-xl px-3 py-2 focus:border-gray-400 focus:ring-gray-400 resize-none"
+              />
+            </div>
+
+            {/* Payment Request Option */}
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+              <div className="flex items-center gap-2 text-blue-800 mb-2">
+                <Info className="h-4 w-4" />
+                <span className="font-medium">Payment Request</span>
+              </div>
+              <p className="text-sm text-blue-700">
+                This will create a payment record that can be used to request payment from tenants. 
+                You can also record actual payments received.
+              </p>
+            </div>
+          </div>
+          
+          <DialogFooter className="pt-6">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                resetManualPaymentForm();
+                setShowManualPaymentModal(false);
+              }} 
+              className="border-gray-200 text-gray-700 hover:bg-gray-50 font-light rounded-xl px-6 py-2"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleManualPaymentSubmit}
+              disabled={!manualPayment.tenant || !manualPayment.property || !manualPayment.amount || !manualPayment.paymentMethod || !manualPayment.paymentDate}
               className="bg-black hover:bg-gray-800 text-white font-light rounded-xl px-6 py-2"
             >
               <CheckCircle className="h-4 w-4 mr-2" />
