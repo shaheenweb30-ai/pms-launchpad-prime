@@ -123,26 +123,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const fetchProfile = async (userId: string) => {
     try {
       console.log('Fetching profile for user:', userId);
-      
-      // Create a default profile for now
-      const defaultProfile = {
+      // Try to load profile from Supabase
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching profile from Supabase:', error);
+      }
+
+      if (data) {
+        console.log('Loaded profile from Supabase:', data);
+        setProfile(data as UserProfile);
+        return;
+      }
+
+      // Fallback inference for local/dev accounts without a users row
+      const email = user?.email || '';
+      let inferredRole: Database['public']['Enums']['user_role'] = 'homeowner';
+      if (/^tenant/i.test(email)) inferredRole = 'tenant';
+      else if (/^admin/i.test(email)) inferredRole = 'admin';
+      else if (/^(owner|home)/i.test(email)) inferredRole = 'homeowner';
+      else if (/^(vendor|maintainer)/i.test(email)) inferredRole = 'vendor';
+
+      const fallbackProfile: UserProfile = {
         id: userId,
-        email: user?.email || '',
+        email,
         first_name: 'User',
         last_name: 'Name',
-        role: 'homeowner' as const,
+        role: inferredRole,
         is_active: true,
         email_verified: true,
         phone: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
-      };
-      
-      console.log('Using default profile:', defaultProfile);
-      setProfile(defaultProfile);
-      
-      // Skip all database operations for now
-      return;
+      } as UserProfile;
+
+      console.warn('No profile found; using inferred fallback profile:', fallbackProfile);
+      setProfile(fallbackProfile);
     } catch (error) {
       console.error('Exception in fetchProfile:', error);
       setProfile(null);
