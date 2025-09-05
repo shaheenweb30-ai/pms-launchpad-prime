@@ -1,8 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="PropertyFlow">
-  <title>PropertyFlow</title>
-  <rect width="128" height="128" rx="24" fill="#ffffff"/>
-  <g fill="#000000" transform="translate(36 28)">
-    <path d="M0 0h12c12 0 20 6 20 16s-8 16-20 16H8v20H0V0zm8 24h3.5C18 24 22 21 22 16s-4-8-10.5-8H8v16z"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-label="PropertyFlow">
+  <defs>
+    <linearGradient id="pfGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ed1c24"/>
+      <stop offset="100%" stop-color="#225fac"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="url(#pfGradient)"/>
+  <text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle"
+        font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+        font-size="28" font-weight="700" fill="#ffffff" letter-spacing="1">PF</text>
 </svg>
 

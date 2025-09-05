@@ -30,23 +30,11 @@ const SignIn = () => {
     if (user && profile && !loading) {
       console.log('Profile loaded, redirecting...', profile.role);
       // Redirect based on user role
-      if (profile.role === 'admin') {
-        navigate('/admin-dashboard');
-        return;
-      }
-      if (profile.role === 'homeowner') {
+      if (profile.role === 'homeowner' || profile.role === 'admin') {
         navigate('/dashboard');
-        return;
+      } else {
+        navigate('/');
       }
-      if (profile.role === 'tenant') {
-        navigate('/tenant-dashboard');
-        return;
-      }
-      if (profile.role === 'vendor') {
-        navigate('/vendor-dashboard');
-        return;
-      }
-      navigate('/');
     }
   }, [user, profile, loading, navigate]);
 
@@ -208,6 +196,15 @@ const SignIn = () => {
         
         {/* Credentials for Quick Access */}
         <div className="mt-8 p-6 bg-gray-50 rounded-3xl border-0">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-light text-gray-600">Quick Access Credentials:</h3>
+            <Link 
+              to="/admin-panel" 
+              className="text-xs text-gray-500 hover:text-black underline font-light"
+            >
+              Admin Panel
+            </Link>
+          </div>
           <div className="space-y-3 text-sm">
             <div 
               className="flex items-center justify-between cursor-pointer hover:bg-white p-3 rounded-2xl transition-colors duration-200"

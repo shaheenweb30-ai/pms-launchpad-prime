@@ -12,3 +12,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Note: Add a Sitemap directive once /sitemap.xml is available

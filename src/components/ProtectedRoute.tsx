@@ -26,13 +26,7 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
 
   // Check role-based access if roles are specified
   if (allowedRoles && !allowedRoles.includes(profile.role || '')) {
-    const role = profile.role;
-    const fallback = role === 'admin' ? '/admin-dashboard'
-      : role === 'homeowner' ? '/dashboard'
-      : role === 'tenant' ? '/tenant-dashboard'
-      : role === 'vendor' ? '/vendor-dashboard'
-      : '/';
-    return <Navigate to={fallback} replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
