@@ -32,6 +32,11 @@ import MyLease from "./pages/MyLease";
 import PaymentHistory from "./pages/PaymentHistory";
 import MaintenanceRequests from "./pages/MaintenanceRequests";
 import TenantChat from "./pages/TenantChat";
+import VendorDashboard from "./pages/VendorDashboard";
+import MaintenanceTasks from "./pages/MaintenanceTasks";
+import WorkHistory from "./pages/WorkHistory";
+import VendorChat from "./pages/VendorChat";
+import VendorPaymentHistory from "./pages/VendorPaymentHistory";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
 import { useEffect } from 'react';
@@ -291,7 +296,51 @@ const App = () => {
                 element={
                   <ProtectedRoute allowedRoles={['vendor']}>
                     <ProtectedLayout>
-                      <Dashboard />
+                      <VendorDashboard />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/maintenance-tasks" 
+                element={
+                  <ProtectedRoute allowedRoles={['vendor']}>
+                    <ProtectedLayout>
+                      <MaintenanceTasks />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/work-history" 
+                element={
+                  <ProtectedRoute allowedRoles={['vendor']}>
+                    <ProtectedLayout>
+                      <WorkHistory />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/vendor-chat" 
+                element={
+                  <ProtectedRoute allowedRoles={['vendor']}>
+                    <ProtectedLayout>
+                      <VendorChat />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/vendor-payment-history" 
+                element={
+                  <ProtectedRoute allowedRoles={['vendor']}>
+                    <ProtectedLayout>
+                      <VendorPaymentHistory />
                     </ProtectedLayout>
                   </ProtectedRoute>
                 } 

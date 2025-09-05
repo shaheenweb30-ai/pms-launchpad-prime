@@ -316,6 +316,32 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/vendor-chat'}
+                        tooltip="Messages"
+                      >
+                        <Link to="/vendor-chat">
+                          <MessageSquare className="h-4 w-4" />
+                          <span>Messages</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/vendor-payment-history'}
+                        tooltip="Payment History"
+                      >
+                        <Link to="/vendor-payment-history">
+                          <DollarSign className="h-4 w-4" />
+                          <span>Payment History</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   </>
                 )}
 
@@ -767,6 +793,32 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
                         <Link to="/work-history">
                           <Clock className="h-4 w-4" />
                           <span>Work History</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/vendor-chat'}
+                        tooltip="Messages"
+                      >
+                        <Link to="/vendor-chat">
+                          <MessageSquare className="h-4 w-4" />
+                          <span>Messages</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/vendor-payment-history'}
+                        tooltip="Payment History"
+                      >
+                        <Link to="/vendor-payment-history">
+                          <DollarSign className="h-4 w-4" />
+                          <span>Payment History</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
