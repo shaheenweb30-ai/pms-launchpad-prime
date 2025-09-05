@@ -169,7 +169,7 @@ const SignUp = () => {
             <Button
               type="submit"
               disabled={isLoading || !formData.name || !formData.userType}
-              className="w-full h-14 bg-black hover:bg-gray-800 text-white font-light rounded-2xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-8"
+              className="w-full h-14 mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">

@@ -272,6 +272,19 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/tenant-chat'}
+                        tooltip="Messages"
+                      >
+                        <Link to="/tenant-chat">
+                          <MessageSquare className="h-4 w-4" />
+                          <span>Messages</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   </>
                 )}
 
@@ -710,6 +723,19 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
                         <Link to="/maintenance-requests">
                           <Wrench className="h-4 w-4" />
                           <span>Maintenance Requests</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === '/tenant-chat'}
+                        tooltip="Messages"
+                      >
+                        <Link to="/tenant-chat">
+                          <MessageSquare className="h-4 w-4" />
+                          <span>Messages</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

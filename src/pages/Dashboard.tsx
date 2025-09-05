@@ -747,7 +747,6 @@ const Dashboard = () => {
               {profile?.role === 'admin' && (
                 <Button 
                   onClick={() => navigate('/admin-dashboard')}
-                  className="bg-black hover:bg-gray-800 text-white font-light shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3"
                 >
                   Go to Admin Dashboard
                 </Button>
@@ -755,19 +754,17 @@ const Dashboard = () => {
               
               <Button 
                 variant="outline" 
-                className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light"
                 onClick={refreshDashboardData}
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh
               </Button>
-              <Button variant="outline" className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 font-light">
+              <Button variant="outline" >
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
               <Button 
                 onClick={handleAddProperty}
-                className="bg-black hover:bg-gray-800 text-white font-light shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 rounded-2xl px-6 py-3"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Property

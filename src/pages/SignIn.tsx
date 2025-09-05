@@ -29,12 +29,23 @@ const SignIn = () => {
   useEffect(() => {
     if (user && profile && !loading) {
       console.log('Profile loaded, redirecting...', profile.role);
-      // Redirect based on user role
-      if (profile.role === 'homeowner' || profile.role === 'admin') {
-        navigate('/dashboard');
-      } else {
-        navigate('/');
+      if (profile.role === 'admin') {
+        navigate('/admin-dashboard');
+        return;
       }
+      if (profile.role === 'homeowner') {
+        navigate('/dashboard');
+        return;
+      }
+      if (profile.role === 'tenant') {
+        navigate('/tenant-dashboard');
+        return;
+      }
+      if (profile.role === 'vendor') {
+        navigate('/vendor-dashboard');
+        return;
+      }
+      navigate('/');
     }
   }, [user, profile, loading, navigate]);
 
@@ -178,7 +189,7 @@ const SignIn = () => {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full h-14 bg-black hover:bg-gray-800 text-white font-light rounded-2xl transition-colors mt-8"
+            className="w-full h-14 mt-8"
           >
             {isLoading ? (
               <div className="flex items-center justify-center">

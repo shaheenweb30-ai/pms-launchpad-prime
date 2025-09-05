@@ -28,6 +28,10 @@ import AdminDashboard from "./pages/AdminDashboard";
 import CreateUsers from "./pages/CreateUsers";
 import TenantDashboard from "./pages/TenantDashboard";
 import TenantMaintenance from "./pages/TenantMaintenance";
+import MyLease from "./pages/MyLease";
+import PaymentHistory from "./pages/PaymentHistory";
+import MaintenanceRequests from "./pages/MaintenanceRequests";
+import TenantChat from "./pages/TenantChat";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
 import { useEffect } from 'react';
@@ -232,6 +236,50 @@ const App = () => {
                   <ProtectedRoute allowedRoles={['tenant']}>
                     <ProtectedLayout>
                       <TenantMaintenance />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/my-lease" 
+                element={
+                  <ProtectedRoute allowedRoles={['tenant']}>
+                    <ProtectedLayout>
+                      <MyLease />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/payment-history" 
+                element={
+                  <ProtectedRoute allowedRoles={['tenant']}>
+                    <ProtectedLayout>
+                      <PaymentHistory />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/maintenance-requests" 
+                element={
+                  <ProtectedRoute allowedRoles={['tenant']}>
+                    <ProtectedLayout>
+                      <MaintenanceRequests />
+                    </ProtectedLayout>
+                  </ProtectedRoute>
+                } 
+              />
+
+              <Route 
+                path="/tenant-chat" 
+                element={
+                  <ProtectedRoute allowedRoles={['tenant']}>
+                    <ProtectedLayout>
+                      <TenantChat />
                     </ProtectedLayout>
                   </ProtectedRoute>
                 } 

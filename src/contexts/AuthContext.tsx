@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       if (session?.user) {
         console.log('User found, fetching profile...');
-        await fetchProfile(session.user.id);
+        await fetchProfile(session.user.id, session.user.email || undefined);
       } else {
         console.log('No user found');
       }
@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         if (session?.user) {
           console.log('User authenticated, fetching profile...');
-          await fetchProfile(session.user.id);
+          await fetchProfile(session.user.id, session.user.email || undefined);
           console.log('Profile fetched after auth change');
         } else {
           console.log('User signed out, clearing profile');
@@ -120,17 +120,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string, emailFromSession?: string) => {
     try {
       console.log('Fetching profile for user:', userId);
       
       // Create a default profile for now
+      const emailLower = (emailFromSession || user?.email || '').toLowerCase();
+      let inferredRole: Database['public']['Enums']['user_role'] = 'homeowner';
+      if (emailLower === 'admin@gmail.com') inferredRole = 'admin';
+      else if (emailLower === 'owner@gmail.com') inferredRole = 'homeowner';
+      else if (emailLower === 'tenant@gmail.com') inferredRole = 'tenant';
+      else if (emailLower === 'maintainer@gmail.com') inferredRole = 'vendor';
+
       const defaultProfile = {
         id: userId,
         email: user?.email || '',
         first_name: 'User',
         last_name: 'Name',
-        role: 'homeowner' as const,
+        role: inferredRole,
         is_active: true,
         email_verified: true,
         phone: null,
