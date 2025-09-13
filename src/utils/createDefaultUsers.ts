@@ -41,6 +41,7 @@ const defaultUsers: DefaultUser[] = [
 
 export const createDefaultUsers = async () => {
   console.log('Creating default users...');
+  const results: any[] = [];
   
   for (const userData of defaultUsers) {
     try {
@@ -66,6 +67,7 @@ export const createDefaultUsers = async () => {
         
         if (authError) {
           console.error(`Failed to create auth user for ${userData.email}:`, authError.message);
+          results.push({ email: userData.email, success: false, error: authError.message });
           continue;
         }
         
@@ -91,8 +93,10 @@ export const createDefaultUsers = async () => {
           
           if (profileError) {
             console.error(`Failed to create profile for ${userData.email}:`, profileError.message);
+            results.push({ email: userData.email, success: false, error: profileError.message });
           } else {
             console.log(`✅ Profile created successfully for ${userData.email}`);
+            results.push({ email: userData.email, success: true });
           }
         }
       } else {
@@ -127,11 +131,14 @@ export const createDefaultUsers = async () => {
           
           if (newProfileError) {
             console.error(`Failed to create missing profile for ${userData.email}:`, newProfileError.message);
+            results.push({ email: userData.email, success: false, error: newProfileError.message });
           } else {
             console.log(`✅ Missing profile created for ${userData.email}`);
+            results.push({ email: userData.email, success: true });
           }
         } else {
           console.log(`✅ Profile exists for ${userData.email}`);
+          results.push({ email: userData.email, success: true });
         }
       }
       
@@ -140,10 +147,79 @@ export const createDefaultUsers = async () => {
       
     } catch (error) {
       console.error(`Error processing user ${userData.email}:`, error);
+      results.push({ email: userData.email, success: false, error: error instanceof Error ? error.message : 'Unknown error' });
     }
   }
   
   console.log('Default user creation process completed');
+  return results;
+};
+
+export const checkDefaultUsers = async () => {
+  console.log('Checking default users...');
+  const results: any[] = [];
+  
+  for (const userData of defaultUsers) {
+    try {
+      console.log(`Checking user: ${userData.email}`);
+      
+      // Try to sign in to check if user exists
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: userData.email,
+        password: userData.password
+      });
+      
+      if (signInError) {
+        console.log(`User ${userData.email} doesn't exist or wrong password`);
+        results.push({ 
+          email: userData.email, 
+          exists: false, 
+          role: userData.role 
+        });
+      } else {
+        console.log(`✅ User ${userData.email} exists and can sign in`);
+        
+        // Check if profile exists in users table
+        const { data: profileData, error: profileError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', signInData.user.id)
+          .single();
+        
+        if (profileError) {
+          console.log(`Profile missing for ${userData.email}`);
+          results.push({ 
+            email: userData.email, 
+            exists: true, 
+            role: userData.role,
+            profileMissing: true 
+          });
+        } else {
+          console.log(`✅ Profile exists for ${userData.email}`);
+          results.push({ 
+            email: userData.email, 
+            exists: true, 
+            role: profileData.role || userData.role 
+          });
+        }
+      }
+      
+      // Sign out before checking next user
+      await supabase.auth.signOut();
+      
+    } catch (error) {
+      console.error(`Error checking user ${userData.email}:`, error);
+      results.push({ 
+        email: userData.email, 
+        exists: false, 
+        role: userData.role,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
+  
+  console.log('Default user check process completed');
+  return results;
 };
 
 // Auto-run if called directly
