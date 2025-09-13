@@ -29,6 +29,8 @@ const SignIn = () => {
   useEffect(() => {
     if (user && profile && !loading) {
       console.log('Profile loaded, redirecting...', profile.role);
+      setIsLoading(false); // Reset loading state
+      
       if (profile.role === 'admin') {
         navigate('/admin-dashboard');
         return;

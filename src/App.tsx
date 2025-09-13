@@ -55,7 +55,7 @@ const App = () => {
     }
   }, [i18n]);
 
-    return (
+  return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>

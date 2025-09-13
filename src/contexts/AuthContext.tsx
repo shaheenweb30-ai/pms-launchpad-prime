@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
+import { createDefaultUsers } from '@/utils/createDefaultUsers';
 
 type UserProfile = Database['public']['Tables']['users']['Row'];
 
@@ -43,6 +44,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('Getting initial session...');
       // Test database connection first
       await testDatabaseConnection();
+      
+      // Ensure default users exist (run in background to avoid blocking)
+      createDefaultUsers().catch(error => {
+        console.error('Error creating default users:', error);
+      });
       
       const { data: { session } } = await supabase.auth.getSession();
       console.log('Initial session:', session);
@@ -95,8 +101,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const testDatabaseConnection = async () => {
     try {
-      console.log('Skipping database connection test');
-      return true;
+      console.log('Testing database connection...');
       
       // Try the most basic possible query
       const { data, error } = await supabase
@@ -124,7 +129,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       console.log('Fetching profile for user:', userId);
       
-      // Create a default profile for now
+      // First, try to fetch from database
+      const { data: profileData, error: profileError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (profileData && !profileError) {
+        console.log('Profile found in database:', profileData);
+        setProfile(profileData);
+        return;
+      }
+      
+      // If profile doesn't exist, create it
+      console.log('Profile not found, creating default profile...');
       const emailLower = (emailFromSession || user?.email || '').toLowerCase();
       let inferredRole: Database['public']['Enums']['user_role'] = 'homeowner';
       if (emailLower === 'admin@gmail.com') inferredRole = 'admin';
@@ -132,11 +151,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       else if (emailLower === 'tenant@gmail.com') inferredRole = 'tenant';
       else if (emailLower === 'maintainer@gmail.com') inferredRole = 'vendor';
 
-      const defaultProfile = {
+      const [firstName, ...lastNameParts] = (emailFromSession || user?.email || 'user').split('@')[0].split('.');
+      const lastName = lastNameParts.join(' ') || 'User';
+
+      const newProfile = {
         id: userId,
-        email: user?.email || '',
-        first_name: 'User',
-        last_name: 'Name',
+        email: emailFromSession || user?.email || '',
+        first_name: firstName.charAt(0).toUpperCase() + firstName.slice(1),
+        last_name: lastName.charAt(0).toUpperCase() + lastName.slice(1),
         role: inferredRole,
         is_active: true,
         email_verified: true,
@@ -145,11 +167,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         updated_at: new Date().toISOString()
       };
       
-      console.log('Using default profile:', defaultProfile);
-      setProfile(defaultProfile);
+      // Insert the profile into the database
+      const { data: insertedProfile, error: insertError } = await supabase
+        .from('users')
+        .insert(newProfile)
+        .select()
+        .single();
       
-      // Skip all database operations for now
-      return;
+      if (insertError) {
+        console.error('Error creating profile in database:', insertError);
+        // Fallback to local profile if database insert fails
+        setProfile(newProfile);
+      } else {
+        console.log('Profile created successfully:', insertedProfile);
+        setProfile(insertedProfile);
+      }
     } catch (error) {
       console.error('Exception in fetchProfile:', error);
       setProfile(null);
