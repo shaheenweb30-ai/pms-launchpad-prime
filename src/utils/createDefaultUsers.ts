@@ -39,8 +39,9 @@ const defaultUsers: DefaultUser[] = [
   }
 ];
 
-export const createDefaultUsers = async () => {
+export const createDefaultUsers = async (): Promise<any[]> => {
   console.log('Creating default users...');
+  const results: any[] = [];
   
   for (const userData of defaultUsers) {
     try {
@@ -144,9 +145,32 @@ export const createDefaultUsers = async () => {
   }
   
   console.log('Default user creation process completed');
+  return results;
+};
+
+// Check if default users exist
+export const checkDefaultUsers = async () => {
+  const results: any[] = [];
+  
+  for (const userData of defaultUsers) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', userData.email)
+      .single();
+    
+    if (data) {
+      results.push({ ...data, exists: true });
+    } else {
+      results.push({ email: userData.email, exists: false });
+    }
+  }
+  
+  return results;
 };
 
 // Auto-run if called directly
 if (typeof window !== 'undefined') {
   (window as any).createDefaultUsers = createDefaultUsers;
+  (window as any).checkDefaultUsers = checkDefaultUsers;
 }

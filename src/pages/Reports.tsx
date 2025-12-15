@@ -53,8 +53,6 @@ import {
   Copy,
   Archive,
   HelpCircle,
-  TrendingUp2,
-  TrendingDown2,
   PiggyBank,
   Wallet,
   Coins,
@@ -85,25 +83,25 @@ import {
   ImageIcon,
   VideoIcon,
   ArchiveIcon,
-  DocumentIcon,
-  PresentationIcon,
-  SpreadsheetIcon,
+  FileText as DocumentIcon,
+  Presentation as PresentationIcon,
+  FileSpreadsheet as SpreadsheetIcon,
   LinkIcon,
   LockIcon,
   UnlockIcon,
   KeyIcon,
-  CertificateIcon,
-  BadgeCheckIcon,
-  VerifiedIcon,
-  SecurityIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
-  AnalyticsIcon,
-  ReportIcon,
-  ChartIcon,
-  GraphIcon,
-  StatsIcon,
-  MetricsIcon
+  Award as CertificateIcon,
+  BadgeCheck as BadgeCheckIcon,
+  BadgeCheck as VerifiedIcon,
+  ShieldCheck as SecurityIcon,
+  TrendingUp as TrendingUpIcon,
+  TrendingDown as TrendingDownIcon,
+  BarChart2 as AnalyticsIcon,
+  FileBarChart as ReportIcon,
+  BarChart as ChartIcon,
+  LineChart as GraphIcon,
+  Activity as StatsIcon,
+  Gauge as MetricsIcon
 } from 'lucide-react';
 import {
   Select,
@@ -989,7 +987,7 @@ const Reports = () => {
                       <div className="text-2xl font-bold">
                         {typeof value === 'number' && key.includes('Rate') ? `${value}%` :
                          typeof value === 'number' && (key.includes('revenue') || key.includes('expense') || key.includes('income') || key.includes('cost')) ? 
-                         `$${value.toLocaleString()}` : value}
+                         `$${(value as number).toLocaleString()}` : String(value)}
                       </div>
                     </div>
                   ))}

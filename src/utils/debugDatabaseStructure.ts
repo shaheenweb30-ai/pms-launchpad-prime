@@ -30,7 +30,7 @@ export const debugDatabaseStructure = async () => {
       email: 'test-debug@example.com'
     };
     
-    const { error: minimalError } = await supabase
+    const { error: minimalError } = await (supabase as any)
       .from('users')
       .insert(minimalInsert);
     
@@ -52,7 +52,7 @@ export const debugDatabaseStructure = async () => {
         updated_at: new Date().toISOString()
       };
       
-      const { error: extendedError } = await supabase
+      const { error: extendedError } = await (supabase as any)
         .from('users')
         .insert(extendedInsert);
       
@@ -120,7 +120,7 @@ export const testSpecificUserInsert = async (email: string, userType: string) =>
     
     console.log('Test insert data:', testInsert);
     
-    const { error: insertError } = await supabase
+    const { error: insertError } = await (supabase as any)
       .from('users')
       .insert(testInsert);
     
