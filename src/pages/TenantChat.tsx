@@ -140,7 +140,7 @@ const TenantChat = () => {
     const message: Message = {
       id: Date.now().toString(),
       senderId: 'tenant',
-      senderName: profile?.name || user?.email || 'You',
+      senderName: profile ? `${profile.first_name} ${profile.last_name}` : user?.email || 'You',
       content: newMessage.trim(),
       timestamp: new Date(),
       isRead: false

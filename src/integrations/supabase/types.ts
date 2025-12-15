@@ -21,7 +21,7 @@ export type Database = {
           entity_id: string
           entity_type: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           new_values: Json | null
           old_values: Json | null
           user_agent: string | null
@@ -34,7 +34,7 @@ export type Database = {
           entity_id: string
           entity_type: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_values?: Json | null
           old_values?: Json | null
           user_agent?: string | null
@@ -47,7 +47,7 @@ export type Database = {
           entity_id?: string
           entity_type?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           new_values?: Json | null
           old_values?: Json | null
           user_agent?: string | null
@@ -597,18 +597,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_user_leases: {
-        Args: Record<PropertyKey, never>
-        Returns: string[]
-      }
-      get_user_properties: {
-        Args: Record<PropertyKey, never>
-        Returns: string[]
-      }
-      is_property_owner: {
-        Args: { property_uuid: string }
-        Returns: boolean
-      }
+      get_user_leases: { Args: never; Returns: string[] }
+      get_user_properties: { Args: never; Returns: string[] }
+      is_property_owner: { Args: { property_uuid: string }; Returns: boolean }
     }
     Enums: {
       document_type:
