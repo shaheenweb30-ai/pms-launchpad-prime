@@ -190,12 +190,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('Signing in user:', email);
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      return { error };
+      if (error) {
+        console.error('Sign in error:', error);
+        // Provide more helpful error messages
+        if (error.message.includes('Invalid login credentials')) {
+          return { 
+            error: { 
+              ...error, 
+              message: 'Invalid email or password. Please check your credentials and try again.' 
+            } as AuthError 
+          };
+        }
+        if (error.message.includes('Email not confirmed')) {
+          return { 
+            error: { 
+              ...error, 
+              message: 'Please verify your email address before signing in. Check your inbox for a verification email.' 
+            } as AuthError 
+          };
+        }
+        return { error };
+      }
+
+      if (data.user) {
+        console.log('Sign in successful, fetching profile for user:', data.user.id);
+        // Fetch profile immediately after successful sign-in
+        await fetchProfile(data.user.id, data.user.email || undefined);
+      }
+
+      return { error: null };
     } catch (error) {
       console.error('Sign in error:', error);
       return { error: error as AuthError };
