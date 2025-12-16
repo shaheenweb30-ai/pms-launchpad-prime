@@ -274,7 +274,7 @@ const VendorDashboard = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-3">
               <h1 className="text-5xl font-extralight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight font-google-sans">
-                Welcome back, {profile?.name || user?.email || 'Vendor'}!
+                Welcome back, {profile ? `${profile.first_name} ${profile.last_name}` : user?.email || 'Vendor'}!
               </h1>
               <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
                 Here's your professional overview of maintenance tasks and work performance.

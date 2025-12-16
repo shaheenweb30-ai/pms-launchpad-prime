@@ -33,6 +33,7 @@ import {
   Archive,
   Calendar,
   Shield,
+  Key,
   AlertCircle,
   CheckCircle,
   Copy,
@@ -92,17 +93,17 @@ import {
   ImageIcon,
   VideoIcon,
   ArchiveIcon,
-  DocumentIcon,
-  PresentationIcon,
-  SpreadsheetIcon,
+  FileText as DocumentIcon,
+  Presentation as PresentationIcon,
+  FileSpreadsheet as SpreadsheetIcon,
   LinkIcon,
   LockIcon,
   UnlockIcon,
   KeyIcon,
-  CertificateIcon,
-  BadgeCheckIcon,
-  VerifiedIcon,
-  SecurityIcon
+  Award as CertificateIcon,
+  BadgeCheck as BadgeCheckIcon,
+  BadgeCheck as VerifiedIcon,
+  ShieldCheck as SecurityIcon
 } from 'lucide-react';
 import {
   Select,
@@ -154,13 +155,6 @@ const Documents = () => {
 
   // Enhanced document data with more details
   const documents: any[] = [];
-      favorite: false,
-      shared: false,
-      description: 'Detailed inspection report with photos and findings',
-      version: '1.0',
-      status: 'active'
-    }
-  ];
 
   const properties: string[] = [];
 
@@ -760,8 +754,8 @@ const Documents = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {Object.entries(categoryStats)
-                .sort(([,a], [,b]) => b - a)
+              {Object.entries(categoryStats as Record<string, number>)
+                .sort(([,a], [,b]) => (b as number) - (a as number))
                 .map(([category, count]) => (
                   <div key={category} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -770,9 +764,9 @@ const Documents = () => {
                       </Badge>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold">{count} files</div>
+                      <div className="font-semibold">{count as number} files</div>
                       <div className="text-xs text-muted-foreground">
-                        {((count / totalDocuments) * 100).toFixed(0)}%
+                        {(((count as number) / totalDocuments) * 100).toFixed(0)}%
                       </div>
                     </div>
                   </div>
