@@ -79,7 +79,7 @@ const MaintenanceRequests = () => {
           const parsedRequests = JSON.parse(storedRequests);
           // Filter requests for current tenant
           const tenantRequests = parsedRequests.filter((req: MaintenanceRequest) => 
-            req.tenant === `${profile.first_name} ${profile.last_name}` || req.tenant === user.email
+            req.tenant === profile.name || req.tenant === user.email
           );
           setRequests(tenantRequests);
         } else {
@@ -105,7 +105,7 @@ const MaintenanceRequests = () => {
       if (storedRequests) {
         const parsedRequests = JSON.parse(storedRequests);
         const tenantRequests = parsedRequests.filter((req: MaintenanceRequest) => 
-          req.tenant === `${profile?.first_name} ${profile?.last_name}` || req.tenant === user?.email
+          req.tenant === profile?.name || req.tenant === user?.email
         );
         setRequests(tenantRequests);
       }
@@ -160,7 +160,7 @@ const MaintenanceRequests = () => {
     if (storedRequests) {
       const parsedRequests = JSON.parse(storedRequests);
       const tenantRequests = parsedRequests.filter((req: MaintenanceRequest) => 
-        req.tenant === `${profile?.first_name} ${profile?.last_name}` || req.tenant === user?.email
+        req.tenant === profile?.name || req.tenant === user?.email
       );
       setRequests(tenantRequests);
     }
@@ -209,7 +209,7 @@ const MaintenanceRequests = () => {
         priority: newRequestForm.priority as 'low' | 'medium' | 'high' | 'urgent',
         category: newRequestForm.category,
         dateReported: new Date().toISOString().split('T')[0],
-        tenant: profile ? `${profile.first_name} ${profile.last_name}` : user?.email || 'Unknown Tenant',
+        tenant: profile?.name || user?.email || 'Unknown Tenant',
         property: 'Downtown Residences',
         unit: '5B'
       };
@@ -862,7 +862,7 @@ const MaintenanceRequests = () => {
                 <strong>Property:</strong> Downtown Residences - Unit 5B
               </p>
               <p className="text-sm text-gray-600">
-                <strong>Requested by:</strong> {profile ? `${profile.first_name} ${profile.last_name}` : user?.email || 'Current User'}
+                <strong>Requested by:</strong> {profile?.name || user?.email || 'Current User'}
               </p>
             </div>
           </div>

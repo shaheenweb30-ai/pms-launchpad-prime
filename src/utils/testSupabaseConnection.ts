@@ -66,13 +66,13 @@ export const testSupabaseConnection = async () => {
 
 export const checkSupabaseConfig = () => {
   console.log('Supabase Configuration:');
-  console.log('URL: [configured]');
-  console.log('Key: [configured]');
+  console.log('URL:', supabase.supabaseUrl);
+  console.log('Key length:', supabase.supabaseKey?.length || 0);
   console.log('Auth config:', supabase.auth);
   
   return {
-    url: '[configured]',
-    keyLength: 0,
+    url: supabase.supabaseUrl,
+    keyLength: supabase.supabaseKey?.length || 0,
     hasAuth: !!supabase.auth
   };
 };

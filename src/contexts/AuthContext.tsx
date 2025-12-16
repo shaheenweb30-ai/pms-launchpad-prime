@@ -83,16 +83,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         if (session?.user) {
           console.log('User authenticated, fetching profile...');
-          await fetchProfile(session.user.id, session.user.email || undefined);
-          console.log('Profile fetched after auth change');
+          try {
+            await fetchProfile(session.user.id, session.user.email || undefined);
+            console.log('Profile fetched after auth change');
+          } catch (error) {
+            console.error('Error fetching profile in auth state change:', error);
+            setLoading(false);
+          }
         } else {
           console.log('User signed out, clearing profile');
           setProfile(null);
+          setLoading(false);
         }
         
-        setLoading(false);
-        console.log('Auth state change complete, loading:', false);
-        console.log('Final state after auth change - user:', session?.user, 'profile:', profile);
+        // Don't set loading to false here - let fetchProfile handle it
+        // setLoading(false);
+        console.log('Auth state change complete');
       }
     );
 
@@ -127,34 +133,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchProfile = async (userId: string, emailFromSession?: string) => {
     try {
-      console.log('Fetching profile for user:', userId);
+      console.log('Fetching profile for user:', userId, 'email:', emailFromSession);
       
-      // First, try to fetch from database
-      const { data: profileData, error: profileError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (profileData && !profileError) {
-        console.log('Profile found in database:', profileData);
-        setProfile(profileData);
-        return;
-      }
-      
-      // If profile doesn't exist, create it
-      console.log('Profile not found, creating default profile...');
+      // Determine role from email first (for fallback)
       const emailLower = (emailFromSession || user?.email || '').toLowerCase();
       let inferredRole: Database['public']['Enums']['user_role'] = 'homeowner';
       if (emailLower === 'admin@gmail.com') inferredRole = 'admin';
       else if (emailLower === 'owner@gmail.com') inferredRole = 'homeowner';
       else if (emailLower === 'tenant@gmail.com') inferredRole = 'tenant';
       else if (emailLower === 'maintainer@gmail.com') inferredRole = 'vendor';
-
+      
+      // Create a fallback profile immediately (will be used if query fails or times out)
       const [firstName, ...lastNameParts] = (emailFromSession || user?.email || 'user').split('@')[0].split('.');
       const lastName = lastNameParts.join(' ') || 'User';
-
-      const newProfile = {
+      
+      const fallbackProfile: UserProfile = {
         id: userId,
         email: emailFromSession || user?.email || '',
         first_name: firstName.charAt(0).toUpperCase() + firstName.slice(1),
@@ -167,35 +160,141 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         updated_at: new Date().toISOString()
       };
       
+      // Set a timeout - if query takes too long, use fallback
+      const timeoutId = setTimeout(() => {
+        console.log('Profile query timeout, using fallback profile');
+        setProfile(fallbackProfile);
+        setLoading(false);
+      }, 3000);
+      
+      // First, try to fetch from database
+      const { data: profileData, error: profileError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      clearTimeout(timeoutId); // Clear timeout if query completes
+      
+      console.log('Profile query result:', { profileData, profileError, hasData: !!profileData, hasError: !!profileError });
+      
+      if (profileData && !profileError) {
+        console.log('Profile found in database:', profileData);
+        console.log('Setting profile state...');
+        setProfile(profileData);
+        setLoading(false); // Ensure loading is set to false when profile is found
+        console.log('Profile set successfully, loading set to false');
+        return;
+      }
+      
+      // Log if there was an error fetching
+      if (profileError) {
+        console.log('Profile query error (will create new profile):', profileError.message, profileError);
+      } else {
+        console.log('No profile found in database, will create new one');
+      }
+      
+      // If profile doesn't exist, create it
+      console.log('Profile not found, creating default profile...');
+      
+      console.log('Creating profile:', fallbackProfile);
+      
       // Insert the profile into the database
       const { data: insertedProfile, error: insertError } = await supabase
         .from('users')
-        .insert(newProfile)
+        .insert(fallbackProfile)
         .select()
         .single();
+      
+      console.log('Profile insert result:', { insertedProfile, insertError });
       
       if (insertError) {
         console.error('Error creating profile in database:', insertError);
         // Fallback to local profile if database insert fails
-        setProfile(newProfile);
-      } else {
+        console.log('Using fallback profile (database insert failed):', fallbackProfile);
+        setProfile(fallbackProfile);
+        setLoading(false);
+        console.log('Fallback profile set, loading set to false');
+      } else if (insertedProfile) {
         console.log('Profile created successfully:', insertedProfile);
+        console.log('Setting inserted profile...');
         setProfile(insertedProfile);
+        setLoading(false);
+        console.log('Inserted profile set, loading set to false');
+      } else {
+        // No inserted profile and no error - use fallback
+        console.log('No inserted profile returned, using fallback');
+        setProfile(fallbackProfile);
+        setLoading(false);
       }
+      
+      console.log('fetchProfile complete');
     } catch (error) {
       console.error('Exception in fetchProfile:', error);
-      setProfile(null);
+      // Create a fallback profile even on error
+      const emailLower = (emailFromSession || user?.email || '').toLowerCase();
+      let inferredRole: Database['public']['Enums']['user_role'] = 'homeowner';
+      if (emailLower === 'admin@gmail.com') inferredRole = 'admin';
+      else if (emailLower === 'owner@gmail.com') inferredRole = 'homeowner';
+      else if (emailLower === 'tenant@gmail.com') inferredRole = 'tenant';
+      else if (emailLower === 'maintainer@gmail.com') inferredRole = 'vendor';
+      
+      const fallbackProfile = {
+        id: userId,
+        email: emailFromSession || user?.email || '',
+        first_name: 'User',
+        last_name: 'Name',
+        role: inferredRole,
+        is_active: true,
+        email_verified: true,
+        phone: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      setProfile(fallbackProfile as UserProfile);
+      setLoading(false);
     }
   };
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('Signing in user:', email);
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      return { error };
+      if (error) {
+        console.error('Sign in error:', error);
+        // Provide more helpful error messages
+        if (error.message.includes('Invalid login credentials')) {
+          return { 
+            error: { 
+              ...error, 
+              message: 'Invalid email or password. Please check your credentials and try again.' 
+            } as AuthError 
+          };
+        }
+        if (error.message.includes('Email not confirmed')) {
+          return { 
+            error: { 
+              ...error, 
+              message: 'Please verify your email address before signing in. Check your inbox for a verification email.' 
+            } as AuthError 
+          };
+        }
+        return { error };
+      }
+
+      if (data.user) {
+        console.log('Sign in successful, fetching profile for user:', data.user.id);
+        // Fetch profile immediately after successful sign-in
+        await fetchProfile(data.user.id, data.user.email || undefined);
+        console.log('Profile fetched in signIn function');
+      }
+
+      return { error: null };
     } catch (error) {
       console.error('Sign in error:', error);
       return { error: error as AuthError };

@@ -47,7 +47,6 @@ import {
   Minus,
   Percent,
   Home,
-  Building2,
   Car,
   Wifi,
   UtensilsCrossed,

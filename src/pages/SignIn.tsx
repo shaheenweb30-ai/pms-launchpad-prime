@@ -27,29 +27,44 @@ const SignIn = () => {
 
   // Watch for profile changes and redirect accordingly
   useEffect(() => {
-    if (user && profile && !loading) {
+    console.log('SignIn useEffect - user:', !!user, 'profile:', !!profile, 'loading:', loading, 'profile role:', profile?.role, 'isLoading:', isLoading);
+    
+    // Redirect if we have both user and profile (don't wait for loading to be false)
+    if (user && profile) {
       console.log('Profile loaded, redirecting...', profile.role);
       setIsLoading(false); // Reset loading state
       
+      // Determine redirect path based on role
+      let redirectPath = '/';
       if (profile.role === 'admin') {
-        navigate('/admin-dashboard');
-        return;
+        redirectPath = '/admin-dashboard';
+      } else if (profile.role === 'homeowner') {
+        redirectPath = '/dashboard';
+      } else if (profile.role === 'tenant') {
+        redirectPath = '/tenant-dashboard';
+      } else if (profile.role === 'vendor') {
+        redirectPath = '/vendor-dashboard';
       }
-      if (profile.role === 'homeowner') {
-        navigate('/dashboard');
-        return;
-      }
-      if (profile.role === 'tenant') {
-        navigate('/tenant-dashboard');
-        return;
-      }
-      if (profile.role === 'vendor') {
-        navigate('/vendor-dashboard');
-        return;
-      }
-      navigate('/');
+      
+      console.log('Redirecting to:', redirectPath);
+      // Use setTimeout to ensure state is fully updated before navigation
+      const timer = setTimeout(() => {
+        navigate(redirectPath, { replace: true });
+      }, 200);
+      
+      return () => clearTimeout(timer);
+    } else if (user && !profile && !loading) {
+      // User is logged in but profile is missing - wait a bit more
+      console.log('User logged in but profile not loaded yet, waiting...');
+      // Set a timeout to check again
+      const checkTimer = setTimeout(() => {
+        if (user && !profile) {
+          console.log('Profile still not loaded after timeout');
+        }
+      }, 2000);
+      return () => clearTimeout(checkTimer);
     }
-  }, [user, profile, loading, navigate]);
+  }, [user, profile, loading, navigate, isLoading]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
@@ -75,12 +90,21 @@ const SignIn = () => {
         });
         setIsLoading(false);
       } else {
-        console.log('Sign in successful, waiting for profile...'); // Debug log
+        console.log('Sign in successful, waiting for profile and redirect...'); // Debug log
         toast({
           title: "Welcome back!",
           description: "You have successfully signed in to PropertyFlow.",
         });
-        // Don't redirect here - let useEffect handle it when profile loads
+        // Wait a bit for profile to load, then check if redirect happened
+        setTimeout(() => {
+          if (user && profile && !loading) {
+            console.log('Profile already loaded, redirecting...');
+            // Redirect will happen via useEffect
+          } else {
+            console.log('Waiting for profile to load...', { user: !!user, profile: !!profile, loading });
+          }
+        }, 1000);
+        // Don't set isLoading to false here - let useEffect handle redirect when profile loads
       }
     } catch (error) {
       console.error('Unexpected error during sign in:', error); // Debug log
@@ -212,11 +236,17 @@ const SignIn = () => {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-light text-gray-600">Quick Access Credentials:</h3>
             <Link 
-              to="/admin-panel" 
-              className="text-xs text-gray-500 hover:text-black underline font-light"
+              to="/create-users" 
+              className="text-xs text-blue-600 hover:text-blue-700 underline font-light"
             >
-              Admin Panel
+              Create Users First
             </Link>
+          </div>
+          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-2xl">
+            <p className="text-xs text-yellow-800 font-light">
+              <strong>⚠️ Important:</strong> If you see "Invalid login credentials", you must create users first. 
+              Click <Link to="/create-users" className="underline font-medium">here</Link> to set up default accounts.
+            </p>
           </div>
           <div className="space-y-3 text-sm">
             <div 

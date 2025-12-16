@@ -23,7 +23,7 @@ export const checkDatabaseSchema = async () => {
     
     // Try to get table structure (this might not work with client-side Supabase)
     try {
-      const { data: columns, error: columnsError } = await (supabase as any)
+      const { data: columns, error: columnsError } = await supabase
         .rpc('get_table_columns', { table_name: 'users' });
       
       if (columnsError) {
@@ -95,7 +95,7 @@ export const checkRequiredTables = async () => {
     try {
       console.log(`🔍 Checking table: ${table}`);
       
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from(table)
         .select('*')
         .limit(1);

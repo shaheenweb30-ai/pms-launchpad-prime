@@ -71,6 +71,8 @@ const AdminDashboard = () => {
   // Load users and system stats
   useEffect(() => {
     console.log('AdminDashboard: Component loaded');
+    console.log('AdminDashboard: Profile:', profile);
+    console.log('AdminDashboard: User role:', profile?.role);
     
     loadUsers();
     loadSystemStats();
@@ -115,7 +117,7 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleUserRoleChange = async (userId: string, newRole: 'admin' | 'homeowner' | 'tenant' | 'vendor') => {
+  const handleUserRoleChange = async (userId: string, newRole: string) => {
     try {
       const { error } = await supabase
         .from('users')
@@ -358,7 +360,7 @@ const AdminDashboard = () => {
                       <TableCell>
                         <Select
                           value={user.role}
-                          onValueChange={(value) => handleUserRoleChange(user.id, value as 'admin' | 'homeowner' | 'tenant' | 'vendor')}
+                          onValueChange={(value) => handleUserRoleChange(user.id, value)}
                         >
                           <SelectTrigger className="w-32">
                             <SelectValue />
