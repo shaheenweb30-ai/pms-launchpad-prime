@@ -49,9 +49,13 @@ const App = () => {
 
   // Initialize language from localStorage on app startup
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('preferredLanguage');
-    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ar')) {
-      i18n.changeLanguage(savedLanguage);
+    try {
+      const savedLanguage = localStorage.getItem('preferredLanguage');
+      if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ar')) {
+        i18n.changeLanguage(savedLanguage);
+      }
+    } catch (error) {
+      console.error('Error loading language preference:', error);
     }
   }, [i18n]);
 

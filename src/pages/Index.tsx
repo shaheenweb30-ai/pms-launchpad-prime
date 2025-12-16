@@ -173,7 +173,13 @@ const Index = () => {
       <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between items-center h-20">
-
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center text-white font-medium text-lg">
+                P
+              </div>
+              <span className="text-2xl font-light tracking-tight font-google-sans">PropertyFlow</span>
+            </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-12">
