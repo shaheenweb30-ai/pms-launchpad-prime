@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -45,6 +46,7 @@ import {
   Clock,
   MessageSquare
 } from 'lucide-react';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
@@ -54,7 +56,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
   const { t, i18n } = useTranslation();
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigation();
   const location = useLocation();
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   
@@ -68,7 +70,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
         title: t('sidebar.signOut'),
         description: t('sidebar.signOutSuccess'),
       });
-      navigate('/');
+      navigateTo('/');
     } catch (error) {
       toast({
         title: "Sign out failed",
@@ -460,8 +462,11 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
               </div>
             </div>
             
-            {/* Right Section - Notifications & Profile */}
+            {/* Right Section - Language Switcher, Notifications & Profile */}
             <div className={`${isRTL ? 'mr-auto' : 'ml-auto'} flex items-center gap-4`}>
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+              
               {/* Enhanced Notifications Button */}
               <Button 
                 variant="ghost" 

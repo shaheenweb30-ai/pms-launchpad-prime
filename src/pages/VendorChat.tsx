@@ -15,7 +15,7 @@ import {
   CheckCheck,
   ArrowLeft
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 interface ChatMessage {
   id: string;
@@ -40,7 +40,7 @@ interface ChatSession {
 
 const VendorChat: React.FC = () => {
   const { user, profile } = useAuth();
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigation();
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [selectedChat, setSelectedChat] = useState<ChatSession | null>(null);
   const [newMessage, setNewMessage] = useState('');
@@ -283,7 +283,7 @@ const VendorChat: React.FC = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/vendor-dashboard')}
+                onClick={() => navigateTo('/vendor-dashboard')}
                 className="text-gray-600 hover:text-gray-900"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />

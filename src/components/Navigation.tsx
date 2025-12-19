@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const Navigation = () => {
   const { user, profile, signOut } = useAuth();
@@ -82,6 +83,9 @@ const Navigation = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+            
             {user ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button
@@ -168,6 +172,11 @@ const Navigation = () => {
               
               {/* Mobile Auth Section */}
               <div className="pt-4 border-t border-[#a5afbe]/20">
+                {/* Language Switcher for Mobile */}
+                <div className="px-3 py-2 mb-3">
+                  <LanguageSwitcher />
+                </div>
+                
                 {user ? (
                   <div className="space-y-3">
                     <div className="relative">

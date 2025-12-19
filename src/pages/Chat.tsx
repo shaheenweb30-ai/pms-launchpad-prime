@@ -58,7 +58,7 @@ const Chat = () => {
           tenantName: tenant.name,
           tenantEmail: tenant.email,
           propertyName: tenant.property,
-          lastMessage: 'No messages yet',
+          lastMessage: t('chat.lastMessage'),
           lastMessageTime: new Date(),
           unreadCount: 0,
           messages: []
@@ -137,19 +137,19 @@ const Chat = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-3">
               <h1 className="text-5xl font-extralight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight font-google-sans">
-                Tenant Chat
+                {t('chat.title')}
               </h1>
               <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
-                Communicate directly with your tenants through our integrated chat system
+                {t('chat.description')}
               </p>
               <div className="flex items-center gap-6 pt-3">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
                   <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-                  <span className="font-medium">{chatSessions.length} tenants available</span>
+                  <span className="font-medium">{chatSessions.length} {t('chat.tenantsAvailable')}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-500">
                   <MessageSquare className="h-4 w-4" />
-                  <span>Real-time messaging</span>
+                  <span>{t('chat.realTimeMessaging')}</span>
                 </div>
               </div>
             </div>
@@ -166,7 +166,7 @@ const Chat = () => {
               <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center">
                 <MessageSquare className="h-5 w-5 text-white" />
               </div>
-              <span className="text-black">Tenants</span>
+              <span className="text-black">{t('chat.tenants')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -174,7 +174,7 @@ const Chat = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search tenants..."
+                placeholder={t('chat.searchTenants')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 border-gray-200 focus:border-gray-400 focus:ring-gray-400 rounded-xl"
@@ -256,8 +256,8 @@ const Chat = () => {
                   {getCurrentChatSession()?.messages.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                       <MessageSquare className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                      <p className="text-lg font-light">No messages yet</p>
-                      <p className="text-sm">Start the conversation with your tenant</p>
+                      <p className="text-lg font-light">{t('chat.noMessages')}</p>
+                      <p className="text-sm">{t('chat.startConversation')}</p>
                     </div>
                   ) : (
                     getCurrentChatSession()?.messages.map((message) => (
@@ -294,7 +294,7 @@ const Chat = () => {
                   </Button>
                   <div className="flex-1">
                     <Input
-                      placeholder="Type your message..."
+                      placeholder={t('chat.typeMessage')}
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
@@ -315,8 +315,8 @@ const Chat = () => {
             <CardContent className="p-8">
               <div className="text-center py-12 text-gray-500">
                 <MessageSquare className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                <h3 className="text-xl font-light text-gray-600 mb-2">Select a tenant to start chatting</h3>
-                <p className="text-sm">Choose a tenant from the list to begin your conversation</p>
+                <h3 className="text-xl font-light text-gray-600 mb-2">{t('chat.selectTenant')}</h3>
+                <p className="text-sm">{t('chat.startConversation')}</p>
               </div>
             </CardContent>
           )}

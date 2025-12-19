@@ -1258,7 +1258,7 @@ const Properties = () => {
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Net Income:</span>
-              <span className="font-semibold text-gray-600">${(property.netIncome || 0).toLocaleString()}</span>
+              <span className="font-semibold text-gray-600">{formatCurrency(property.netIncome || 0)}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">ROI:</span>

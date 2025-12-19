@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { 
   Building2, 
   Users, 
@@ -192,6 +193,7 @@ const Index = () => {
 
             {/* Auth Buttons */}
             <div className="hidden md:flex items-center space-x-6">
+              <LanguageSwitcher />
               <Link to="/signin">
                 <Button variant="ghost" className="text-gray-500 hover:text-black font-light">
                   Sign In
@@ -227,6 +229,9 @@ const Index = () => {
                 <a href="#testimonials" className="text-gray-600 hover:text-gray-900 transition-colors">Testimonials</a>
                 <a href="#faq" className="text-gray-600 hover:text-gray-900 transition-colors">FAQ</a>
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
+                  <div className="px-2">
+                    <LanguageSwitcher />
+                  </div>
                   <Link to="/signin">
                     <Button variant="ghost" className="w-full justify-start text-gray-600 hover:text-gray-900">
                       Sign In

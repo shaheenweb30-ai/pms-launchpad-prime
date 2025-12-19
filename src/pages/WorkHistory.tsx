@@ -59,8 +59,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 interface WorkHistory {
   id: string;
@@ -81,7 +81,7 @@ const WorkHistory = () => {
   const { user, profile } = useAuth();
   const { formatCurrency } = useCurrency();
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigation();
 
   const [workHistory, setWorkHistory] = useState<WorkHistory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -330,7 +330,7 @@ const WorkHistory = () => {
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => navigate('/vendor-dashboard')}
+                onClick={() => navigateTo('/vendor-dashboard')}
               >
                 <ArrowUpRight className="h-4 w-4 mr-2" />
                 Dashboard

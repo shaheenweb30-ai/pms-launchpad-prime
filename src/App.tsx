@@ -2,13 +2,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AccessControlProvider } from "@/contexts/AccessControlContext";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ProtectedLayout from "@/components/ProtectedLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { LanguageRoute } from "@/components/LanguageRoute";
 import Index from "./pages/Index";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -39,26 +40,10 @@ import VendorChat from "./pages/VendorChat";
 import VendorPaymentHistory from "./pages/VendorPaymentHistory";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
-import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const { i18n } = useTranslation();
-
-  // Initialize language from localStorage on app startup
-  useEffect(() => {
-    try {
-      const savedLanguage = localStorage.getItem('preferredLanguage');
-      if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ar')) {
-        i18n.changeLanguage(savedLanguage);
-      }
-    } catch (error) {
-      console.error('Error loading language preference:', error);
-    }
-  }, [i18n]);
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -75,145 +60,173 @@ const App = () => {
               >
                 <ErrorBoundary>
               <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/signup" element={<SignUp />} />
+              {/* Redirect root to default language */}
+              <Route path="/" element={<Navigate to="/en" replace />} />
+              
+              {/* Language-prefixed routes */}
+              <Route path="/:lang" element={<LanguageRoute><Index /></LanguageRoute>} />
+              <Route path="/:lang/signin" element={<LanguageRoute><SignIn /></LanguageRoute>} />
+              <Route path="/:lang/signup" element={<LanguageRoute><SignUp /></LanguageRoute>} />
               
               {/* Admin Routes - Admin Only */}
               <Route 
-                path="/admin-dashboard" 
+                path="/:lang/admin-dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <ProtectedLayout>
-                      <AdminDashboard />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['admin']}>
+                      <ProtectedLayout>
+                        <AdminDashboard />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               <Route 
-                path="/admin-panel" 
+                path="/:lang/admin-panel" 
                 element={
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <ProtectedLayout>
-                      <AdminPanel />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['admin']}>
+                      <ProtectedLayout>
+                        <AdminPanel />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               <Route 
-                path="/admin-access-control" 
+                path="/:lang/admin-access-control" 
                 element={
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <ProtectedLayout>
-                      <AdminAccessControl />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['admin']}>
+                      <ProtectedLayout>
+                        <AdminAccessControl />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               {/* Property Owner Routes - Homeowner Only */}
               <Route 
-                path="/dashboard" 
+                path="/:lang/dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['homeowner']}>
-                    <ProtectedLayout>
-                      <Dashboard />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['homeowner']}>
+                      <ProtectedLayout>
+                        <Dashboard />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               <Route 
-                path="/analytics" 
+                path="/:lang/analytics" 
                 element={
-                  <ProtectedRoute allowedRoles={['homeowner']}>
-                    <ProtectedLayout>
-                      <Analytics />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['homeowner']}>
+                      <ProtectedLayout>
+                        <Analytics />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               <Route 
-                path="/leases" 
+                path="/:lang/leases" 
                 element={
-                  <ProtectedRoute allowedRoles={['homeowner']}>
-                    <ProtectedLayout>
-                      <Lease />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['homeowner']}>
+                      <ProtectedLayout>
+                        <Lease />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               <Route 
-                path="/properties" 
+                path="/:lang/properties" 
                 element={
-                  <ProtectedRoute allowedRoles={['homeowner']}>
-                    <ProtectedLayout>
-                      <Properties />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['homeowner']}>
+                      <ProtectedLayout>
+                        <Properties />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               <Route 
-                path="/tenants" 
+                path="/:lang/tenants" 
                 element={
-                  <ProtectedRoute allowedRoles={['homeowner']}>
-                    <ProtectedLayout>
-                      <Tenants />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['homeowner']}>
+                      <ProtectedLayout>
+                        <Tenants />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               <Route 
-                path="/chat" 
+                path="/:lang/chat" 
                 element={
-                  <ProtectedRoute allowedRoles={['homeowner']}>
-                    <ProtectedLayout>
-                      <Chat />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['homeowner']}>
+                      <ProtectedLayout>
+                        <Chat />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               <Route 
-                path="/lease" 
+                path="/:lang/lease" 
                 element={
-                  <ProtectedRoute allowedRoles={['homeowner']}>
-                    <ProtectedLayout>
-                      <Lease />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['homeowner']}>
+                      <ProtectedLayout>
+                        <Lease />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
+                } 
+              />
+              
+
+              
+              <Route 
+                path="/:lang/rent-collection" 
+                element={
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['homeowner']}>
+                      <ProtectedLayout>
+                        <RentCollection />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
 
               
               <Route 
-                path="/rent-collection" 
+                path="/:lang/maintenance" 
                 element={
-                  <ProtectedRoute allowedRoles={['homeowner']}>
-                    <ProtectedLayout>
-                      <RentCollection />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
-                } 
-              />
-              
-
-              
-              <Route 
-                path="/maintenance" 
-                element={
-                  <ProtectedRoute allowedRoles={['homeowner']}>
-                    <ProtectedLayout>
-                      <Maintenance />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['homeowner']}>
+                      <ProtectedLayout>
+                        <Maintenance />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
@@ -222,153 +235,208 @@ const App = () => {
 
               
               <Route 
-                path="/reports" 
+                path="/:lang/reports" 
                 element={
-                  <ProtectedRoute allowedRoles={['homeowner']}>
-                    <ProtectedLayout>
-                      <Reports />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['homeowner']}>
+                      <ProtectedLayout>
+                        <Reports />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               {/* Tenant Routes - Tenant Only */}
               <Route 
-                path="/tenant-dashboard" 
+                path="/:lang/tenant-dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['tenant']}>
-                    <ProtectedLayout>
-                      <TenantDashboard />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['tenant']}>
+                      <ProtectedLayout>
+                        <TenantDashboard />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               <Route 
-                path="/tenant-maintenance" 
+                path="/:lang/tenant-maintenance" 
                 element={
-                  <ProtectedRoute allowedRoles={['tenant']}>
-                    <ProtectedLayout>
-                      <TenantMaintenance />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['tenant']}>
+                      <ProtectedLayout>
+                        <TenantMaintenance />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
 
               <Route 
-                path="/my-lease" 
+                path="/:lang/my-lease" 
                 element={
-                  <ProtectedRoute allowedRoles={['tenant']}>
-                    <ProtectedLayout>
-                      <MyLease />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['tenant']}>
+                      <ProtectedLayout>
+                        <MyLease />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
 
               <Route 
-                path="/payment-history" 
+                path="/:lang/payment-history" 
                 element={
-                  <ProtectedRoute allowedRoles={['tenant']}>
-                    <ProtectedLayout>
-                      <PaymentHistory />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['tenant']}>
+                      <ProtectedLayout>
+                        <PaymentHistory />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
 
               <Route 
-                path="/maintenance-requests" 
+                path="/:lang/maintenance-requests" 
                 element={
-                  <ProtectedRoute allowedRoles={['tenant']}>
-                    <ProtectedLayout>
-                      <MaintenanceRequests />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['tenant']}>
+                      <ProtectedLayout>
+                        <MaintenanceRequests />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
 
               <Route 
-                path="/tenant-chat" 
+                path="/:lang/tenant-chat" 
                 element={
-                  <ProtectedRoute allowedRoles={['tenant']}>
-                    <ProtectedLayout>
-                      <TenantChat />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['tenant']}>
+                      <ProtectedLayout>
+                        <TenantChat />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               {/* Vendor Routes - Vendor Only */}
               <Route 
-                path="/vendor-dashboard" 
+                path="/:lang/vendor-dashboard" 
                 element={
-                  <ProtectedRoute allowedRoles={['vendor']}>
-                    <ProtectedLayout>
-                      <VendorDashboard />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['vendor']}>
+                      <ProtectedLayout>
+                        <VendorDashboard />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
 
               <Route 
-                path="/maintenance-tasks" 
+                path="/:lang/maintenance-tasks" 
                 element={
-                  <ProtectedRoute allowedRoles={['vendor']}>
-                    <ProtectedLayout>
-                      <MaintenanceTasks />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['vendor']}>
+                      <ProtectedLayout>
+                        <MaintenanceTasks />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
 
               <Route 
-                path="/work-history" 
+                path="/:lang/work-history" 
                 element={
-                  <ProtectedRoute allowedRoles={['vendor']}>
-                    <ProtectedLayout>
-                      <WorkHistory />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['vendor']}>
+                      <ProtectedLayout>
+                        <WorkHistory />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
 
               <Route 
-                path="/vendor-chat" 
+                path="/:lang/vendor-chat" 
                 element={
-                  <ProtectedRoute allowedRoles={['vendor']}>
-                    <ProtectedLayout>
-                      <VendorChat />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['vendor']}>
+                      <ProtectedLayout>
+                        <VendorChat />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
 
               <Route 
-                path="/vendor-payment-history" 
+                path="/:lang/vendor-payment-history" 
                 element={
-                  <ProtectedRoute allowedRoles={['vendor']}>
-                    <ProtectedLayout>
-                      <VendorPaymentHistory />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['vendor']}>
+                      <ProtectedLayout>
+                        <VendorPaymentHistory />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
               {/* Shared Routes - All Authenticated Users */}
               <Route 
-                path="/settings" 
+                path="/:lang/settings" 
                 element={
-                  <ProtectedRoute allowedRoles={['admin', 'homeowner', 'tenant', 'vendor']}>
-                    <ProtectedLayout>
-                      <Settings />
-                    </ProtectedLayout>
-                  </ProtectedRoute>
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['admin', 'homeowner', 'tenant', 'vendor']}>
+                      <ProtectedLayout>
+                        <Settings />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
                 } 
               />
               
-              {/* Create Users Route (Temporary - No Auth Required) */}
+              {/* Create Users Route (Temporary - No Auth Required, no language prefix) */}
               <Route path="/create-users" element={<CreateUsers />} />
+
+              {/* Redirect old routes without language prefix to English version */}
+              <Route path="/signin" element={<Navigate to="/en/signin" replace />} />
+              <Route path="/signup" element={<Navigate to="/en/signup" replace />} />
+              <Route path="/admin-dashboard" element={<Navigate to="/en/admin-dashboard" replace />} />
+              <Route path="/admin-panel" element={<Navigate to="/en/admin-panel" replace />} />
+              <Route path="/admin-access-control" element={<Navigate to="/en/admin-access-control" replace />} />
+              <Route path="/dashboard" element={<Navigate to="/en/dashboard" replace />} />
+              <Route path="/analytics" element={<Navigate to="/en/analytics" replace />} />
+              <Route path="/leases" element={<Navigate to="/en/leases" replace />} />
+              <Route path="/lease" element={<Navigate to="/en/lease" replace />} />
+              <Route path="/properties" element={<Navigate to="/en/properties" replace />} />
+              <Route path="/tenants" element={<Navigate to="/en/tenants" replace />} />
+              <Route path="/chat" element={<Navigate to="/en/chat" replace />} />
+              <Route path="/rent-collection" element={<Navigate to="/en/rent-collection" replace />} />
+              <Route path="/maintenance" element={<Navigate to="/en/maintenance" replace />} />
+              <Route path="/reports" element={<Navigate to="/en/reports" replace />} />
+              <Route path="/tenant-dashboard" element={<Navigate to="/en/tenant-dashboard" replace />} />
+              <Route path="/tenant-maintenance" element={<Navigate to="/en/tenant-maintenance" replace />} />
+              <Route path="/my-lease" element={<Navigate to="/en/my-lease" replace />} />
+              <Route path="/payment-history" element={<Navigate to="/en/payment-history" replace />} />
+              <Route path="/maintenance-requests" element={<Navigate to="/en/maintenance-requests" replace />} />
+              <Route path="/tenant-chat" element={<Navigate to="/en/tenant-chat" replace />} />
+              <Route path="/vendor-dashboard" element={<Navigate to="/en/vendor-dashboard" replace />} />
+              <Route path="/maintenance-tasks" element={<Navigate to="/en/maintenance-tasks" replace />} />
+              <Route path="/work-history" element={<Navigate to="/en/work-history" replace />} />
+              <Route path="/vendor-chat" element={<Navigate to="/en/vendor-chat" replace />} />
+              <Route path="/vendor-payment-history" element={<Navigate to="/en/vendor-payment-history" replace />} />
+              <Route path="/settings" element={<Navigate to="/en/settings" replace />} />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
