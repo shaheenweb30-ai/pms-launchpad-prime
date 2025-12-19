@@ -10,9 +10,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar, FileText, Building2, User, Download, Eye, ArrowUpRight, MessageSquare, Phone, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useCurrency } from '@/contexts/CurrencyContext';
 
 const MyLease = () => {
   const { toast } = useToast();
+  const { formatCurrency } = useCurrency();
   
   // Modal states
   const [showFullLeaseModal, setShowFullLeaseModal] = useState(false);
@@ -281,8 +283,8 @@ const MyLease = () => {
                 <p><strong>Tenant:</strong> Your Name</p>
                 <p><strong>Landlord:</strong> Property Management LLC</p>
                 <p><strong>Lease Term:</strong> January 1, 2025 - December 31, 2025</p>
-                <p><strong>Monthly Rent:</strong> $2,500.00</p>
-                <p><strong>Security Deposit:</strong> $2,500.00</p>
+                <p><strong>Monthly Rent:</strong> {formatCurrency(2500)}</p>
+                <p><strong>Security Deposit:</strong> {formatCurrency(2500)}</p>
               </div>
               
               <div className="space-y-3">

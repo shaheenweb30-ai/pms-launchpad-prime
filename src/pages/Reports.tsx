@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { 
   BarChart3,
   TrendingUp,
@@ -145,6 +146,7 @@ import {
 } from "@/components/ui/tabs";
 
 const Reports = () => {
+  const { formatCurrency } = useCurrency();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [periodFilter, setPeriodFilter] = useState('monthly');
@@ -989,7 +991,7 @@ const Reports = () => {
                       <div className="text-2xl font-bold">
                         {typeof value === 'number' && key.includes('Rate') ? `${value}%` :
                          typeof value === 'number' && (key.includes('revenue') || key.includes('expense') || key.includes('income') || key.includes('cost')) ? 
-                         `$${value.toLocaleString()}` : value}
+                         formatCurrency(value) : value}
                       </div>
                     </div>
                   ))}

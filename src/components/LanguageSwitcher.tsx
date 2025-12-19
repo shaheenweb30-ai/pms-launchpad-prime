@@ -7,30 +7,25 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Globe } from 'lucide-react';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation();
-
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    // Update document direction for RTL languages
-    document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = lng;
-  };
+  const { lang, switchLanguage } = useLanguageNavigation();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="gap-2">
           <Globe className="h-4 w-4" />
-          {i18n.language === 'ar' ? 'عربي' : 'English'}
+          {lang === 'ar' ? 'عربي' : 'English'}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => changeLanguage('en')}>
+        <DropdownMenuItem onClick={() => switchLanguage('en')}>
           English
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => changeLanguage('ar')}>
+        <DropdownMenuItem onClick={() => switchLanguage('ar')}>
           عربي
         </DropdownMenuItem>
       </DropdownMenuContent>

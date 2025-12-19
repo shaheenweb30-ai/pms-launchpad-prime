@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useCurrency } from '@/contexts/CurrencyContext';
 import { 
   Users, 
   Plus,
@@ -66,6 +67,7 @@ import {
 } from "@/components/ui/select";
 
 const Tenants = () => {
+  const { formatCurrency } = useCurrency();
   const [searchQuery, setSearchQuery] = useState('');
 
   const [propertyFilter, setPropertyFilter] = useState('all');
@@ -2117,11 +2119,11 @@ const Tenants = () => {
                 <div className="flex items-center gap-6">
                   <div className="text-right space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-extralight text-black">${tenant.rent}</span>
+                      <span className="text-2xl font-extralight text-black">{formatCurrency(tenant.rent)}</span>
                       <span className="text-sm text-gray-600">/month</span>
                     </div>
                     <div className="text-sm text-gray-600">
-                      Total paid: ${calculateTotalPaid(tenant).toLocaleString()}
+                      Total paid: {formatCurrency(calculateTotalPaid(tenant))}
                     </div>
                   </div>
 

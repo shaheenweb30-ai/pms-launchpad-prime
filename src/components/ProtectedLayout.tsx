@@ -45,6 +45,7 @@ import {
   Clock,
   MessageSquare
 } from 'lucide-react';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
@@ -460,8 +461,11 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
               </div>
             </div>
             
-            {/* Right Section - Notifications & Profile */}
+            {/* Right Section - Language Switcher, Notifications & Profile */}
             <div className={`${isRTL ? 'mr-auto' : 'ml-auto'} flex items-center gap-4`}>
+              {/* Language Switcher */}
+              <LanguageSwitcher />
+              
               {/* Enhanced Notifications Button */}
               <Button 
                 variant="ghost" 

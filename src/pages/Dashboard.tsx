@@ -43,12 +43,14 @@ import { useCurrency } from '@/contexts/CurrencyContext';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 const Dashboard = () => {
   const { profile } = useAuth();
   const { formatCurrency } = useCurrency();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   // State for dashboard data
   const [dashboardStats, setDashboardStats] = useState({
@@ -550,40 +552,40 @@ const Dashboard = () => {
 
   const stats = [
     {
-      title: 'Total Properties',
+      title: t('dashboard.totalProperties'),
       value: dashboardStats.totalProperties.toString(),
-      change: 'Properties managed',
+      change: t('dashboard.totalProperties'),
       trend: 'up',
       icon: Building2,
       progress: Math.min(dashboardStats.totalProperties * 10, 100),
-      detail: `${dashboardStats.totalProperties} properties in portfolio`
+      detail: `${dashboardStats.totalProperties} ${t('dashboard.totalProperties')}`
     },
     {
-      title: 'Active Tenants',
+      title: t('dashboard.activeTenants'),
       value: dashboardStats.activeTenants.toString(),
-      change: 'Currently active',
+      change: t('dashboard.activeTenants'),
       trend: 'up',
       icon: Users,
       progress: Math.min(dashboardStats.activeTenants * 3, 100),
-      detail: `${dashboardStats.activeTenants} active tenants`
+      detail: `${dashboardStats.activeTenants} ${t('dashboard.activeTenants')}`
     },
     {
-      title: 'Monthly Revenue',
+      title: t('dashboard.monthlyRevenue'),
       value: formatCurrency(dashboardStats.monthlyRevenue),
-      change: 'This month',
+      change: t('dashboard.monthlyRevenue'),
       trend: 'up',
       icon: DollarSign,
       progress: Math.min((dashboardStats.monthlyRevenue / 50000) * 100, 100),
-      detail: `Revenue for ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
+      detail: `${t('dashboard.monthlyRevenue')}`
     },
     {
-      title: 'Occupancy Rate',
+      title: t('dashboard.occupancyRate'),
       value: `${dashboardStats.occupancyRate}%`,
-      change: 'Current rate',
+      change: t('dashboard.occupancyRate'),
       trend: 'up',
       icon: TrendingUp,
       progress: dashboardStats.occupancyRate,
-      detail: `${dashboardStats.occupancyRate}% of units occupied`
+      detail: `${dashboardStats.occupancyRate}% ${t('dashboard.occupancyRate')}`
     }
   ];
 
@@ -637,27 +639,27 @@ const Dashboard = () => {
 
   const quickActions = [
     {
-      title: 'Add Property',
+      title: t('dashboard.addProperty'),
       icon: Building2,
-      description: 'List new property',
+      description: t('dashboard.addProperty'),
       onClick: handleAddProperty
     },
     {
-      title: 'Add Tenant',
+      title: t('dashboard.addTenant'),
       icon: Users,
-      description: 'Register new tenant',
+      description: t('dashboard.addTenant'),
       onClick: handleAddTenant
     },
     {
-      title: 'Record Payment',
+      title: t('dashboard.collectRent'),
       icon: DollarSign,
-      description: 'Log rent payment',
+      description: t('dashboard.collectRent'),
       onClick: handleRecordPayment
     },
     {
-      title: 'Schedule Inspection',
+      title: t('dashboard.createMaintenance'),
       icon: Eye,
-      description: 'Book property review',
+      description: t('dashboard.createMaintenance'),
       onClick: handleScheduleInspection
     }
   ];
@@ -726,10 +728,10 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-3">
               <h1 className="text-5xl font-extralight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight font-google-sans">
-                Welcome back, {profile?.first_name || 'Owner'}!
+                {t('dashboard.welcome')}, {profile?.first_name || t('dashboard.welcome')}!
               </h1>
               <p className="text-lg text-slate-600 max-w-2xl font-light leading-relaxed">
-                Here's what's happening with your properties today. Your portfolio is performing excellently with a 94% occupancy rate and growing revenue.
+                {t('dashboard.overview')}
               </p>
               <div className="flex items-center gap-6 pt-3">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -757,17 +759,17 @@ const Dashboard = () => {
                 onClick={refreshDashboardData}
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh
+                {t('common.refresh')}
               </Button>
               <Button variant="outline" >
                 <Download className="h-4 w-4 mr-2" />
-                Export
+                {t('common.export')}
               </Button>
               <Button 
                 onClick={handleAddProperty}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Property
+                {t('dashboard.addProperty')}
               </Button>
             </div>
           </div>
@@ -842,7 +844,7 @@ const Dashboard = () => {
               <div className="p-2 rounded-lg bg-gray-100">
                 <Bell className="h-5 w-5 text-gray-600" />
               </div>
-              Recent Activity
+              {t('dashboard.recentActivity')}
               <Badge variant="secondary" className="ml-auto font-light">{recentActivityData.length} items</Badge>
             </CardTitle>
           </CardHeader>
@@ -884,8 +886,8 @@ const Dashboard = () => {
                   <div className="space-y-3">
                     <Clock className="h-12 w-12 text-gray-300 mx-auto" />
                     <div>
-                      <p className="text-sm font-medium text-gray-600">No recent activity</p>
-                      <p className="text-xs text-gray-400">Activities will appear here as they happen</p>
+                      <p className="text-sm font-medium text-gray-600">{t('dashboard.noActivity')}</p>
+                      <p className="text-xs text-gray-400">{t('dashboard.noActivity')}</p>
                     </div>
                   </div>
                 </div>
@@ -893,7 +895,7 @@ const Dashboard = () => {
             </div>
             <div className="p-4 border-t border-gray-100 bg-gray-50/30">
               <Button variant="ghost" className="w-full text-gray-600 hover:text-black hover:bg-gray-50 font-light">
-                View All Activity
+                {t('dashboard.viewAll')}
                 <ArrowUpRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
@@ -907,7 +909,7 @@ const Dashboard = () => {
               <div className="p-2 rounded-lg bg-gray-100">
                 <Calendar className="h-5 w-5 text-gray-600" />
               </div>
-              Upcoming Tasks
+              {t('dashboard.upcomingTasks')}
               <Badge variant="secondary" className="ml-auto font-light">{upcomingTasksData.length} pending</Badge>
             </CardTitle>
           </CardHeader>
@@ -952,8 +954,8 @@ const Dashboard = () => {
                   <div className="space-y-3">
                     <CheckCircle className="h-12 w-12 text-gray-300 mx-auto" />
                     <div>
-                      <p className="text-sm font-medium text-gray-600">No upcoming tasks</p>
-                      <p className="text-xs text-gray-400">You're all caught up!</p>
+                      <p className="text-sm font-medium text-gray-600">{t('dashboard.noTasks')}</p>
+                      <p className="text-xs text-gray-400">{t('dashboard.noTasks')}</p>
                     </div>
                   </div>
                 </div>
@@ -961,7 +963,7 @@ const Dashboard = () => {
             </div>
             <div className="p-4 border-t border-gray-100 bg-gray-50/30">
               <Button variant="ghost" className="w-full text-gray-600 hover:text-black hover:bg-gray-50 font-light">
-                View All Tasks
+                {t('dashboard.viewAll')}
                 <ArrowUpRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
@@ -976,7 +978,7 @@ const Dashboard = () => {
             <div className="p-2 rounded-lg bg-gray-100">
               <Zap className="h-5 w-5 text-gray-600" />
             </div>
-            Quick Actions
+            {t('dashboard.quickActions')}
             <span className="text-sm font-light text-gray-500 ml-auto">Frequently used tools</span>
           </CardTitle>
         </CardHeader>
