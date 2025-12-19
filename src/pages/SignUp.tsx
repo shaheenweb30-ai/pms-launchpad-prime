@@ -4,15 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building2, ArrowRight, ArrowLeft } from "lucide-react";
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 const SignUp = () => {
   const { t } = useTranslation();
   const { signUp } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigation();
   
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -47,7 +48,7 @@ const SignUp = () => {
           title: "Account created successfully!",
           description: "Please check your email to verify your account before signing in.",
         });
-        navigate('/signin');
+        navigateTo('/signin');
       }
     } catch (error) {
       toast({

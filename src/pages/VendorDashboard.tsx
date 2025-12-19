@@ -299,7 +299,7 @@ const VendorDashboard = () => {
             <div className="hidden lg:flex items-center gap-3">
               <Button 
                 variant="outline"
-                onClick={() => navigate('/maintenance-tasks')}
+                onClick={() => navigateTo('/maintenance-tasks')}
               >
                 <Wrench className="h-4 w-4 mr-2" />
                 View All Tasks
@@ -443,7 +443,7 @@ const VendorDashboard = () => {
                     <Button 
                       variant="ghost" 
                       size="sm"
-                      onClick={() => navigate('/maintenance-tasks')}
+                      onClick={() => navigateTo('/maintenance-tasks')}
                       className="text-xs font-light"
                     >
                       View Details
@@ -456,7 +456,7 @@ const VendorDashboard = () => {
               <Button 
                 variant="outline" 
                 className="w-full justify-center font-light"
-                onClick={() => navigate('/maintenance-tasks')}
+                onClick={() => navigateTo('/maintenance-tasks')}
               >
                 View All Tasks
                 <ChevronRight className="h-4 w-4 ml-2" />
@@ -523,7 +523,7 @@ const VendorDashboard = () => {
             <Button 
               variant="outline" 
               className="justify-start h-12 border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
-              onClick={() => navigate('/maintenance-tasks')}
+              onClick={() => navigateTo('/maintenance-tasks')}
             >
               <Wrench className="h-4 w-4 mr-3" />
               View Tasks

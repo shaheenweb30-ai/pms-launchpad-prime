@@ -81,7 +81,7 @@ const WorkHistory = () => {
   const { user, profile } = useAuth();
   const { formatCurrency } = useCurrency();
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigation();
 
   const [workHistory, setWorkHistory] = useState<WorkHistory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -330,7 +330,7 @@ const WorkHistory = () => {
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => navigate('/vendor-dashboard')}
+                onClick={() => navigateTo('/vendor-dashboard')}
               >
                 <ArrowUpRight className="h-4 w-4 mr-2" />
                 Dashboard

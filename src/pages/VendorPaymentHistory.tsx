@@ -344,7 +344,7 @@ const VendorPaymentHistory: React.FC = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate('/vendor-dashboard')}
+                  onClick={() => navigateTo('/vendor-dashboard')}
                   className="text-gray-600 hover:text-gray-900"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
