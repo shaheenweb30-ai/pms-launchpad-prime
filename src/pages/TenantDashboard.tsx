@@ -67,13 +67,13 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { useNavigate } from 'react-router-dom';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 import { useToast } from '@/hooks/use-toast';
 
 const TenantDashboard = () => {
   const { user, profile } = useAuth();
   const { formatCurrency } = useCurrency();
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigation();
   const { toast } = useToast();
   
   const [tenantData, setTenantData] = useState<any>(null);
@@ -346,7 +346,7 @@ const TenantDashboard = () => {
             <div className="hidden lg:flex items-center gap-3">
               <Button 
                 variant="outline"
-                onClick={() => navigate('/tenant-chat')}
+                onClick={() => navigateTo('/tenant-chat')}
               >
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Messages
@@ -528,7 +528,7 @@ const TenantDashboard = () => {
               <Button 
                 variant="outline" 
                 className="justify-start h-12 border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
-                onClick={() => navigate('/maintenance-requests')}
+                onClick={() => navigateTo('/maintenance-requests')}
               >
                 <Wrench className="h-4 w-4 mr-3" />
                 Submit Maintenance Request
@@ -537,7 +537,7 @@ const TenantDashboard = () => {
               <Button 
                 variant="outline" 
                 className="justify-start h-12 border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
-                onClick={() => navigate('/payment-history')}
+                onClick={() => navigateTo('/payment-history')}
               >
                 <CreditCard className="h-4 w-4 mr-3" />
                 Make Rent Payment
@@ -546,7 +546,7 @@ const TenantDashboard = () => {
               <Button 
                 variant="outline" 
                 className="justify-start h-12 border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
-                onClick={() => navigate('/my-lease')}
+                onClick={() => navigateTo('/my-lease')}
               >
                 <FileText className="h-4 w-4 mr-3" />
                 View Lease Documents
@@ -555,7 +555,7 @@ const TenantDashboard = () => {
               <Button 
                 variant="outline" 
                 className="justify-start h-12 border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
-                onClick={() => navigate('/tenant-chat')}
+                onClick={() => navigateTo('/tenant-chat')}
               >
                 <MessageSquare className="h-4 w-4 mr-3" />
                 Messages
@@ -605,7 +605,7 @@ const TenantDashboard = () => {
                     variant="ghost" 
                     size="sm" 
                     className="text-gray-600 hover:text-black hover:bg-gray-50 font-light"
-                    onClick={() => navigate('/maintenance-requests')}
+                    onClick={() => navigateTo('/maintenance-requests')}
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     View Details
@@ -628,7 +628,7 @@ const TenantDashboard = () => {
             <Button 
               variant="ghost" 
               className="w-full text-gray-600 hover:text-black hover:bg-gray-50 font-light"
-              onClick={() => navigate('/maintenance-requests')}
+              onClick={() => navigateTo('/maintenance-requests')}
             >
               View All Requests
               <ArrowUpRight className="h-4 w-4 ml-2" />

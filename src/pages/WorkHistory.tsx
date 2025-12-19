@@ -59,8 +59,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 interface WorkHistory {
   id: string;

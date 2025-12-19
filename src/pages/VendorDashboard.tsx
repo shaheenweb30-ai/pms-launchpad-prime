@@ -55,8 +55,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
-import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 interface MaintenanceTask {
   id: string;
@@ -90,7 +90,7 @@ const VendorDashboard = () => {
   const { user, profile } = useAuth();
   const { formatCurrency } = useCurrency();
   const { toast } = useToast();
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigation();
 
   const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTask[]>([]);
   const [workHistory, setWorkHistory] = useState<WorkHistory[]>([]);
@@ -306,20 +306,20 @@ const VendorDashboard = () => {
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => navigate('/vendor-chat')}
+                onClick={() => navigateTo('/vendor-chat')}
               >
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Messages
               </Button>
               <Button 
                 variant="outline"
-                onClick={() => navigate('/vendor-payment-history')}
+                onClick={() => navigateTo('/vendor-payment-history')}
               >
                 <DollarSign className="h-4 w-4 mr-2" />
                 Payment History
               </Button>
               <Button 
-                onClick={() => navigate('/work-history')}
+                onClick={() => navigateTo('/work-history')}
               >
                 <Clock className="h-4 w-4 mr-2" />
                 Work History
@@ -503,7 +503,7 @@ const VendorDashboard = () => {
               <Button 
                 variant="outline" 
                 className="w-full justify-center font-light"
-                onClick={() => navigate('/work-history')}
+                onClick={() => navigateTo('/work-history')}
               >
                 View Work History
                 <ChevronRight className="h-4 w-4 ml-2" />
@@ -532,7 +532,7 @@ const VendorDashboard = () => {
             <Button 
               variant="outline" 
               className="justify-start h-12 border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
-              onClick={() => navigate('/work-history')}
+              onClick={() => navigateTo('/work-history')}
             >
               <Clock className="h-4 w-4 mr-3" />
               Work History
@@ -541,7 +541,7 @@ const VendorDashboard = () => {
             <Button 
               variant="outline" 
               className="justify-start h-12 border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
-              onClick={() => navigate('/vendor-chat')}
+              onClick={() => navigateTo('/vendor-chat')}
             >
               <MessageSquare className="h-4 w-4 mr-3" />
               Messages
@@ -550,7 +550,7 @@ const VendorDashboard = () => {
             <Button 
               variant="outline" 
               className="justify-start h-12 border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
-              onClick={() => navigate('/vendor-payment-history')}
+              onClick={() => navigateTo('/vendor-payment-history')}
             >
               <DollarSign className="h-4 w-4 mr-3" />
               Payment History
@@ -559,7 +559,7 @@ const VendorDashboard = () => {
             <Button 
               variant="outline" 
               className="justify-start h-12 border-gray-200 text-gray-700 hover:bg-gray-50 font-light"
-              onClick={() => navigate('/settings')}
+              onClick={() => navigateTo('/settings')}
             >
               <Settings className="h-4 w-4 mr-3" />
               Settings

@@ -41,14 +41,14 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 const Dashboard = () => {
   const { profile } = useAuth();
   const { formatCurrency } = useCurrency();
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigation();
   const { toast } = useToast();
   const { t } = useTranslation();
 
@@ -546,9 +546,9 @@ const Dashboard = () => {
     
     if (profile?.role === 'admin') {
       console.log('Dashboard: Redirecting to admin dashboard...');
-      navigate('/admin-dashboard', { replace: true });
+      navigateTo('/admin-dashboard');
     }
-  }, [profile?.role, navigate]);
+  }, [profile?.role, navigateTo]);
 
   const stats = [
     {
@@ -606,7 +606,7 @@ const Dashboard = () => {
 
   // Quick action handlers
   const handleAddProperty = () => {
-    navigate('/properties');
+    navigateTo('/properties');
     toast({
       title: "Redirecting to Properties",
       description: "You can add a new property from the Properties page.",
@@ -614,7 +614,7 @@ const Dashboard = () => {
   };
 
   const handleAddTenant = () => {
-    navigate('/tenants');
+    navigateTo('/tenants');
     toast({
       title: "Redirecting to Tenants",
       description: "You can add a new tenant from the Tenants page.",
@@ -622,7 +622,7 @@ const Dashboard = () => {
   };
 
   const handleRecordPayment = () => {
-    navigate('/rent-collection');
+    navigateTo('/rent-collection');
     toast({
       title: "Redirecting to Rent Collection",
       description: "You can record payments from the Rent Collection page.",
@@ -630,7 +630,7 @@ const Dashboard = () => {
   };
 
   const handleScheduleInspection = () => {
-    navigate('/inspections');
+    navigateTo('/inspections');
     toast({
       title: "Redirecting to Property Inspections",
       description: "You can schedule inspections from the Inspections page.",
@@ -748,7 +748,7 @@ const Dashboard = () => {
               {/* Admin Test Button */}
               {profile?.role === 'admin' && (
                 <Button 
-                  onClick={() => navigate('/admin-dashboard')}
+                  onClick={() => navigateTo('/admin-dashboard')}
                 >
                   Go to Admin Dashboard
                 </Button>
