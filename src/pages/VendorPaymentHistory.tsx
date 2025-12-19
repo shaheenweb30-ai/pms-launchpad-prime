@@ -24,8 +24,8 @@ import {
   CreditCard,
   Banknote
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 interface PaymentRecord {
   id: string;
@@ -51,7 +51,7 @@ interface PaymentRecord {
 const VendorPaymentHistory: React.FC = () => {
   const { user, profile } = useAuth();
   const { formatCurrency } = useCurrency();
-  const navigate = useNavigate();
+  const { navigateTo } = useLanguageNavigation();
   const { toast } = useToast();
   
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
