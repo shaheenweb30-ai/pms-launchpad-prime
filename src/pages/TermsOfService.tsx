@@ -3,18 +3,23 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Menu, X } from 'lucide-react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
+import { useTranslation } from 'react-i18next';
 
 const TermsOfService = () => {
+  const { getLocalizedPath } = useLanguageNavigation();
+  const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isRTL = i18n.language === 'ar';
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className={`min-h-screen bg-white ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
       <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3">
+            <Link to={getLocalizedPath('/')} className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-3 order-3' : 'space-x-3'}`}>
               <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center text-white font-medium text-lg">
                 P
               </div>
@@ -22,25 +27,25 @@ const TermsOfService = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-12">
-              <Link to="/#features" className="text-gray-500 hover:text-black transition-colors font-light">Features</Link>
-              <Link to="/#pricing" className="text-gray-500 hover:text-black transition-colors font-light">Pricing</Link>
-              <Link to="/#how-it-works" className="text-gray-500 hover:text-black transition-colors font-light">How it Works</Link>
-              <Link to="/#testimonials" className="text-gray-500 hover:text-black transition-colors font-light">Testimonials</Link>
-              <Link to="/#faq" className="text-gray-500 hover:text-black transition-colors font-light">FAQ</Link>
+            <nav className={`hidden md:flex items-center ${isRTL ? 'space-x-reverse space-x-12 order-2' : 'space-x-12'}`}>
+              <Link to={getLocalizedPath('/about')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.about')}</Link>
+              <Link to={getLocalizedPath('/pricing')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.pricing')}</Link>
+              <Link to={getLocalizedPath('/careers')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.careers')}</Link>
+              <Link to={getLocalizedPath('/blog')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.blog')}</Link>
+              <Link to={getLocalizedPath('/contact')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.contact')}</Link>
             </nav>
 
             {/* Auth Buttons */}
-            <div className="hidden md:flex items-center space-x-6">
+            <div className={`hidden md:flex items-center ${isRTL ? 'space-x-reverse space-x-6 order-1' : 'space-x-6'}`}>
               <LanguageSwitcher />
-              <Link to="/signin">
+              <Link to={getLocalizedPath('/signin')}>
                 <Button variant="ghost" className="text-gray-500 hover:text-black font-light">
-                  Sign In
+                  {t('homepage.footer.signIn')}
                 </Button>
               </Link>
-              <Link to="/signup">
+              <Link to={getLocalizedPath('/signup')}>
                 <Button className="px-6">
-                  Free Trial
+                  {t('homepage.hero.startTrial')}
                 </Button>
               </Link>
             </div>
@@ -62,11 +67,11 @@ const TermsOfService = () => {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-200">
               <div className="flex flex-col space-y-4">
-                <Link to="/#features" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Features</Link>
-                <Link to="/#pricing" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
-                <Link to="/#how-it-works" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>How it Works</Link>
-                <Link to="/#testimonials" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Testimonials</Link>
-                <Link to="/#faq" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
+                <Link to="/about" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>About</Link>
+                <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
+                <Link to="/careers" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Careers</Link>
+                <Link to="/blog" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Blogs</Link>
+                <Link to="/contact" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Contact</Link>
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                   <div className="px-2">
                     <LanguageSwitcher />
@@ -92,7 +97,7 @@ const TermsOfService = () => {
       <main className="pt-24 pb-20">
         <div className="max-w-4xl mx-auto px-6">
           {/* Back Button */}
-          <Link to="/">
+          <Link to={getLocalizedPath('/')}>
             <Button 
               variant="ghost" 
               className="mb-8 text-gray-500 hover:text-black font-light"
@@ -285,7 +290,7 @@ const TermsOfService = () => {
 
           {/* Back to Home Button */}
           <div className="mt-12 pt-8 border-t border-gray-100">
-            <Link to="/">
+            <Link to={getLocalizedPath('/')}>
               <Button className="w-full md:w-auto px-8 py-3 rounded-full font-light">
                 Back to Home
                 <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
@@ -323,8 +328,8 @@ const TermsOfService = () => {
             <div>
               <h3 className="font-light mb-6 text-white">Company</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors font-light">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors font-light">Blog</a></li>
+                <li><Link to="/about" className="hover:text-white transition-colors font-light">About</Link></li>
+                <li><Link to="/blog" className="hover:text-white transition-colors font-light">Blog</Link></li>
                 <li><Link to="/careers" className="hover:text-white transition-colors font-light">Careers</Link></li>
                 <li><Link to="/contact" className="hover:text-white transition-colors font-light">Contact</Link></li>
               </ul>
@@ -333,8 +338,7 @@ const TermsOfService = () => {
             <div>
               <h3 className="font-light mb-6 text-white">Support</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors font-light">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors font-light">Documentation</a></li>
+                <li><Link to="/help" className="hover:text-white transition-colors font-light">Help Center</Link></li>
                 <li><a href="#faq" className="hover:text-white transition-colors font-light">FAQ</a></li>
                 <li><Link to="/signin" className="hover:text-white transition-colors font-light">Sign In</Link></li>
               </ul>

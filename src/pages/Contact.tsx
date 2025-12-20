@@ -7,12 +7,17 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, Menu, X, Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 const Contact = () => {
+  const { t, i18n } = useTranslation();
+  const { getLocalizedPath } = useLanguageNavigation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
+  const isRTL = i18n.language === 'ar';
 
   const [formData, setFormData] = useState({
     name: '',
@@ -64,8 +69,8 @@ const Contact = () => {
       }, 3000);
     } catch (error) {
       toast({
-        title: "Failed to send message",
-        description: "Something went wrong. Please try again.",
+        title: t('contact.failedToSend'),
+        description: t('contact.tryAgain'),
         variant: "destructive",
       });
     } finally {
@@ -95,13 +100,13 @@ const Contact = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className={`min-h-screen bg-white ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
       <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3">
+            <Link to={getLocalizedPath('/')} className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-3 order-3' : 'space-x-3'}`}>
               <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center text-white font-medium text-lg">
                 P
               </div>
@@ -109,25 +114,25 @@ const Contact = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-12">
-              <Link to="/#features" className="text-gray-500 hover:text-black transition-colors font-light">Features</Link>
-              <Link to="/#pricing" className="text-gray-500 hover:text-black transition-colors font-light">Pricing</Link>
-              <Link to="/#how-it-works" className="text-gray-500 hover:text-black transition-colors font-light">How it Works</Link>
-              <Link to="/#testimonials" className="text-gray-500 hover:text-black transition-colors font-light">Testimonials</Link>
-              <Link to="/#faq" className="text-gray-500 hover:text-black transition-colors font-light">FAQ</Link>
+            <nav className={`hidden md:flex items-center ${isRTL ? 'space-x-reverse space-x-12 order-2' : 'space-x-12'}`}>
+              <Link to={getLocalizedPath('/about')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.about')}</Link>
+              <Link to={getLocalizedPath('/pricing')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.pricing')}</Link>
+              <Link to={getLocalizedPath('/careers')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.careers')}</Link>
+              <Link to={getLocalizedPath('/blog')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.blog')}</Link>
+              <Link to={getLocalizedPath('/contact')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.contact')}</Link>
             </nav>
 
             {/* Auth Buttons */}
-            <div className="hidden md:flex items-center space-x-6">
+            <div className={`hidden md:flex items-center ${isRTL ? 'space-x-reverse space-x-6 order-1' : 'space-x-6'}`}>
               <LanguageSwitcher />
-              <Link to="/signin">
+              <Link to={getLocalizedPath('/signin')}>
                 <Button variant="ghost" className="text-gray-500 hover:text-black font-light">
-                  Sign In
+                  {t('homepage.footer.signIn')}
                 </Button>
               </Link>
-              <Link to="/signup">
+              <Link to={getLocalizedPath('/signup')}>
                 <Button className="px-6">
-                  Free Trial
+                  {t('homepage.hero.startTrial')}
                 </Button>
               </Link>
             </div>
@@ -149,11 +154,11 @@ const Contact = () => {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-200">
               <div className="flex flex-col space-y-4">
-                <Link to="/#features" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Features</Link>
-                <Link to="/#pricing" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
-                <Link to="/#how-it-works" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>How it Works</Link>
-                <Link to="/#testimonials" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Testimonials</Link>
-                <Link to="/#faq" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
+                <Link to="/about" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>About</Link>
+                <Link to="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
+                <Link to="/careers" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Careers</Link>
+                <Link to="/blog" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Blogs</Link>
+                <Link to="/contact" className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>Contact</Link>
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                   <div className="px-2">
                     <LanguageSwitcher />
@@ -179,38 +184,38 @@ const Contact = () => {
       <main className="pt-24 pb-20">
         <div className="max-w-5xl mx-auto px-6">
           {/* Back Button */}
-          <Link to="/">
+          <Link to={getLocalizedPath('/')}>
             <Button 
               variant="ghost" 
-              className="mb-8 text-gray-500 hover:text-black font-light"
+              className={`mb-8 text-gray-500 hover:text-black font-light ${isRTL ? 'flex-row-reverse' : ''}`}
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
+              <ArrowLeft className={`h-4 w-4 ${isRTL ? 'ml-2 rotate-180' : 'mr-2'}`} />
+              {t('about.backToHome')}
             </Button>
           </Link>
 
           {/* Hero Section */}
           <div className="text-center mb-20">
             <h1 className="text-4xl md:text-5xl font-extralight text-black mb-6 tracking-tight font-google-sans">
-              Get in Touch
+              {t('contact.getInTouch')}
             </h1>
             <p className="text-xl text-gray-500 max-w-2xl mx-auto font-light leading-relaxed">
-              Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+              {t('contact.subtitle')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Contact Information */}
             <div className="lg:col-span-1">
-              <h2 className="text-2xl font-light text-black mb-8">Contact Information</h2>
+              <h2 className="text-2xl font-light text-black mb-8">{t('contact.contactInfo')}</h2>
               <div className="space-y-6">
                 {contactInfo.map((info, index) => (
-                  <div key={index} className="flex items-start space-x-4">
+                  <div key={index} className={`flex items-start ${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : 'space-x-4'}`}>
                     <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center flex-shrink-0">
                       <info.icon className="h-5 w-5 text-gray-600" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-light text-gray-500 mb-1">{info.title}</h3>
+                      <h3 className="text-sm font-light text-gray-500 mb-1">{t(info.titleKey)}</h3>
                       {info.link ? (
                         <a 
                           href={info.link} 
@@ -228,19 +233,19 @@ const Contact = () => {
 
               {/* Office Hours */}
               <div className="mt-12 p-6 bg-gray-50 rounded-3xl border border-gray-100">
-                <h3 className="text-lg font-light text-black mb-4">Office Hours</h3>
+                <h3 className="text-lg font-light text-black mb-4">{t('contact.officeHours')}</h3>
                 <div className="space-y-2 text-gray-600 font-light text-sm">
-                  <div className="flex justify-between">
-                    <span>Monday - Friday</span>
+                  <div className={`flex ${isRTL ? 'flex-row-reverse' : ''} justify-between`}>
+                    <span>{t('contact.officeHours.weekdays')}</span>
                     <span>9:00 AM - 6:00 PM</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Saturday</span>
+                  <div className={`flex ${isRTL ? 'flex-row-reverse' : ''} justify-between`}>
+                    <span>{t('contact.officeHours.saturday')}</span>
                     <span>10:00 AM - 4:00 PM</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Sunday</span>
-                    <span>Closed</span>
+                  <div className={`flex ${isRTL ? 'flex-row-reverse' : ''} justify-between`}>
+                    <span>{t('contact.officeHours.sunday')}</span>
+                    <span>{t('contact.officeHours.closed')}</span>
                   </div>
                 </div>
               </div>
@@ -254,19 +259,19 @@ const Contact = () => {
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <CheckCircle className="h-8 w-8 text-green-600" />
                     </div>
-                    <h3 className="text-2xl font-light text-black mb-2">Message Sent!</h3>
+                    <h3 className="text-2xl font-light text-black mb-2">{t('contact.messageSent')}</h3>
                     <p className="text-gray-600 font-light">
-                      Thank you for contacting us. We'll get back to you soon.
+                      {t('contact.thankYou')}
                     </p>
                   </div>
                 ) : (
                   <>
-                    <h2 className="text-2xl font-light text-black mb-6">Send us a Message</h2>
+                    <h2 className="text-2xl font-light text-black mb-6">{t('contact.sendMessage')}</h2>
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="name" className="text-black font-light">
-                            Full Name <span className="text-red-500">*</span>
+                            {t('contact.name')} <span className="text-red-500">*</span>
                           </Label>
                           <Input
                             id="name"
@@ -275,14 +280,14 @@ const Contact = () => {
                             required
                             value={formData.name}
                             onChange={handleInputChange}
-                            placeholder="John Doe"
+                            placeholder={t('contact.namePlaceholder')}
                             className="font-light"
                           />
                         </div>
                         
                         <div className="space-y-2">
                           <Label htmlFor="email" className="text-black font-light">
-                            Email <span className="text-red-500">*</span>
+                            {t('contact.email')} <span className="text-red-500">*</span>
                           </Label>
                           <Input
                             id="email"
@@ -291,7 +296,7 @@ const Contact = () => {
                             required
                             value={formData.email}
                             onChange={handleInputChange}
-                            placeholder="john@example.com"
+                            placeholder={t('contact.emailPlaceholder')}
                             className="font-light"
                           />
                         </div>
@@ -300,7 +305,7 @@ const Contact = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="phone" className="text-black font-light">
-                            Phone Number
+                            {t('contact.phone')}
                           </Label>
                           <Input
                             id="phone"
@@ -308,14 +313,14 @@ const Contact = () => {
                             type="tel"
                             value={formData.phone}
                             onChange={handleInputChange}
-                            placeholder="+1 (555) 123-4567"
+                            placeholder={t('contact.phonePlaceholder')}
                             className="font-light"
                           />
                         </div>
                         
                         <div className="space-y-2">
                           <Label htmlFor="subject" className="text-black font-light">
-                            Subject
+                            {t('contact.subject')}
                           </Label>
                           <Input
                             id="subject"
@@ -323,7 +328,7 @@ const Contact = () => {
                             type="text"
                             value={formData.subject}
                             onChange={handleInputChange}
-                            placeholder="How can we help?"
+                            placeholder={t('contact.subjectPlaceholder')}
                             className="font-light"
                           />
                         </div>
@@ -331,7 +336,7 @@ const Contact = () => {
 
                       <div className="space-y-2">
                         <Label htmlFor="message" className="text-black font-light">
-                          Message <span className="text-red-500">*</span>
+                          {t('contact.message')} <span className="text-red-500">*</span>
                         </Label>
                         <Textarea
                           id="message"
@@ -339,7 +344,7 @@ const Contact = () => {
                           required
                           value={formData.message}
                           onChange={handleInputChange}
-                          placeholder="Tell us what you're looking for..."
+                          placeholder={t('contact.messagePlaceholder')}
                           rows={6}
                           className="font-light resize-none"
                         />
@@ -347,16 +352,16 @@ const Contact = () => {
 
                       <Button
                         type="submit"
-                        className="w-full rounded-full font-light"
+                        className={`w-full rounded-full font-light ${isRTL ? 'flex-row-reverse' : ''}`}
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
-                          'Sending...'
+                          t('contact.sending')
                         ) : (
-                          <>
-                            <Send className="mr-2 h-4 w-4" />
-                            Send Message
-                          </>
+                          <div className={`flex items-center justify-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <Send className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                            {t('contact.sendMessage')}
+                          </div>
                         )}
                       </Button>
                     </form>
@@ -368,10 +373,10 @@ const Contact = () => {
 
           {/* Back to Home Button */}
           <div className="mt-12 pt-8 border-t border-gray-100">
-            <Link to="/">
-              <Button className="w-full md:w-auto px-8 py-3 rounded-full font-light">
-                Back to Home
-                <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
+            <Link to={getLocalizedPath('/')}>
+              <Button className={`w-full md:w-auto px-8 py-3 rounded-full font-light ${isRTL ? 'flex-row-reverse' : ''}`}>
+                {t('about.backToHome')}
+                <ArrowLeft className={`h-4 w-4 rotate-180 ${isRTL ? 'mr-2' : 'ml-2'}`} />
               </Button>
             </Link>
           </div>
@@ -406,8 +411,8 @@ const Contact = () => {
             <div>
               <h3 className="font-light mb-6 text-white">Company</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors font-light">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors font-light">Blog</a></li>
+                <li><Link to="/about" className="hover:text-white transition-colors font-light">About</Link></li>
+                <li><Link to="/blog" className="hover:text-white transition-colors font-light">Blog</Link></li>
                 <li><Link to="/careers" className="hover:text-white transition-colors font-light">Careers</Link></li>
                 <li><Link to="/contact" className="hover:text-white transition-colors font-light">Contact</Link></li>
               </ul>
@@ -416,8 +421,7 @@ const Contact = () => {
             <div>
               <h3 className="font-light mb-6 text-white">Support</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors font-light">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors font-light">Documentation</a></li>
+                <li><Link to="/help" className="hover:text-white transition-colors font-light">Help Center</Link></li>
                 <li><a href="#faq" className="hover:text-white transition-colors font-light">FAQ</a></li>
                 <li><Link to="/signin" className="hover:text-white transition-colors font-light">Sign In</Link></li>
               </ul>

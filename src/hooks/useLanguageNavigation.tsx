@@ -34,9 +34,9 @@ export const useLanguageNavigation = () => {
     // Remove leading slash and any existing language prefix
     const cleanPath = path.replace(/^\//, '').replace(/^(en|ar)\//, '');
     
-    // Don't add language prefix for root path
+    // Always add language prefix, including for root path
     if (cleanPath === '') {
-      return target === 'en' ? '/' : `/${target}`;
+      return `/${target}`;
     }
     
     return `/${target}/${cleanPath}`;

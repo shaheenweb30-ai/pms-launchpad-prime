@@ -1,5 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface ProtectedRouteProps {
@@ -9,6 +9,8 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
   const { user, profile, loading } = useAuth();
+  const params = useParams<{ lang?: string }>();
+  const lang = params.lang || 'en';
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -21,12 +23,12 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
 
   // Redirect to sign in if not authenticated
   if (!user || !profile) {
-    return <Navigate to="/signin" replace />;
+    return <Navigate to={`/${lang}/signin`} replace />;
   }
 
   // Check role-based access if roles are specified
   if (allowedRoles && !allowedRoles.includes(profile.role || '')) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={`/${lang}`} replace />;
   }
 
   return <>{children}</>;

@@ -10,12 +10,15 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 const SignIn = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { signIn, profile, user, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { getLocalizedPath } = useLanguageNavigation();
+  const isRTL = i18n.language === 'ar';
   
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +52,7 @@ const SignIn = () => {
       console.log('Redirecting to:', redirectPath);
       // Use setTimeout to ensure state is fully updated before navigation
       const timer = setTimeout(() => {
-        navigate(redirectPath, { replace: true });
+        navigate(getLocalizedPath(redirectPath), { replace: true });
       }, 200);
       
       return () => clearTimeout(timer);
@@ -109,8 +112,8 @@ const SignIn = () => {
     } catch (error) {
       console.error('Unexpected error during sign in:', error); // Debug log
       toast({
-        title: "Sign in failed",
-        description: "An unexpected error occurred. Please try again.",
+        title: t('signin.signInFailed'),
+        description: t('signin.unexpectedError'),
         variant: "destructive",
       });
       setIsLoading(false);
@@ -118,15 +121,15 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
+    <div className={`min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12 ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Back to Home */}
       <div className="text-center mb-8">
         <Link 
-          to="/" 
-          className="inline-flex items-center text-gray-500 hover:text-black transition-colors font-light text-sm"
+          to={getLocalizedPath('/')} 
+          className={`inline-flex items-center text-gray-500 hover:text-black transition-colors font-light text-sm ${isRTL ? 'flex-row-reverse' : ''}`}
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to PropertyFlow
+          <ArrowLeft className={`w-4 h-4 ${isRTL ? 'ml-2 rotate-180' : 'mr-2'}`} />
+          {t('signin.backToHome')}
         </Link>
       </div>
       
@@ -136,10 +139,10 @@ const SignIn = () => {
         <div className="text-center mb-12">
 
           <h1 className="text-4xl md:text-5xl font-extralight text-black mb-4 tracking-tight font-google-sans">
-            Welcome Back
+            {t('signin.welcomeBack')}
           </h1>
           <p className="text-gray-500 text-lg font-light leading-relaxed">
-            Sign in to your PropertyFlow account
+            {t('signin.subtitle')}
           </p>
         </div>
         
@@ -148,12 +151,12 @@ const SignIn = () => {
           {/* Email Field */}
           <div>
             <Label htmlFor="email" className="block text-sm font-light text-gray-600 mb-3">
-              Email Address
+              {t('signin.email')}
             </Label>
             <Input
               id="email"
               type="email"
-              placeholder="Enter your email"
+              placeholder={t('signin.emailPlaceholder')}
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               className="h-14 border-gray-200 focus:border-black focus:ring-black rounded-2xl text-base font-light px-6"
@@ -165,13 +168,13 @@ const SignIn = () => {
           {/* Password Field */}
           <div>
             <Label htmlFor="password" className="block text-sm font-light text-gray-600 mb-3">
-              Password
+              {t('signin.password')}
             </Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
+                placeholder={t('signin.passwordPlaceholder')}
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
                 className="h-14 border-gray-200 focus:border-black focus:ring-black rounded-2xl text-base font-light px-6 pr-12"
@@ -181,7 +184,7 @@ const SignIn = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                className={`absolute ${isRTL ? 'left-4' : 'right-4'} top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors`}
                 disabled={isLoading}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -200,14 +203,14 @@ const SignIn = () => {
                 disabled={isLoading}
               />
               <Label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer font-light">
-                Remember me
+                {t('signin.rememberMe')}
               </Label>
             </div>
             <Link 
-              to="/forgot-password" 
+              to={getLocalizedPath('/forgot-password')} 
               className="text-sm text-gray-600 hover:text-black transition-colors font-light"
             >
-              Forgot password?
+              {t('signin.forgotPassword')}
             </Link>
           </div>
           
@@ -218,14 +221,14 @@ const SignIn = () => {
             className="w-full h-14 mt-8"
           >
             {isLoading ? (
-              <div className="flex items-center justify-center">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                Signing in...
+              <div className={`flex items-center justify-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={`w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}></div>
+                {t('signin.signingIn')}
               </div>
             ) : (
-              <div className="flex items-center justify-center">
-                Sign In
-                <ArrowRight className="w-4 h-4 ml-2" />
+              <div className={`flex items-center justify-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                {t('signin.signIn')}
+                <ArrowRight className={`w-4 h-4 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} />
               </div>
             )}
           </Button>
@@ -234,7 +237,7 @@ const SignIn = () => {
         {/* Credentials for Quick Access */}
         <div className="mt-8 p-6 bg-gray-50 rounded-3xl border-0">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-light text-gray-600">Quick Access Credentials:</h3>
+            <h3 className="text-sm font-light text-gray-600">{t('signin.quickAccess')}</h3>
           </div>
           <div className="space-y-3 text-sm">
             <div 

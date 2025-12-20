@@ -26,6 +26,7 @@ import Settings from "./pages/Settings";
 import AdminAccessControl from "./pages/AdminAccessControl";
 import AdminPanel from "./components/AdminPanel";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminPricingManagement from "./pages/AdminPricingManagement";
 import TenantDashboard from "./pages/TenantDashboard";
 import TenantMaintenance from "./pages/TenantMaintenance";
 import MyLease from "./pages/MyLease";
@@ -42,6 +43,10 @@ import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import Careers from "./pages/Careers";
 import Contact from "./pages/Contact";
+import HelpCenter from "./pages/HelpCenter";
+import About from "./pages/About";
+import Blog from "./pages/Blog";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
 
@@ -66,6 +71,19 @@ const App = () => {
               <Routes>
               {/* Redirect root to default language */}
               <Route path="/" element={<Navigate to="/en" replace />} />
+              
+              {/* Redirect any non-prefixed routes to English version */}
+              <Route path="/signin" element={<Navigate to="/en/signin" replace />} />
+              <Route path="/signup" element={<Navigate to="/en/signup" replace />} />
+              <Route path="/about" element={<Navigate to="/en/about" replace />} />
+              <Route path="/pricing" element={<Navigate to="/en/pricing" replace />} />
+              <Route path="/careers" element={<Navigate to="/en/careers" replace />} />
+              <Route path="/blog" element={<Navigate to="/en/blog" replace />} />
+              <Route path="/contact" element={<Navigate to="/en/contact" replace />} />
+              <Route path="/privacy" element={<Navigate to="/en/privacy" replace />} />
+              <Route path="/terms" element={<Navigate to="/en/terms" replace />} />
+              <Route path="/cookies" element={<Navigate to="/en/cookies" replace />} />
+              <Route path="/help" element={<Navigate to="/en/help" replace />} />
               
               {/* Language-prefixed routes */}
               <Route path="/:lang" element={<LanguageRoute><Index /></LanguageRoute>} />
@@ -106,6 +124,19 @@ const App = () => {
                     <ProtectedRoute allowedRoles={['admin']}>
                       <ProtectedLayout>
                         <AdminAccessControl />
+                      </ProtectedLayout>
+                    </ProtectedRoute>
+                  </LanguageRoute>
+                } 
+              />
+              
+              <Route 
+                path="/:lang/admin-pricing" 
+                element={
+                  <LanguageRoute>
+                    <ProtectedRoute allowedRoles={['admin']}>
+                      <ProtectedLayout>
+                        <AdminPricingManagement />
                       </ProtectedLayout>
                     </ProtectedRoute>
                   </LanguageRoute>
@@ -410,20 +441,16 @@ const App = () => {
                 } 
               />
               
-              {/* Privacy Policy Route (Public - No Auth Required, no language prefix) */}
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              
-              {/* Terms of Service Route (Public - No Auth Required, no language prefix) */}
-              <Route path="/terms" element={<TermsOfService />} />
-              
-              {/* Cookie Policy Route (Public - No Auth Required, no language prefix) */}
-              <Route path="/cookies" element={<CookiePolicy />} />
-              
-              {/* Careers Route (Public - No Auth Required, no language prefix) */}
-              <Route path="/careers" element={<Careers />} />
-              
-              {/* Contact Route (Public - No Auth Required, no language prefix) */}
-              <Route path="/contact" element={<Contact />} />
+              {/* Public Routes - No Auth Required */}
+              <Route path="/:lang/privacy" element={<LanguageRoute><PrivacyPolicy /></LanguageRoute>} />
+              <Route path="/:lang/terms" element={<LanguageRoute><TermsOfService /></LanguageRoute>} />
+              <Route path="/:lang/cookies" element={<LanguageRoute><CookiePolicy /></LanguageRoute>} />
+              <Route path="/:lang/careers" element={<LanguageRoute><Careers /></LanguageRoute>} />
+              <Route path="/:lang/contact" element={<LanguageRoute><Contact /></LanguageRoute>} />
+              <Route path="/:lang/help" element={<LanguageRoute><HelpCenter /></LanguageRoute>} />
+              <Route path="/:lang/about" element={<LanguageRoute><About /></LanguageRoute>} />
+              <Route path="/:lang/blog" element={<LanguageRoute><Blog /></LanguageRoute>} />
+              <Route path="/:lang/pricing" element={<LanguageRoute><Pricing /></LanguageRoute>} />
 
               {/* Redirect old routes without language prefix to English version */}
               <Route path="/signin" element={<Navigate to="/en/signin" replace />} />
@@ -455,7 +482,9 @@ const App = () => {
               <Route path="/settings" element={<Navigate to="/en/settings" replace />} />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
+              {/* Catch-all route for 404 - must be last */}
+              <Route path="/:lang/*" element={<LanguageRoute><NotFound /></LanguageRoute>} />
+              <Route path="*" element={<Navigate to="/en" replace />} />
             </Routes>
           </ErrorBoundary>
         </BrowserRouter>

@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 import { 
   Building2, 
   Users, 
@@ -35,10 +37,13 @@ import {
 } from 'lucide-react';
 
 const Index = () => {
+  const { t, i18n } = useTranslation();
+  const { getLocalizedPath } = useLanguageNavigation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const testimonialsRef = useRef<HTMLDivElement>(null);
   const isButtonScrolling = useRef(false);
+  const isRTL = i18n.language === 'ar';
 
   // Handle infinite loop when reaching the end of scroll
   useEffect(() => {
@@ -73,33 +78,33 @@ const Index = () => {
   const features = [
     {
       icon: Building2,
-      title: "Property Management",
-      description: "Manage all your properties with detailed information, image galleries, and comprehensive tracking."
+      titleKey: "features.portfolio.title",
+      descriptionKey: "features.portfolio.description"
     },
     {
       icon: Users,
-      title: "Tenant Management", 
-      description: "Handle tenant profiles, payment tracking, lease management, and communication all in one place."
+      titleKey: "features.tenant.title",
+      descriptionKey: "features.tenant.description"
     },
     {
       icon: CreditCard,
-      title: "Online Payments",
-      description: "Secure payment processing with automated rent collection and financial tracking."
+      titleKey: "features.payments.title",
+      descriptionKey: "features.payments.description"
     },
     {
       icon: Wrench,
-      title: "Maintenance Tracking",
-      description: "Submit, track, and manage maintenance requests with priority scoring and vendor management."
+      titleKey: "features.maintenance.title",
+      descriptionKey: "features.maintenance.description"
     },
     {
       icon: BarChart3,
-      title: "Analytics & Reports",
-      description: "Comprehensive financial reports and property performance analytics for informed decisions."
+      titleKey: "features.analytics.title",
+      descriptionKey: "features.analytics.description"
     },
     {
       icon: FileText,
-      title: "Document Management",
-      description: "Store and organize all property documents, leases, and important paperwork securely."
+      titleKey: "sidebar.documents",
+      descriptionKey: "features.document.description"
     }
   ];
 
@@ -153,101 +158,101 @@ const Index = () => {
   const howItWorksSteps = [
     {
       step: "1",
-      title: "Sign Up & Setup",
-      description: "Create your account and add your properties in minutes with our intuitive setup wizard."
+      titleKey: "homepage.howItWorks.step1.title",
+      descriptionKey: "homepage.howItWorks.step1.description"
     },
     {
       step: "2", 
-      title: "Add Tenants",
-      description: "Import existing tenants or add new ones with comprehensive profiles and lease information."
+      titleKey: "homepage.howItWorks.step2.title",
+      descriptionKey: "homepage.howItWorks.step2.description"
     },
     {
       step: "3",
-      title: "Automate Operations",
-      description: "Set up automated rent collection, maintenance workflows, and communication systems."
+      titleKey: "homepage.howItWorks.step3.title",
+      descriptionKey: "homepage.howItWorks.step3.description"
     },
     {
       step: "4",
-      title: "Monitor & Grow",
-      description: "Track performance with detailed analytics and scale your property management business."
+      titleKey: "homepage.howItWorks.step4.title",
+      descriptionKey: "homepage.howItWorks.step4.description"
     }
   ];
 
   const testimonials = [
     {
       rating: 5,
-      quote: "PropertyFlow has completely transformed how I manage my portfolio. The automated rent collection alone saves me 10 hours a week. The interface is intuitive and everything I need is right at my fingertips.",
+      quoteKey: "homepage.testimonials.testimonial1.quote",
       avatar: "SM",
-      name: "Sarah Mitchell",
-      role: "Property Manager",
-      company: "Urban Properties"
+      nameKey: "homepage.testimonials.testimonial1.name",
+      roleKey: "homepage.testimonials.testimonial1.role",
+      companyKey: "homepage.testimonials.testimonial1.company"
     },
     {
       rating: 5,
-      quote: "As someone managing 30+ units, I needed a solution that could scale with my business. PropertyFlow's analytics and reporting features give me insights I never had before. Highly recommend to any serious property manager.",
+      quoteKey: "homepage.testimonials.testimonial2.quote",
       avatar: "JD",
-      name: "James Davis",
-      role: "Real Estate Investor",
-      company: "Davis Holdings"
+      nameKey: "homepage.testimonials.testimonial2.name",
+      roleKey: "homepage.testimonials.testimonial2.role",
+      companyKey: "homepage.testimonials.testimonial2.company"
     },
     {
       rating: 5,
-      quote: "The maintenance tracking feature is a game-changer. Tenants can submit requests easily, and I can assign vendors seamlessly. Communication has never been smoother. This platform pays for itself.",
+      quoteKey: "homepage.testimonials.testimonial3.quote",
       avatar: "EM",
-      name: "Emily Rodriguez",
-      role: "Landlord",
-      company: "Independent Owner"
+      nameKey: "homepage.testimonials.testimonial3.name",
+      roleKey: "homepage.testimonials.testimonial3.role",
+      companyKey: "homepage.testimonials.testimonial3.company"
     },
     {
       rating: 5,
-      quote: "I've tried multiple property management platforms, and PropertyFlow stands out for its simplicity and power. The mobile app is fantastic—I can manage everything on the go. Best investment I've made for my business.",
+      quoteKey: "homepage.testimonials.testimonial4.quote",
       avatar: "RK",
-      name: "Robert Kim",
-      role: "Property Owner",
-      company: "Kim Realty Group"
+      nameKey: "homepage.testimonials.testimonial4.name",
+      roleKey: "homepage.testimonials.testimonial4.role",
+      companyKey: "homepage.testimonials.testimonial4.company"
     },
     {
       rating: 5,
-      quote: "The financial reporting is incredibly detailed and easy to understand. I can track expenses, revenue, and profitability across all my properties in one place. It's made tax season so much easier.",
+      quoteKey: "homepage.testimonials.testimonial5.quote",
       avatar: "LP",
-      name: "Lisa Park",
-      role: "Portfolio Manager",
-      company: "Park & Associates"
+      nameKey: "homepage.testimonials.testimonial5.name",
+      roleKey: "homepage.testimonials.testimonial5.role",
+      companyKey: "homepage.testimonials.testimonial5.company"
     },
     {
       rating: 5,
-      quote: "PropertyFlow's tenant management system is outstanding. I can track lease renewals, payment history, and communication all in one place. The platform is user-friendly and the support team is responsive.",
+      quoteKey: "homepage.testimonials.testimonial6.quote",
       avatar: "MC",
-      name: "Michael Chen",
-      role: "Property Manager",
-      company: "Coastal Properties"
+      nameKey: "homepage.testimonials.testimonial6.name",
+      roleKey: "homepage.testimonials.testimonial6.role",
+      companyKey: "homepage.testimonials.testimonial6.company"
     }
   ];
 
   const faqs = [
     {
-      question: "How quickly can I get started?",
-      answer: "You can set up your account and add your first property in under 10 minutes. Our setup wizard guides you through each step."
+      questionKey: "homepage.faq.faq1.question",
+      answerKey: "homepage.faq.faq1.answer"
     },
     {
-      question: "Do you integrate with accounting software?",
-      answer: "Yes, we integrate with QuickBooks, Xero, and other popular accounting platforms to streamline your financial management."
+      questionKey: "homepage.faq.faq2.question",
+      answerKey: "homepage.faq.faq2.answer"
     },
     {
-      question: "Is there a mobile app?",
-      answer: "Yes, our mobile app is available for both iOS and Android, allowing you to manage your properties on the go."
+      questionKey: "homepage.faq.faq3.question",
+      answerKey: "homepage.faq.faq3.answer"
     },
     {
-      question: "What kind of support do you offer?",
-      answer: "We offer email support for all plans, with priority support for Professional and Enterprise customers. Enterprise customers also get dedicated account management."
+      questionKey: "homepage.faq.faq4.question",
+      answerKey: "homepage.faq.faq4.answer"
     },
     {
-      question: "Can I import my existing data?",
-      answer: "Absolutely! We provide data import tools and can help you migrate from other property management systems."
+      questionKey: "homepage.faq.faq5.question",
+      answerKey: "homepage.faq.faq5.answer"
     },
     {
-      question: "Is my data secure?",
-      answer: "Yes, we use enterprise-grade security with encrypted data storage, regular backups, and SOC 2 compliance."
+      questionKey: "homepage.faq.faq6.question",
+      answerKey: "homepage.faq.faq6.answer"
     }
   ];
 
@@ -258,7 +263,7 @@ const Index = () => {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3">
+            <Link to={getLocalizedPath('/')} className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-3 order-3' : 'space-x-3'}`}>
               <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center text-white font-medium text-lg">
                 P
               </div>
@@ -266,25 +271,25 @@ const Index = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-12">
-              <a href="#features" className="text-gray-500 hover:text-black transition-colors font-light">Features</a>
-              <a href="#pricing" className="text-gray-500 hover:text-black transition-colors font-light">Pricing</a>
-              <a href="#how-it-works" className="text-gray-500 hover:text-black transition-colors font-light">How it Works</a>
-              <a href="#testimonials" className="text-gray-500 hover:text-black transition-colors font-light">Testimonials</a>
-              <a href="#faq" className="text-gray-500 hover:text-black transition-colors font-light">FAQ</a>
+            <nav className={`hidden md:flex items-center ${isRTL ? 'space-x-reverse space-x-12 order-2' : 'space-x-12'}`}>
+              <Link to={getLocalizedPath('/about')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.about')}</Link>
+              <Link to={getLocalizedPath('/pricing')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.pricing')}</Link>
+              <Link to={getLocalizedPath('/careers')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.careers')}</Link>
+              <Link to={getLocalizedPath('/blog')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.blog')}</Link>
+              <Link to={getLocalizedPath('/contact')} className="text-gray-500 hover:text-black transition-colors font-light">{t('homepage.footer.contact')}</Link>
             </nav>
 
             {/* Auth Buttons */}
-            <div className="hidden md:flex items-center space-x-6">
+            <div className={`hidden md:flex items-center ${isRTL ? 'space-x-reverse space-x-6 order-1' : 'space-x-6'}`}>
               <LanguageSwitcher />
-              <Link to="/signin">
+              <Link to={getLocalizedPath('/signin')}>
                 <Button variant="ghost" className="text-gray-500 hover:text-black font-light">
-                  Sign In
+                  {t('homepage.footer.signIn')}
                 </Button>
               </Link>
-              <Link to="/signup">
+              <Link to={getLocalizedPath('/signup')}>
                 <Button className="px-6">
-                  Free Trial
+                  {t('homepage.hero.startTrial')}
                 </Button>
               </Link>
             </div>
@@ -306,23 +311,23 @@ const Index = () => {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-200">
               <div className="flex flex-col space-y-4">
-                <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
-                <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
-                <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 transition-colors">How it Works</a>
-                <a href="#testimonials" className="text-gray-600 hover:text-gray-900 transition-colors">Testimonials</a>
-                <a href="#faq" className="text-gray-600 hover:text-gray-900 transition-colors">FAQ</a>
+                <Link to={getLocalizedPath('/about')} className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('homepage.footer.about')}</Link>
+                <Link to={getLocalizedPath('/pricing')} className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('homepage.footer.pricing')}</Link>
+                <Link to={getLocalizedPath('/careers')} className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('homepage.footer.careers')}</Link>
+                <Link to={getLocalizedPath('/blog')} className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('homepage.footer.blog')}</Link>
+                <Link to={getLocalizedPath('/contact')} className="text-gray-600 hover:text-gray-900 transition-colors" onClick={() => setIsMenuOpen(false)}>{t('homepage.footer.contact')}</Link>
                 <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                   <div className="px-2">
                     <LanguageSwitcher />
                   </div>
-                  <Link to="/signin">
+                  <Link to={getLocalizedPath('/signin')} onClick={() => setIsMenuOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start text-gray-600 hover:text-gray-900">
-                      Sign In
+                      {t('homepage.footer.signIn')}
                     </Button>
                   </Link>
-                  <Link to="/signup">
+                  <Link to={getLocalizedPath('/signup')} onClick={() => setIsMenuOpen(false)}>
                     <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                      Free Trial
+                      {t('homepage.hero.startTrial')}
                     </Button>
                   </Link>
                 </div>
@@ -335,36 +340,36 @@ const Index = () => {
       {/* Hero Section */}
       <section className="pt-32 pb-24">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-50 text-gray-600 text-sm font-light mb-8">
-            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-            Trusted by 10,000+ property managers
+          <div className={`inline-flex items-center px-4 py-2 rounded-full bg-gray-50 text-gray-600 text-sm font-light mb-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className={`w-2 h-2 bg-green-500 rounded-full ${isRTL ? 'ml-2' : 'mr-2'}`}></div>
+            {t('homepage.trusted')}
           </div>
           
           <h1 className="text-5xl md:text-7xl font-extralight text-black mb-8 leading-tight tracking-tight font-google-sans">
-            Property Management
+            {t('homepage.hero.title')}
             <br />
-            <span className="font-light">Made Simple</span>
+            <span className="font-light">{t('homepage.hero.subtitle')}</span>
           </h1>
           
           <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-12 leading-relaxed font-light">
-            The only platform you need to manage properties, tenants, and finances—all in one beautifully simple interface.
+            {t('homepage.hero.description')}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20">
-            <Link to="/signup">
-              <Button size="lg" className="px-8 py-4 text-lg">
-                Start Free Trial
-                <ArrowRight className="ml-2 h-5 w-5" />
+          <div className={`flex flex-col sm:flex-row gap-4 justify-center items-center mb-20 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Link to={getLocalizedPath('/signup')}>
+              <Button size="lg" className={`px-8 py-4 text-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
+                {t('homepage.hero.startTrial')}
+                <ArrowRight className={`h-5 w-5 ${isRTL ? 'mr-2 rotate-180' : 'ml-2'}`} />
               </Button>
             </Link>
             
             <Button 
               variant="ghost" 
               size="lg" 
-              className="text-gray-500 hover:text-black px-8 py-4 text-lg font-light"
+              className={`text-gray-500 hover:text-black px-8 py-4 text-lg font-light ${isRTL ? 'flex-row-reverse' : ''}`}
             >
-              <Play className="mr-2 h-5 w-5" />
-              Watch Demo
+              <Play className={`h-5 w-5 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+              {t('homepage.hero.watchDemo')}
             </Button>
           </div>
 
@@ -377,35 +382,35 @@ const Index = () => {
                   <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
                   <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
                 </div>
-                <div className="text-sm text-gray-400 font-light">PropertyFlow</div>
+                <div className="text-sm text-gray-400 font-light">{t('homepage.hero.dashboardPreview')}</div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-gray-50 rounded-2xl p-6 border-0">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="text-sm font-light text-gray-600">Properties</div>
+                  <div className={`flex items-center justify-between mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className="text-sm font-light text-gray-600">{t('homepage.hero.properties')}</div>
                     <Building2 className="h-5 w-5 text-gray-400" />
                   </div>
                   <div className="text-3xl font-extralight text-black">24</div>
-                  <div className="text-sm text-gray-400 font-light">Active</div>
+                  <div className="text-sm text-gray-400 font-light">{t('homepage.hero.active')}</div>
                 </div>
                 
                 <div className="bg-gray-50 rounded-2xl p-6 border-0">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="text-sm font-light text-gray-600">Revenue</div>
+                  <div className={`flex items-center justify-between mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className="text-sm font-light text-gray-600">{t('homepage.hero.revenue')}</div>
                     <DollarSign className="h-5 w-5 text-gray-400" />
                   </div>
                   <div className="text-3xl font-extralight text-black">$48.5k</div>
-                  <div className="text-sm text-gray-400 font-light">Monthly</div>
+                  <div className="text-sm text-gray-400 font-light">{t('homepage.hero.monthly')}</div>
                 </div>
                 
                 <div className="bg-gray-50 rounded-2xl p-6 border-0">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="text-sm font-light text-gray-600">Tenants</div>
+                  <div className={`flex items-center justify-between mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className="text-sm font-light text-gray-600">{t('homepage.hero.tenants')}</div>
                     <Users className="h-5 w-5 text-gray-400" />
                   </div>
                   <div className="text-3xl font-extralight text-black">89</div>
-                  <div className="text-sm text-gray-400 font-light">96% Rate</div>
+                  <div className="text-sm text-gray-400 font-light">{t('homepage.hero.rate')}</div>
                 </div>
               </div>
             </div>
@@ -418,10 +423,10 @@ const Index = () => {
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-extralight text-black mb-6 tracking-tight font-google-sans">
-              Everything you need
+              {t('homepage.features.title')}
             </h2>
             <p className="text-xl text-gray-500 max-w-2xl mx-auto font-light leading-relaxed">
-              Simple tools that handle the complexity of property management
+              {t('homepage.features.subtitle')}
             </p>
           </div>
           
@@ -431,8 +436,8 @@ const Index = () => {
                 <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-gray-100 transition-colors">
                   <feature.icon className="h-6 w-6 text-gray-600" />
                 </div>
-                <h3 className="text-xl font-light text-black mb-3">{feature.title}</h3>
-                <p className="text-gray-500 leading-relaxed font-light">{feature.description}</p>
+                <h3 className="text-xl font-light text-black mb-3">{t(feature.titleKey)}</h3>
+                <p className="text-gray-500 leading-relaxed font-light">{t(feature.descriptionKey)}</p>
               </div>
             ))}
           </div>
@@ -444,10 +449,10 @@ const Index = () => {
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-extralight text-black mb-6 tracking-tight font-google-sans">
-              Simple pricing
+              {t('homepage.pricing.title')}
             </h2>
             <p className="text-xl text-gray-500 max-w-2xl mx-auto font-light leading-relaxed">
-              Start free, scale as you grow. No hidden fees, cancel anytime.
+              {t('homepage.pricing.subtitle')}
             </p>
           </div>
           
@@ -455,8 +460,8 @@ const Index = () => {
             {pricingPlans.map((plan, index) => (
               <div key={index} className={`relative bg-white rounded-3xl p-8 border transition-all duration-200 ${plan.popular ? 'border-black shadow-lg scale-105' : 'border-gray-100 hover:border-gray-200'}`}>
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-1 rounded-full text-sm font-light">
-                    Most Popular
+                  <div className={`absolute -top-4 ${isRTL ? 'right-1/2 translate-x-1/2' : 'left-1/2 -translate-x-1/2'} bg-black text-white px-4 py-1 rounded-full text-sm font-light`}>
+                    {t('homepage.pricing.mostPopular')}
                   </div>
                 )}
                 <div className="text-center mb-8">
@@ -470,8 +475,8 @@ const Index = () => {
                 
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center">
-                      <div className="w-5 h-5 rounded-full bg-black flex items-center justify-center mr-3 flex-shrink-0">
+                    <li key={featureIndex} className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className={`w-5 h-5 rounded-full bg-black flex items-center justify-center flex-shrink-0 ${isRTL ? 'ml-3' : 'mr-3'}`}>
                         <Check className="h-3 w-3 text-white" />
                       </div>
                       <span className="text-gray-600 font-light">{feature}</span>
@@ -479,9 +484,9 @@ const Index = () => {
                   ))}
                 </ul>
                 
-                <Link to="/signup">
+                <Link to={getLocalizedPath('/signup')}>
                   <Button className={`w-full py-3 rounded-full font-light ${plan.popular ? 'bg-black hover:bg-gray-800 text-white' : 'bg-gray-100 hover:bg-gray-200 text-black'}`}>
-                    Start Free Trial
+                    {t('homepage.pricing.startTrial')}
                   </Button>
                 </Link>
               </div>
@@ -495,22 +500,22 @@ const Index = () => {
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-extralight text-black mb-6 tracking-tight font-google-sans">
-              How it works
+              {t('homepage.howItWorks.title')}
             </h2>
             <p className="text-xl text-gray-500 max-w-2xl mx-auto font-light leading-relaxed">
-              Four simple steps to streamlined property management
+              {t('homepage.howItWorks.subtitle')}
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {howItWorksSteps.map((step, index) => (
-              <div key={index} className="flex items-start space-x-6">
+              <div key={index} className={`flex items-start ${isRTL ? 'flex-row-reverse space-x-reverse space-x-6' : 'space-x-6'}`}>
                 <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center text-lg font-light flex-shrink-0">
                   {step.step}
                 </div>
                 <div>
-                  <h3 className="text-xl font-light text-black mb-3">{step.title}</h3>
-                  <p className="text-gray-500 leading-relaxed font-light">{step.description}</p>
+                  <h3 className="text-xl font-light text-black mb-3">{t(step.titleKey)}</h3>
+                  <p className="text-gray-500 leading-relaxed font-light">{t(step.descriptionKey)}</p>
                 </div>
               </div>
             ))}
@@ -523,10 +528,10 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-extralight text-black mb-6 tracking-tight font-google-sans">
-              What people say
+              {t('homepage.testimonials.title')}
             </h2>
             <p className="text-xl text-gray-500 font-light leading-relaxed">
-              Trusted by property professionals worldwide
+              {t('homepage.testimonials.subtitle')}
             </p>
           </div>
           
@@ -552,51 +557,46 @@ const Index = () => {
                   container.scrollLeft = scrollWidth - clientWidth;
                   requestAnimationFrame(() => {
                     container.scrollBy({
-                      left: -scrollAmount,
+                      left: isRTL ? scrollAmount : -scrollAmount,
                       behavior: 'smooth'
                     });
                   });
                 } else {
                   container.scrollBy({
-                    left: -scrollAmount,
+                    left: isRTL ? scrollAmount : -scrollAmount,
                     behavior: 'smooth'
                   });
                 }
               }}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all border border-gray-100 hover:shadow-xl active:scale-95"
-              aria-label="Scroll left"
+              className={`absolute ${isRTL ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all border border-gray-100 hover:shadow-xl active:scale-95`}
+              aria-label={isRTL ? "Scroll right" : "Scroll left"}
             >
-              <ChevronLeft className="h-6 w-6 text-gray-600" />
+              {isRTL ? <ChevronRight className="h-6 w-6 text-gray-600" /> : <ChevronLeft className="h-6 w-6 text-gray-600" />}
             </button>
 
             {/* Scrollable Container */}
             <div
               ref={testimonialsRef}
-              className="flex gap-8 overflow-x-hidden scroll-smooth scrollbar-hide snap-x snap-mandatory"
+              className={`flex gap-8 overflow-x-hidden scroll-smooth scrollbar-hide snap-x snap-mandatory ${isRTL ? 'flex-row-reverse' : ''}`}
+              dir={isRTL ? 'rtl' : 'ltr'}
             >
               {/* Duplicate testimonials for seamless loop */}
               {[...testimonials, ...testimonials].map((testimonial, index) => (
                 <div 
-                  key={`${index}-${testimonial.name}`}
+                  key={`${index}-${testimonial.avatar}`}
                   className="testimonial-card flex-shrink-0 w-full md:w-[calc((100%-4rem)/3)] snap-start bg-white rounded-3xl p-8 border-0 shadow-sm"
                 >
-                  <div className="flex items-center mb-6">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
-                    ))}
-                  </div>
-                  
                   <blockquote className="text-gray-600 mb-8 text-lg leading-relaxed font-light">
-                    "{testimonial.quote}"
+                    "{t(testimonial.quoteKey)}"
                   </blockquote>
                   
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-light mr-4">
+                  <div className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={`w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-light ${isRTL ? 'ml-4' : 'mr-4'}`}>
                       {testimonial.avatar}
                     </div>
                     <div>
-                      <div className="font-light text-black">{testimonial.name}</div>
-                      <div className="text-sm text-gray-500 font-light">{testimonial.role}, {testimonial.company}</div>
+                      <div className="font-light text-black">{t(testimonial.nameKey)}</div>
+                      <div className="text-sm text-gray-500 font-light">{t(testimonial.roleKey)}, {t(testimonial.companyKey)}</div>
                     </div>
                   </div>
                 </div>
@@ -624,21 +624,21 @@ const Index = () => {
                   container.scrollLeft = 0;
                   requestAnimationFrame(() => {
                     container.scrollBy({
-                      left: scrollAmount,
+                      left: isRTL ? -scrollAmount : scrollAmount,
                       behavior: 'smooth'
                     });
                   });
                 } else {
                   container.scrollBy({
-                    left: scrollAmount,
+                    left: isRTL ? -scrollAmount : scrollAmount,
                     behavior: 'smooth'
                   });
                 }
               }}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all border border-gray-100 hover:shadow-xl active:scale-95"
-              aria-label="Scroll right"
+              className={`absolute ${isRTL ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all border border-gray-100 hover:shadow-xl active:scale-95`}
+              aria-label={isRTL ? "Scroll left" : "Scroll right"}
             >
-              <ChevronRight className="h-6 w-6 text-gray-600" />
+              {isRTL ? <ChevronLeft className="h-6 w-6 text-gray-600" /> : <ChevronRight className="h-6 w-6 text-gray-600" />}
             </button>
           </div>
         </div>
@@ -646,31 +646,31 @@ const Index = () => {
 
       {/* FAQ Section */}
       <section id="faq" className="py-24">
-        <div className="max-w-3xl mx-auto px-6">
-          <div className="text-center mb-20">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-extralight text-black mb-6 tracking-tight font-google-sans">
-              Questions
+              {t('homepage.faq.title')}
             </h2>
             <p className="text-xl text-gray-500 font-light leading-relaxed">
-              Everything you need to know about PropertyFlow
+              {t('homepage.faq.subtitle')}
             </p>
           </div>
           
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {faqs.map((faq, index) => (
-              <div key={index} className="border-b border-gray-100 pb-6">
+              <div key={index} className="bg-gray-50 rounded-3xl p-6 border border-gray-100">
                 <button 
-                  className="w-full text-left"
+                  className={`w-full ${isRTL ? 'text-right' : 'text-left'}`}
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
                 >
-                  <div className="flex items-center justify-between py-4">
-                    <h3 className="text-lg font-light text-black">{faq.question}</h3>
-                    <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${openFaq === index ? 'rotate-180' : ''}`} />
+                  <div className={`flex items-start justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <h3 className={`text-lg font-light text-black ${isRTL ? 'pl-4' : 'pr-4'}`}>{t(faq.questionKey)}</h3>
+                    <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform duration-200 flex-shrink-0 mt-1 ${openFaq === index ? 'rotate-180' : ''}`} />
                   </div>
                 </button>
                 {openFaq === index && (
-                  <div className="pb-4">
-                    <p className="text-gray-500 leading-relaxed font-light">{faq.answer}</p>
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-gray-600 leading-relaxed font-light">{t(faq.answerKey)}</p>
                   </div>
                 )}
               </div>
@@ -691,50 +691,49 @@ const Index = () => {
                 <span className="text-2xl font-light tracking-tight font-google-sans">PropertyFlow</span>
               </div>
               <p className="text-gray-400 max-w-sm font-light leading-relaxed">
-                Modern property management software built for the next generation of property managers.
+                {t('homepage.footer.description')}
               </p>
             </div>
             
             <div>
-              <h3 className="font-light mb-6 text-white">Product</h3>
+              <h3 className="font-light mb-6 text-white">{t('homepage.footer.product')}</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#features" className="hover:text-white transition-colors font-light">Features</a></li>
-                <li><a href="#pricing" className="hover:text-white transition-colors font-light">Pricing</a></li>
-                <li><a href="#how-it-works" className="hover:text-white transition-colors font-light">How it Works</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors font-light">{t('homepage.footer.features')}</a></li>
+                <li><a href="#pricing" className="hover:text-white transition-colors font-light">{t('homepage.footer.pricing')}</a></li>
+                <li><a href="#how-it-works" className="hover:text-white transition-colors font-light">{t('homepage.footer.howItWorks')}</a></li>
               </ul>
             </div>
             
             <div>
-              <h3 className="font-light mb-6 text-white">Company</h3>
+              <h3 className="font-light mb-6 text-white">{t('homepage.footer.company')}</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors font-light">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors font-light">Blog</a></li>
-                <li><Link to="/careers" className="hover:text-white transition-colors font-light">Careers</Link></li>
-                <li><Link to="/contact" className="hover:text-white transition-colors font-light">Contact</Link></li>
+                <li><Link to={getLocalizedPath('/about')} className="hover:text-white transition-colors font-light">{t('homepage.footer.about')}</Link></li>
+                <li><Link to={getLocalizedPath('/blog')} className="hover:text-white transition-colors font-light">{t('homepage.footer.blog')}</Link></li>
+                <li><Link to={getLocalizedPath('/careers')} className="hover:text-white transition-colors font-light">{t('homepage.footer.careers')}</Link></li>
+                <li><Link to={getLocalizedPath('/contact')} className="hover:text-white transition-colors font-light">{t('homepage.footer.contact')}</Link></li>
               </ul>
             </div>
             
             <div>
-              <h3 className="font-light mb-6 text-white">Support</h3>
+              <h3 className="font-light mb-6 text-white">{t('homepage.footer.support')}</h3>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors font-light">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors font-light">Documentation</a></li>
-                <li><a href="#faq" className="hover:text-white transition-colors font-light">FAQ</a></li>
-                <li><Link to="/signin" className="hover:text-white transition-colors font-light">Sign In</Link></li>
+                <li><Link to={getLocalizedPath('/help')} className="hover:text-white transition-colors font-light">{t('homepage.footer.helpCenter')}</Link></li>
+                <li><a href="#faq" className="hover:text-white transition-colors font-light">{t('homepage.footer.faq')}</a></li>
+                <li><Link to={getLocalizedPath('/signin')} className="hover:text-white transition-colors font-light">{t('homepage.footer.signIn')}</Link></li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-gray-800 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className={`flex flex-col md:flex-row justify-between items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
               <div className="text-gray-400 text-sm mb-4 md:mb-0 font-light">
-                © 2024 PropertyFlow. All rights reserved.
+                {t('homepage.footer.copyright')}
               </div>
               
-              <div className="flex space-x-8 text-gray-400 text-sm">
-                <Link to="/privacy" className="hover:text-white transition-colors font-light">Privacy Policy</Link>
-                <Link to="/terms" className="hover:text-white transition-colors font-light">Terms of Service</Link>
-                <Link to="/cookies" className="hover:text-white transition-colors font-light">Cookie Policy</Link>
+              <div className={`flex ${isRTL ? 'space-x-reverse space-x-8' : 'space-x-8'} text-gray-400 text-sm`}>
+                <Link to={getLocalizedPath('/privacy')} className="hover:text-white transition-colors font-light">{t('homepage.footer.privacy')}</Link>
+                <Link to={getLocalizedPath('/terms')} className="hover:text-white transition-colors font-light">{t('homepage.footer.terms')}</Link>
+                <Link to={getLocalizedPath('/cookies')} className="hover:text-white transition-colors font-light">{t('homepage.footer.cookies')}</Link>
               </div>
             </div>
           </div>
