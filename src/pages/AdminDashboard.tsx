@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 import { 
   Users, 
   Shield, 
@@ -26,8 +27,11 @@ import {
   BarChart3,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  DollarSign,
+  ArrowRight
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface User {
   id: string;
@@ -448,6 +452,51 @@ const AdminDashboard = () => {
 
         {/* System Settings Tab */}
         <TabsContent value="settings" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <Link to={getLocalizedPath('/admin-pricing')} className="block">
+                  <Card className="hover:border-blue-500 transition-colors cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <DollarSign className="h-6 w-6 text-blue-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">Pricing Management</h3>
+                            <p className="text-sm text-muted-foreground">Manage subscription plans</p>
+                          </div>
+                        </div>
+                        <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+                <Link to="/en/admin-access-control" className="block">
+                  <Card className="hover:border-blue-500 transition-colors cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <Shield className="h-6 w-6 text-purple-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">Access Control</h3>
+                            <p className="text-sm text-muted-foreground">Configure page access</p>
+                          </div>
+                        </div>
+                        <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle>System Configuration</CardTitle>

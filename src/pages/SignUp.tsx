@@ -10,10 +10,11 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 const SignUp = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { signUp } = useAuth();
   const { toast } = useToast();
-  const { navigateTo } = useLanguageNavigation();
+  const { navigateTo, getLocalizedPath } = useLanguageNavigation();
+  const isRTL = i18n.language === 'ar';
   
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,8 +53,8 @@ const SignUp = () => {
       }
     } catch (error) {
       toast({
-        title: "Sign up failed",
-        description: "An unexpected error occurred. Please try again.",
+        title: t('signup.signUpFailed'),
+        description: t('signin.unexpectedError'),
         variant: "destructive",
       });
     } finally {
@@ -62,21 +63,21 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className={`min-h-screen bg-white flex flex-col ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
-      <header className="flex items-center justify-between p-6 border-b border-gray-100">
-        <Link to="/" className="flex items-center space-x-2 text-gray-500 hover:text-black transition-colors font-light">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-light">Back to PropertyFlow</span>
+      <header className={`flex items-center justify-between p-6 border-b border-gray-100 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <Link to={getLocalizedPath('/')} className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-2' : 'space-x-2'} text-gray-500 hover:text-black transition-colors font-light`}>
+          <ArrowLeft className={`w-4 h-4 ${isRTL ? 'rotate-180' : ''}`} />
+          <span className="text-sm font-light">{t('signup.backToHome')}</span>
         </Link>
         
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-500 font-light">Already have an account?</span>
+        <div className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-2' : 'space-x-2'}`}>
+          <span className="text-sm text-gray-500 font-light">{t('signup.alreadyHaveAccount')}</span>
           <Link 
-            to="/signin" 
+            to={getLocalizedPath('/signin')} 
             className="text-sm font-light text-black hover:text-gray-600 transition-colors"
           >
-            Sign in
+            {t('signup.signIn')}
           </Link>
         </div>
       </header>
@@ -88,10 +89,10 @@ const SignUp = () => {
           <div className="text-center mb-12">
 
             <h1 className="text-4xl md:text-5xl font-extralight text-black mb-4 tracking-tight font-google-sans">
-              Create your account
+              {t('signup.createAccount')}
             </h1>
             <p className="text-gray-500 text-lg font-light leading-relaxed">
-              Start your free trial of PropertyFlow
+              {t('signup.subtitle')}
             </p>
           </div>
 
@@ -100,12 +101,12 @@ const SignUp = () => {
             {/* Name Field */}
             <div>
               <label htmlFor="name" className="block text-sm font-light text-gray-600 mb-3">
-                Full Name
+                {t('signup.name')}
               </label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Enter your full name"
+                placeholder={t('signup.namePlaceholder')}
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
                 className="h-14 border-gray-200 focus:border-black focus:ring-black rounded-2xl text-base font-light px-6"
@@ -117,17 +118,17 @@ const SignUp = () => {
             {/* User Type Field */}
             <div>
               <label htmlFor="userType" className="block text-sm font-light text-gray-600 mb-3">
-                User Role
+                {t('signup.userType')}
               </label>
               <Select value={formData.userType} onValueChange={(value) => handleInputChange('userType', value)}>
                 <SelectTrigger className="h-14 border-gray-200 focus:border-black focus:ring-black rounded-2xl text-base font-light px-6" disabled={isLoading}>
-                  <SelectValue placeholder="Select your role" />
+                  <SelectValue placeholder={t('signup.userTypePlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="homeowner">Property Owner</SelectItem>
-                  <SelectItem value="tenant">Tenant</SelectItem>
-                  <SelectItem value="vendor">Maintainer/Vendor</SelectItem>
-                  <SelectItem value="admin">Administrator</SelectItem>
+                  <SelectItem value="homeowner">{t('signup.userTypeHomeowner')}</SelectItem>
+                  <SelectItem value="tenant">{t('signup.userTypeTenant')}</SelectItem>
+                  <SelectItem value="vendor">{t('signup.userTypeVendor')}</SelectItem>
+                  <SelectItem value="admin">{t('signup.userTypeVendor')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -135,12 +136,12 @@ const SignUp = () => {
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-light text-gray-600 mb-3">
-                Email address
+                {t('signup.email')}
               </label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('signup.emailPlaceholder')}
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 className="h-14 border-gray-200 focus:border-black focus:ring-black rounded-2xl text-base font-light px-6"
@@ -152,12 +153,12 @@ const SignUp = () => {
             {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-light text-gray-600 mb-3">
-                Password
+                {t('signup.password')}
               </label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Create a password"
+                placeholder={t('signup.passwordPlaceholder')}
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
                 className="h-14 border-gray-200 focus:border-black focus:ring-black rounded-2xl text-base font-light px-6"

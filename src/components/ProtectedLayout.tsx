@@ -56,7 +56,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
   const { t, i18n } = useTranslation();
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
-  const { navigateTo } = useLanguageNavigation();
+  const { navigateTo, getLocalizedPath } = useLanguageNavigation();
   const location = useLocation();
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   
@@ -353,10 +353,10 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={location.pathname === '/admin-panel'}
+                        isActive={location.pathname.includes('/admin-panel')}
                         tooltip="Admin Panel"
                       >
-                        <Link to="/admin-panel">
+                        <Link to={getLocalizedPath('/admin-panel')}>
                           <Settings className="h-4 w-4" />
                           <span>Admin Panel</span>
                         </Link>
@@ -366,12 +366,25 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={location.pathname === '/admin-access-control'}
+                        isActive={location.pathname.includes('/admin-access-control')}
                         tooltip="Access Control"
                       >
-                        <Link to="/admin-access-control">
+                        <Link to={getLocalizedPath('/admin-access-control')}>
                           <Shield className="h-4 w-4" />
                           <span>Access Control</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname.includes('/admin-pricing')}
+                        tooltip="Pricing Management"
+                      >
+                        <Link to={getLocalizedPath('/admin-pricing')}>
+                          <CreditCard className="h-4 w-4" />
+                          <span>Pricing Management</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -836,10 +849,10 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={location.pathname === '/admin-panel'}
+                        isActive={location.pathname.includes('/admin-panel')}
                         tooltip="Admin Panel"
                       >
-                        <Link to="/admin-panel">
+                        <Link to={getLocalizedPath('/admin-panel')}>
                           <Settings className="h-4 w-4" />
                           <span>Admin Panel</span>
                         </Link>
@@ -849,12 +862,25 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
                     <SidebarMenuItem>
                       <SidebarMenuButton
                         asChild
-                        isActive={location.pathname === '/admin-access-control'}
+                        isActive={location.pathname.includes('/admin-access-control')}
                         tooltip="Access Control"
                       >
-                        <Link to="/admin-access-control">
+                        <Link to={getLocalizedPath('/admin-access-control')}>
                           <Shield className="h-4 w-4" />
                           <span>Access Control</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname.includes('/admin-pricing')}
+                        tooltip="Pricing Management"
+                      >
+                        <Link to={getLocalizedPath('/admin-pricing')}>
+                          <CreditCard className="h-4 w-4" />
+                          <span>Pricing Management</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
