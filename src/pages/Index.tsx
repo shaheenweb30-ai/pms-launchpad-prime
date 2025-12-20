@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,12 +29,46 @@ import {
   X,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Play
 } from 'lucide-react';
 
 const Index = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const testimonialsRef = useRef<HTMLDivElement>(null);
+  const isButtonScrolling = useRef(false);
+
+  // Handle infinite loop when reaching the end of scroll
+  useEffect(() => {
+    const container = testimonialsRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      // Skip if button is controlling the scroll
+      if (isButtonScrolling.current) {
+        isButtonScrolling.current = false;
+        return;
+      }
+
+      const { scrollLeft, scrollWidth, clientWidth } = container;
+      const threshold = 10; // pixels from edge
+
+      // If scrolled to the end, loop back to beginning
+      if (scrollLeft + clientWidth >= scrollWidth - threshold) {
+        container.scrollLeft = 0;
+      }
+      // If scrolled to the beginning (from second set), loop to end of first set
+      else if (scrollLeft <= threshold && scrollLeft > 0) {
+        const singleSetWidth = scrollWidth / 2;
+        container.scrollLeft = singleSetWidth - clientWidth;
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const features = [
     {
@@ -139,7 +173,56 @@ const Index = () => {
     }
   ];
 
-  const testimonials: any[] = [];
+  const testimonials = [
+    {
+      rating: 5,
+      quote: "PropertyFlow has completely transformed how I manage my portfolio. The automated rent collection alone saves me 10 hours a week. The interface is intuitive and everything I need is right at my fingertips.",
+      avatar: "SM",
+      name: "Sarah Mitchell",
+      role: "Property Manager",
+      company: "Urban Properties"
+    },
+    {
+      rating: 5,
+      quote: "As someone managing 30+ units, I needed a solution that could scale with my business. PropertyFlow's analytics and reporting features give me insights I never had before. Highly recommend to any serious property manager.",
+      avatar: "JD",
+      name: "James Davis",
+      role: "Real Estate Investor",
+      company: "Davis Holdings"
+    },
+    {
+      rating: 5,
+      quote: "The maintenance tracking feature is a game-changer. Tenants can submit requests easily, and I can assign vendors seamlessly. Communication has never been smoother. This platform pays for itself.",
+      avatar: "EM",
+      name: "Emily Rodriguez",
+      role: "Landlord",
+      company: "Independent Owner"
+    },
+    {
+      rating: 5,
+      quote: "I've tried multiple property management platforms, and PropertyFlow stands out for its simplicity and power. The mobile app is fantastic—I can manage everything on the go. Best investment I've made for my business.",
+      avatar: "RK",
+      name: "Robert Kim",
+      role: "Property Owner",
+      company: "Kim Realty Group"
+    },
+    {
+      rating: 5,
+      quote: "The financial reporting is incredibly detailed and easy to understand. I can track expenses, revenue, and profitability across all my properties in one place. It's made tax season so much easier.",
+      avatar: "LP",
+      name: "Lisa Park",
+      role: "Portfolio Manager",
+      company: "Park & Associates"
+    },
+    {
+      rating: 5,
+      quote: "PropertyFlow's tenant management system is outstanding. I can track lease renewals, payment history, and communication all in one place. The platform is user-friendly and the support team is responsive.",
+      avatar: "MC",
+      name: "Michael Chen",
+      role: "Property Manager",
+      company: "Coastal Properties"
+    }
+  ];
 
   const faqs = [
     {
@@ -437,7 +520,7 @@ const Index = () => {
 
       {/* Testimonials Section */}
       <section id="testimonials" className="py-24 bg-gray-50">
-        <div className="max-w-5xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-extralight text-black mb-6 tracking-tight font-google-sans">
               What people say
@@ -447,30 +530,116 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-3xl p-8 border-0 shadow-sm">
-                <div className="flex items-center mb-6">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 text-gray-400 fill-current" />
-                  ))}
-                </div>
+          <div className="relative px-8 md:px-12">
+            {/* Left Arrow Button */}
+            <button
+              onClick={() => {
+                const container = testimonialsRef.current;
+                if (!container) return;
                 
-                <blockquote className="text-gray-600 mb-8 text-lg leading-relaxed font-light">
-                  "{testimonial.quote}"
-                </blockquote>
+                isButtonScrolling.current = true;
                 
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-light mr-4">
-                    {testimonial.avatar}
+                const card = container.querySelector('.testimonial-card') as HTMLElement;
+                if (!card) return;
+                
+                const cardWidth = card.offsetWidth;
+                const gap = 32; // gap-8 = 2rem = 32px
+                const scrollAmount = (cardWidth + gap) * 3;
+                const { scrollLeft, scrollWidth, clientWidth } = container;
+                
+                // If we're at the start, jump to end first
+                if (scrollLeft <= 10) {
+                  container.scrollLeft = scrollWidth - clientWidth;
+                  requestAnimationFrame(() => {
+                    container.scrollBy({
+                      left: -scrollAmount,
+                      behavior: 'smooth'
+                    });
+                  });
+                } else {
+                  container.scrollBy({
+                    left: -scrollAmount,
+                    behavior: 'smooth'
+                  });
+                }
+              }}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all border border-gray-100 hover:shadow-xl active:scale-95"
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="h-6 w-6 text-gray-600" />
+            </button>
+
+            {/* Scrollable Container */}
+            <div
+              ref={testimonialsRef}
+              className="flex gap-8 overflow-x-hidden scroll-smooth scrollbar-hide snap-x snap-mandatory"
+            >
+              {/* Duplicate testimonials for seamless loop */}
+              {[...testimonials, ...testimonials].map((testimonial, index) => (
+                <div 
+                  key={`${index}-${testimonial.name}`}
+                  className="testimonial-card flex-shrink-0 w-full md:w-[calc((100%-4rem)/3)] snap-start bg-white rounded-3xl p-8 border-0 shadow-sm"
+                >
+                  <div className="flex items-center mb-6">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                    ))}
                   </div>
-                  <div>
-                    <div className="font-light text-black">{testimonial.name}</div>
-                    <div className="text-sm text-gray-500 font-light">{testimonial.role}, {testimonial.company}</div>
+                  
+                  <blockquote className="text-gray-600 mb-8 text-lg leading-relaxed font-light">
+                    "{testimonial.quote}"
+                  </blockquote>
+                  
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 font-light mr-4">
+                      {testimonial.avatar}
+                    </div>
+                    <div>
+                      <div className="font-light text-black">{testimonial.name}</div>
+                      <div className="text-sm text-gray-500 font-light">{testimonial.role}, {testimonial.company}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* Right Arrow Button */}
+            <button
+              onClick={() => {
+                const container = testimonialsRef.current;
+                if (!container) return;
+                
+                isButtonScrolling.current = true;
+                
+                const card = container.querySelector('.testimonial-card') as HTMLElement;
+                if (!card) return;
+                
+                const cardWidth = card.offsetWidth;
+                const gap = 32; // gap-8 = 2rem = 32px
+                const scrollAmount = (cardWidth + gap) * 3;
+                const { scrollLeft, scrollWidth, clientWidth } = container;
+                
+                // If we're at the end, loop back to start
+                if (scrollLeft + clientWidth >= scrollWidth - 10) {
+                  container.scrollLeft = 0;
+                  requestAnimationFrame(() => {
+                    container.scrollBy({
+                      left: scrollAmount,
+                      behavior: 'smooth'
+                    });
+                  });
+                } else {
+                  container.scrollBy({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                  });
+                }
+              }}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all border border-gray-100 hover:shadow-xl active:scale-95"
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="h-6 w-6 text-gray-600" />
+            </button>
           </div>
         </div>
       </section>
@@ -532,7 +701,6 @@ const Index = () => {
                 <li><a href="#features" className="hover:text-white transition-colors font-light">Features</a></li>
                 <li><a href="#pricing" className="hover:text-white transition-colors font-light">Pricing</a></li>
                 <li><a href="#how-it-works" className="hover:text-white transition-colors font-light">How it Works</a></li>
-                <li><Link to="/create-users" className="hover:text-white transition-colors font-light">Setup Users</Link></li>
               </ul>
             </div>
             
@@ -541,8 +709,8 @@ const Index = () => {
               <ul className="space-y-3 text-gray-400">
                 <li><a href="#" className="hover:text-white transition-colors font-light">About</a></li>
                 <li><a href="#" className="hover:text-white transition-colors font-light">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors font-light">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors font-light">Contact</a></li>
+                <li><Link to="/careers" className="hover:text-white transition-colors font-light">Careers</Link></li>
+                <li><Link to="/contact" className="hover:text-white transition-colors font-light">Contact</Link></li>
               </ul>
             </div>
             
@@ -564,9 +732,9 @@ const Index = () => {
               </div>
               
               <div className="flex space-x-8 text-gray-400 text-sm">
-                <a href="#" className="hover:text-white transition-colors font-light">Privacy Policy</a>
-                <a href="#" className="hover:text-white transition-colors font-light">Terms of Service</a>
-                <a href="#" className="hover:text-white transition-colors font-light">Cookie Policy</a>
+                <Link to="/privacy" className="hover:text-white transition-colors font-light">Privacy Policy</Link>
+                <Link to="/terms" className="hover:text-white transition-colors font-light">Terms of Service</Link>
+                <Link to="/cookies" className="hover:text-white transition-colors font-light">Cookie Policy</Link>
               </div>
             </div>
           </div>

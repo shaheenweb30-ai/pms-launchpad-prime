@@ -26,7 +26,6 @@ import Settings from "./pages/Settings";
 import AdminAccessControl from "./pages/AdminAccessControl";
 import AdminPanel from "./components/AdminPanel";
 import AdminDashboard from "./pages/AdminDashboard";
-import CreateUsers from "./pages/CreateUsers";
 import TenantDashboard from "./pages/TenantDashboard";
 import TenantMaintenance from "./pages/TenantMaintenance";
 import MyLease from "./pages/MyLease";
@@ -38,6 +37,11 @@ import MaintenanceTasks from "./pages/MaintenanceTasks";
 import WorkHistory from "./pages/WorkHistory";
 import VendorChat from "./pages/VendorChat";
 import VendorPaymentHistory from "./pages/VendorPaymentHistory";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookiePolicy from "./pages/CookiePolicy";
+import Careers from "./pages/Careers";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import './lib/i18n';
 
@@ -406,8 +410,20 @@ const App = () => {
                 } 
               />
               
-              {/* Create Users Route (Temporary - No Auth Required, no language prefix) */}
-              <Route path="/create-users" element={<CreateUsers />} />
+              {/* Privacy Policy Route (Public - No Auth Required, no language prefix) */}
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              
+              {/* Terms of Service Route (Public - No Auth Required, no language prefix) */}
+              <Route path="/terms" element={<TermsOfService />} />
+              
+              {/* Cookie Policy Route (Public - No Auth Required, no language prefix) */}
+              <Route path="/cookies" element={<CookiePolicy />} />
+              
+              {/* Careers Route (Public - No Auth Required, no language prefix) */}
+              <Route path="/careers" element={<Careers />} />
+              
+              {/* Contact Route (Public - No Auth Required, no language prefix) */}
+              <Route path="/contact" element={<Contact />} />
 
               {/* Redirect old routes without language prefix to English version */}
               <Route path="/signin" element={<Navigate to="/en/signin" replace />} />

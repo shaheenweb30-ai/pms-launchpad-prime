@@ -235,18 +235,6 @@ const SignIn = () => {
         <div className="mt-8 p-6 bg-gray-50 rounded-3xl border-0">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-light text-gray-600">Quick Access Credentials:</h3>
-            <Link 
-              to="/create-users" 
-              className="text-xs text-blue-600 hover:text-blue-700 underline font-light"
-            >
-              Create Users First
-            </Link>
-          </div>
-          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-2xl">
-            <p className="text-xs text-yellow-800 font-light">
-              <strong>⚠️ Important:</strong> If you see "Invalid login credentials", you must create users first. 
-              Click <Link to="/create-users" className="underline font-medium">here</Link> to set up default accounts.
-            </p>
           </div>
           <div className="space-y-3 text-sm">
             <div 

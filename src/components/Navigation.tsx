@@ -52,10 +52,7 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-[#ed1c24] to-[#225fac] rounded-xl flex items-center justify-center text-white font-bold text-lg lg:text-xl group-hover:opacity-80 transition-opacity">
-              PF
-            </div>
+          <Link to="/" className="flex items-center group">
             <span className="text-xl lg:text-2xl font-bold text-[#231f20]">PropertyFlow</span>
           </Link>
 
@@ -73,12 +70,6 @@ const Navigation = () => {
             >
               Testimonials
             </a>
-            <Link 
-              to="/create-users"
-              className="text-[#a5afbe] hover:text-[#ed1c24] transition-colors duration-300 font-medium rounded-full px-4 py-2 hover:bg-[#f8f9fa]"
-            >
-              Setup Users
-            </Link>
           </div>
 
           {/* Desktop Auth Buttons */}
@@ -162,13 +153,6 @@ const Navigation = () => {
               >
                 Testimonials
               </a>
-              <Link 
-                to="/create-users"
-                onClick={closeMenu}
-                className="block w-full text-left px-3 py-2 text-[#a5afbe] hover:text-[#ed1c24] hover:bg-[#f8f9fa] rounded-lg transition-colors font-medium"
-              >
-                Setup Users
-              </Link>
               
               {/* Mobile Auth Section */}
               <div className="pt-4 border-t border-[#a5afbe]/20">
