@@ -313,3 +313,4 @@
 - Improve animations and transitions
 - Add user preferences panel
 
+
