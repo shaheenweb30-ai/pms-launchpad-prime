@@ -66,17 +66,30 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
   const handleSignOut = async () => {
     try {
       await signOut();
+      
+      // Wait a moment for state to clear
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
       toast({
         title: t('sidebar.signOut'),
         description: t('sidebar.signOutSuccess'),
       });
-      navigateTo('/');
+      
+      // Use hard redirect to ensure complete sign out
+      setTimeout(() => {
+        window.location.href = getLocalizedPath('/');
+      }, 300);
     } catch (error) {
+      console.error('❌ Sign out error:', error);
       toast({
         title: "Sign out failed",
-        description: "An error occurred while signing out.",
+        description: "An error occurred while signing out. Please try again.",
         variant: "destructive",
       });
+      // Still redirect even on error to ensure user can try again
+      setTimeout(() => {
+        window.location.href = getLocalizedPath('/');
+      }, 1000);
     }
   };
 

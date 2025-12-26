@@ -1,31 +1,49 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useLanguageNavigation } from '@/hooks/useLanguageNavigation';
 
 const Navigation = () => {
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { getLocalizedPath } = useLanguageNavigation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
     try {
+      setIsProfileDropdownOpen(false);
       await signOut();
+      
+      // Wait a moment for state to clear
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
       toast({
         title: "Signed out successfully",
         description: "You have been signed out of PropertyFlow.",
       });
+      
+      // Use hard redirect to ensure complete sign out
+      setTimeout(() => {
+        window.location.href = getLocalizedPath('/');
+      }, 300);
     } catch (error) {
+      console.error('❌ Sign out error:', error);
       toast({
         title: "Sign out failed",
-        description: "An error occurred while signing out.",
+        description: "An error occurred while signing out. Please try again.",
         variant: "destructive",
       });
+      // Still redirect even on error to ensure user can try again
+      setTimeout(() => {
+        window.location.href = getLocalizedPath('/');
+      }, 1000);
     }
   };
 

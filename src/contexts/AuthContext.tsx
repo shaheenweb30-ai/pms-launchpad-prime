@@ -77,28 +77,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, session);
+        console.log('🔄 Auth state change:', event, session?.user?.email || 'no user');
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          console.log('User authenticated, fetching profile...');
+          console.log('✅ User authenticated, fetching profile...');
           try {
             await fetchProfile(session.user.id, session.user.email || undefined);
-            console.log('Profile fetched after auth change');
+            console.log('✅ Profile fetched after auth change');
           } catch (error) {
-            console.error('Error fetching profile in auth state change:', error);
+            console.error('❌ Error fetching profile in auth state change:', error);
             setLoading(false);
           }
         } else {
-          console.log('User signed out, clearing profile');
+          console.log('🚪 User signed out, clearing profile and state');
           setProfile(null);
+          setUser(null);
+          setSession(null);
           setLoading(false);
+          
+          // Clear localStorage on sign out event
+          try {
+            const keysToRemove: string[] = [];
+            for (let i = 0; i < localStorage.length; i++) {
+              const key = localStorage.key(i);
+              if (key && (key.startsWith('sb-') || key.includes('supabase') || key.includes('auth'))) {
+                keysToRemove.push(key);
+              }
+            }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+          } catch (storageError) {
+            console.warn('⚠️ Error clearing localStorage in auth state change:', storageError);
+          }
         }
         
-        // Don't set loading to false here - let fetchProfile handle it
-        // setLoading(false);
-        console.log('Auth state change complete');
+        console.log('✅ Auth state change complete');
       }
     );
 
@@ -347,9 +361,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      console.log('🚪 Signing out...');
+      
+      // Clear local state immediately to prevent UI flicker
+      setUser(null);
+      setProfile(null);
+      setSession(null);
+      setLoading(false);
+      
+      // Sign out from Supabase - this will trigger the auth state change listener
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('❌ Sign out error:', error);
+        // State already cleared above, but ensure it stays cleared
+        setUser(null);
+        setProfile(null);
+        setSession(null);
+        throw error;
+      }
+      
+      // Clear any localStorage data related to auth
+      try {
+        // Clear Supabase auth tokens
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith('sb-') || key.includes('supabase') || key.includes('auth'))) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        console.log('🧹 Cleared localStorage auth data');
+      } catch (storageError) {
+        console.warn('⚠️ Error clearing localStorage:', storageError);
+      }
+      
+      // Wait a bit to ensure auth state change listener processes the sign out
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      console.log('✅ Sign out successful');
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error('❌ Sign out error:', error);
+      // Always ensure state is cleared even on error
+      setUser(null);
+      setProfile(null);
+      setSession(null);
+      setLoading(false);
+      throw error;
     }
   };
 

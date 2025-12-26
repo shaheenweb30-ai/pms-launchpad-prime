@@ -33,79 +33,150 @@ const Pricing = () => {
     loadPricingPlans();
   }, []);
 
+  const getFallbackPlans = (): PricingPlan[] => [
+    {
+      id: '1',
+      name: "Starter",
+      monthly_price: 29,
+      annual_price: 290,
+      period: "per month",
+      description: "Perfect for individual landlords",
+      features: [
+        "Up to 5 properties",
+        "Basic tenant management",
+        "Online rent collection",
+        "Mobile app access",
+        "Email support"
+      ],
+      popular: false,
+      is_active: true,
+      display_order: 1
+    },
+    {
+      id: '2',
+      name: "Professional",
+      monthly_price: 79,
+      annual_price: 790,
+      period: "per month",
+      description: "Ideal for growing portfolios",
+      features: [
+        "Up to 25 properties",
+        "Advanced tenant screening",
+        "Maintenance management",
+        "Financial reporting",
+        "Priority support",
+        "API access"
+      ],
+      popular: true,
+      is_active: true,
+      display_order: 2
+    },
+    {
+      id: '3',
+      name: "Enterprise",
+      monthly_price: 199,
+      annual_price: 1990,
+      period: "per month",
+      description: "For large property managers",
+      features: [
+        "Unlimited properties",
+        "Custom integrations",
+        "Advanced analytics",
+        "White-label options",
+        "Dedicated support",
+        "Custom training"
+      ],
+      popular: false,
+      is_active: true,
+      display_order: 3
+    }
+  ];
+
   const loadPricingPlans = async () => {
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+      console.log('🔄 Loading pricing plans for public page...');
+      
+      // Add timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        console.warn('⏱️ Pricing plans query timeout, using fallback plans');
+        setLoading(false);
+        const fallback = getFallbackPlans();
+        console.log('📦 Setting fallback plans:', fallback);
+        setPricingPlans(fallback);
+      }, 8000);
+      
+      const { data, error } = await (supabase as any)
         .from('pricing_plans')
         .select('*')
         .eq('is_active', true)
         .order('display_order', { ascending: true });
 
-      if (error) throw error;
-      setPricingPlans(data || []);
-    } catch (error) {
-      console.error('Error loading pricing plans:', error);
-      // Fallback to default plans if database fails
-      setPricingPlans([
-        {
-          id: '1',
-          name: "Starter",
-          monthly_price: 29,
-          annual_price: 290,
-          period: "per month",
-          description: "Perfect for individual landlords",
-          features: [
-            "Up to 5 properties",
-            "Basic tenant management",
-            "Online rent collection",
-            "Mobile app access",
-            "Email support"
-          ],
-          popular: false,
-          is_active: true,
-          display_order: 1
-        },
-        {
-          id: '2',
-          name: "Professional",
-          monthly_price: 79,
-          annual_price: 790,
-          period: "per month",
-          description: "Ideal for growing portfolios",
-          features: [
-            "Up to 25 properties",
-            "Advanced tenant screening",
-            "Maintenance management",
-            "Financial reporting",
-            "Priority support",
-            "API access"
-          ],
-          popular: true,
-          is_active: true,
-          display_order: 2
-        },
-        {
-          id: '3',
-          name: "Enterprise",
-          monthly_price: 199,
-          annual_price: 1990,
-          period: "per month",
-          description: "For large property managers",
-          features: [
-            "Unlimited properties",
-            "Custom integrations",
-            "Advanced analytics",
-            "White-label options",
-            "Dedicated support",
-            "Custom training"
-          ],
-          popular: false,
-          is_active: true,
-          display_order: 3
+      clearTimeout(timeoutId);
+
+      console.log('📊 Query result:', { 
+        data, 
+        error, 
+        dataLength: data?.length,
+        errorCode: error?.code,
+        errorMessage: error?.message 
+      });
+
+      if (error) {
+        console.error('❌ Supabase error:', error);
+        console.error('Error details:', JSON.stringify(error, null, 2));
+        // Don't throw - use fallback instead
+        console.log('📦 Using fallback due to error');
+        setPricingPlans(getFallbackPlans());
+        setLoading(false);
+        return;
+      }
+      
+      const plansData = data || [];
+      console.log(`✅ Loaded ${plansData.length} pricing plan(s) from database`);
+      console.log('📋 Raw plans data:', plansData);
+      
+      // Transform features from JSONB to array if needed
+      const transformedPlans = plansData.map((plan: any) => {
+        let features = [];
+        if (Array.isArray(plan.features)) {
+          features = plan.features;
+        } else if (typeof plan.features === 'string') {
+          try {
+            features = JSON.parse(plan.features);
+          } catch (e) {
+            console.warn('Failed to parse features as JSON:', plan.features);
+            features = [];
+          }
         }
-      ]);
+        
+        return {
+          ...plan,
+          features: features
+        };
+      });
+      
+      console.log('📦 Transformed plans:', transformedPlans);
+      console.log('📦 Plans count:', transformedPlans.length);
+      
+      // Use fallback if no plans found
+      if (transformedPlans.length === 0) {
+        console.warn('⚠️ No pricing plans found, using fallback');
+        const fallback = getFallbackPlans();
+        setPricingPlans(fallback);
+      } else {
+        console.log('✅ Setting pricing plans:', transformedPlans);
+        setPricingPlans(transformedPlans);
+      }
+    } catch (error: any) {
+      console.error('❌ Error loading pricing plans:', error);
+      console.error('Error stack:', error.stack);
+      // Fallback to default plans if database fails
+      console.log('📦 Using fallback pricing plans due to exception');
+      setPricingPlans(getFallbackPlans());
     } finally {
       setLoading(false);
+      console.log('✅ Loading complete, pricingPlans state:', pricingPlans.length);
     }
   };
 
@@ -300,9 +371,29 @@ const Pricing = () => {
                 <p className="text-gray-500 font-light">{t('pricing.loading')}</p>
               </div>
             </div>
+          ) : pricingPlans.length === 0 ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-center">
+                <p className="text-gray-500 font-light">No pricing plans available at this time.</p>
+              </div>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-              {pricingPlans.map((plan, index) => (
+              {pricingPlans.map((plan, index) => {
+                // Ensure features is always an array
+                const planFeatures = Array.isArray(plan.features) 
+                  ? plan.features 
+                  : (typeof plan.features === 'string' 
+                      ? (() => {
+                          try {
+                            return JSON.parse(plan.features);
+                          } catch {
+                            return [];
+                          }
+                        })()
+                      : []);
+                
+                return (
               <div 
                 key={index} 
                 className={`relative bg-white rounded-3xl p-8 border transition-all duration-200 ${
@@ -331,7 +422,7 @@ const Pricing = () => {
                 </div>
                 
                 <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
+                  {planFeatures.map((feature: string, featureIndex: number) => (
                     <li key={featureIndex} className={`flex items-start ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <div className={`w-5 h-5 rounded-full bg-black flex items-center justify-center flex-shrink-0 mt-0.5 ${isRTL ? 'ml-3' : 'mr-3'}`}>
                         <Check className="h-3 w-3 text-white" />
@@ -351,7 +442,8 @@ const Pricing = () => {
                   </Button>
                 </Link>
               </div>
-              ))}
+              );
+              })}
             </div>
           )}
 

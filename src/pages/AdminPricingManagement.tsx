@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { Plus, Edit, Trash2, Check, X } from 'lucide-react';
 
 interface PricingPlan {
@@ -27,6 +28,7 @@ interface PricingPlan {
 
 const AdminPricingManagement = () => {
   const { toast } = useToast();
+  const { user, profile } = useAuth();
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -44,27 +46,133 @@ const AdminPricingManagement = () => {
   });
 
   useEffect(() => {
-    loadPricingPlans();
-  }, []);
+    if (user && profile) {
+      loadPricingPlans();
+    } else if (!user) {
+      setLoading(false);
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to view pricing plans.",
+        variant: "destructive",
+      });
+    }
+  }, [user, profile]);
 
   const loadPricingPlans = async () => {
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+      console.log('🔄 Loading pricing plans...');
+      console.log('👤 Current user:', user?.email);
+      console.log('👤 Current profile:', profile?.role);
+      
+      // Add timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        console.warn('⏱️ Pricing plans query timeout after 8 seconds');
+        setLoading(false);
+        setPlans([]);
+        toast({
+          title: "Timeout",
+          description: "Request took too long. Please check your connection or try again.",
+          variant: "destructive",
+        });
+      }, 8000);
+      
+      // Check if user is admin
+      const isAdmin = profile?.role === 'admin';
+      console.log('🔐 Is admin:', isAdmin);
+      
+      // Try different query strategies based on admin status
+      let { data, error } = await (supabase as any)
         .from('pricing_plans')
         .select('*')
         .order('display_order', { ascending: true });
 
-      if (error) throw error;
-      setPlans(data || []);
-    } catch (error) {
-      console.error('Error loading pricing plans:', error);
+      // If admin query fails, try with explicit filter
+      if (error && isAdmin) {
+        console.warn('⚠️ Admin query failed, trying alternative approach...');
+        // Try getting all plans without filter (admin should see all)
+        const result = await (supabase as any)
+          .from('pricing_plans')
+          .select('*')
+          .order('display_order', { ascending: true });
+        data = result.data;
+        error = result.error;
+      }
+
+      // If still failing and user is admin, try active plans only as fallback
+      if (error && (error.code === 'PGRST301' || error.message?.includes('permission') || error.message?.includes('policy'))) {
+        console.warn('⚠️ Permission denied, trying active plans only...');
+        const result = await (supabase as any)
+          .from('pricing_plans')
+          .select('*')
+          .eq('is_active', true)
+          .order('display_order', { ascending: true });
+        data = result.data;
+        error = result.error;
+      }
+
+      clearTimeout(timeoutId);
+
+      console.log('📊 Query result:', { 
+        data, 
+        error, 
+        dataLength: data?.length,
+        errorCode: error?.code,
+        errorMessage: error?.message 
+      });
+
+      if (error) {
+        console.error('❌ Supabase error:', error);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        console.error('Error details:', JSON.stringify(error, null, 2));
+        
+        // If it's a permission error and user is admin, show helpful message
+        if ((error.code === 'PGRST301' || error.message?.includes('permission')) && isAdmin) {
+          toast({
+            title: "Permission Error",
+            description: "Admin access denied. Please check your database RLS policies or contact support.",
+            variant: "destructive",
+          });
+        } else {
+          throw error;
+        }
+      }
+      
+      const plansData = (data || []) as PricingPlan[];
+      console.log(`✅ Loaded ${plansData.length} pricing plan(s)`);
+      
+      // Transform features from JSONB to array if needed
+      const transformedPlans = plansData.map(plan => ({
+        ...plan,
+        features: Array.isArray(plan.features) ? plan.features : (typeof plan.features === 'string' ? JSON.parse(plan.features) : [])
+      }));
+      
+      setPlans(transformedPlans);
+      
+      if (transformedPlans.length === 0) {
+        console.warn('⚠️ No pricing plans found in database');
+        toast({
+          title: "No Plans Found",
+          description: "No pricing plans found. You can create one using the 'Add Pricing Plan' button.",
+          variant: "default",
+        });
+      }
+    } catch (error: any) {
+      console.error('❌ Error loading pricing plans:', error);
+      console.error('Error code:', error?.code);
+      console.error('Error message:', error?.message);
+      console.error('Error stack:', error?.stack);
       toast({
         title: "Error",
-        description: "Failed to load pricing plans",
+        description: error?.message || error?.details?.message || "Failed to load pricing plans. Please check your connection.",
         variant: "destructive",
       });
+      // Set empty array on error to prevent infinite loading
+      setPlans([]);
     } finally {
       setLoading(false);
+      console.log('✅ Loading complete');
     }
   };
 
@@ -147,7 +255,7 @@ const AdminPricingManagement = () => {
 
       if (editingPlan) {
         // Update existing plan
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('pricing_plans')
           .update(planData)
           .eq('id', editingPlan.id);
@@ -160,7 +268,7 @@ const AdminPricingManagement = () => {
         });
       } else {
         // Create new plan
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('pricing_plans')
           .insert([planData]);
 
@@ -190,7 +298,7 @@ const AdminPricingManagement = () => {
     }
 
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('pricing_plans')
         .delete()
         .eq('id', id);
@@ -215,7 +323,7 @@ const AdminPricingManagement = () => {
 
   const handleToggleActive = async (plan: PricingPlan) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('pricing_plans')
         .update({ is_active: !plan.is_active })
         .eq('id', plan.id);
@@ -264,8 +372,27 @@ const AdminPricingManagement = () => {
       </div>
 
       {/* Pricing Plans Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {plans.map((plan) => (
+      {plans.length === 0 ? (
+        <Card className="p-12 text-center">
+          <CardContent>
+            <div className="flex flex-col items-center justify-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <Plus className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">No Pricing Plans</h3>
+              <p className="text-slate-600 mb-6 max-w-md">
+                You haven't created any pricing plans yet. Click the button below to create your first plan.
+              </p>
+              <Button onClick={() => handleOpenDialog()} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Create Your First Pricing Plan
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {plans.map((plan) => (
           <Card key={plan.id} className={plan.popular ? 'border-2 border-blue-500' : ''}>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -324,7 +451,8 @@ const AdminPricingManagement = () => {
             </CardContent>
           </Card>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Add/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
